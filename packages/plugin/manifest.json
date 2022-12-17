@@ -1,0 +1,14 @@
+{
+  "name": "Baemin Figma",
+  "id": "1180446958868214960",
+  "api": "1.0.0",
+  "editorType": [
+    "figma"
+  ],
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "menu": [
+    {"name": "Open locale editor", "command": "locale"}
+   
+  ]
+}

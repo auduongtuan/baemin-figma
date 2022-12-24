@@ -4,7 +4,7 @@ import {
   updateMatchedItem,
 } from "../state/localeSlice";
 import { useForm } from "react-hook-form";
-import { Field, Select } from "../uiComponents";
+import { TextBox } from "../components/Field";
 
 const MatchedItem = () => {
   const matchedItem = useAppSelector((state) => state.locale.matchedItem);
@@ -40,10 +40,10 @@ const MatchedItem = () => {
   }, [watch, matchedItem]);
   return (
     <div className="mt-16">
-      <h3>Matched item</h3>
-      <Field label="Key" id="key" {...register("key")} disabled />
-      <Field label="English" id="en" className="mt-16" {...register("en")} />
-      <Field label="Vietnamese" id="vi" className="mt-16" {...register("vi")} />
+      <h4>{matchedItem ? `${matchedItem.key}` : 'No matched item'}</h4>
+      {/* <TextBox label="Key" id="key" {...register("key")} disabled /> */}
+      <TextBox label="English" id="en" className="mt-8" {...register("en")} />
+      <TextBox label="Vietnamese" id="vi" className="mt-8" {...register("vi")} />
     </div>
   );
 };

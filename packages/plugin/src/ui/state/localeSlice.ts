@@ -3,6 +3,7 @@ import {findItemByCharacters, findItemByKey, findItemByKeyOrCharacters} from '..
 import * as ui from "../uiHelper";
 
 const initialState = {
+  sheetName: null,
   sheetId: null,
   selectedText: null,
   localeItems: [],
@@ -15,12 +16,13 @@ export const localeSlice = createSlice({
   reducers: {
     setLocaleData: (state, action) => {
       if('sheetId' in action.payload) state.sheetId = action.payload.sheetId;
+      if('sheetName' in action.payload) state.sheetName = action.payload.sheetName;
       if('modifiedTime' in action.payload) state.modifiedTime = action.payload.modifiedTime;
       if('items' in action.payload) state.localeItems = action.payload.items;
     },
     setSelectedText: (state, action) => {
       state.selectedText = action.payload; 
-      if (state.localeItems && state.selectedText) {
+      if (state.localeItems && state.selectedText && !state.selectedText.multiple) {
         let finder = findItemByKeyOrCharacters(state.selectedText.key, state.selectedText.characters, state.localeItems);
         if (finder) {
           state.matchedItem = finder;

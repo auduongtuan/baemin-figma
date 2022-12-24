@@ -4,3 +4,4 @@ export const LANGUAGES = {
 }
 // export const PREFIX = "baemin_locale_";
 export const PREFIX = "locale_";
+export const MIXED_VALUE = "__mixed";

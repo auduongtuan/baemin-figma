@@ -43,9 +43,10 @@ app.get("/api/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         spreadsheetId: sheetId,
         range,
     });
-    const lastUpdated = yield drive.files.get({
+    const sheetFile = yield drive.files.get({
         fileId: sheetId,
-        fields: "modifiedTime",
+        // fields: "modifiedTime",
+        fields: "*",
     });
     console.log();
     if (response.data.values) {
@@ -53,7 +54,8 @@ app.get("/api/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         let header = values.shift();
         if (header) {
             let returnData = {
-                modifiedTime: lastUpdated.data.modifiedTime,
+                sheetName: sheetFile.data.name,
+                modifiedTime: sheetFile.data.modifiedTime,
                 items: values.reduce((acc, current) => {
                     acc.push(header.reduce((obj, col, i) => {
                         obj[col] = current[i];

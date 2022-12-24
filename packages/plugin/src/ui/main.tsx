@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {render} from 'react-dom'
 import { useState, useEffect } from 'react'
-
-import 'figma-plugin-ds/dist/figma-plugin-ds.css'
+import * as Tooltip from "@radix-ui/react-tooltip";
+// import 'figma-plugin-ds/dist/figma-plugin-ds.css'
 import "./ui.scss";
 import Locale from './Locale';
 import { Provider } from 'react-redux'
@@ -29,7 +29,9 @@ const App = () => {
   }
   return (
     <Provider store={store}>
-    {ui()}
+      <Tooltip.Provider>
+        {ui()}
+      </Tooltip.Provider>
     </Provider>
   );
 

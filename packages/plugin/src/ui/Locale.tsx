@@ -1,12 +1,9 @@
 import React, { useCallback } from "react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import * as ui from "./uiHelper";
-import { Field, Select } from "./uiComponents";
-import axios from "axios";
+import { TextBox } from "./components/Field";
 import MatchedItem from "./locale/MatchedItem";
-import { css } from '@emotion/react'
-
-
+import Button from "./components/Button";
 import { removeVietnameseAccent } from "../lib/helpers";
 import { snakeCase } from "lodash";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
@@ -14,12 +11,11 @@ import {
   setSelectedText,
   addLocaleItemsItem,
   updateSelectedText,
-  setLocaleData
+  setLocaleData,
 } from "./state/localeSlice";
 
 import CurrentTextInfo from "./locale/CurrentTextInfo";
 import SheetManagement from "./locale/SheetManagement";
-
 
 const Locale = ({}) => {
   // const [selectedText, setSelectedText] = useState<{ [key: string]: string }>();
@@ -31,7 +27,7 @@ const Locale = ({}) => {
   const modifiedTime = useAppSelector((state) => state.locale.modifiedTime);
   const dispatch = useAppDispatch();
 
-  console.log('re-render Locale');
+  console.log("re-render Locale");
 
   const addNewKey = useCallback(() => {
     const newKey = snakeCase(removeVietnameseAccent(selectedText.characters));
@@ -42,14 +38,11 @@ const Locale = ({}) => {
         vi: selectedText.characters,
       })
     );
-    dispatch(
-      updateSelectedText({key: newKey})
-    )
+    dispatch(updateSelectedText({ key: newKey }));
   }, [selectedText, localeItems]);
 
- 
   useEffect(() => {
-    ui.postData({type: "get_locale_data"});
+    ui.postData({ type: "get_locale_data" });
     window.onmessage = async (event) => {
       if (event.data.pluginMessage.localeData) {
         const localeData = JSON.parse(event.data.pluginMessage.localeData);
@@ -64,50 +57,39 @@ const Locale = ({}) => {
   }, []);
 
   return (
-    <div className="p-16">
-      <footer css={css`
-        display: flex;
-      `}>
-        <button
-          className="button button--secondary"
-          onClick={() => {
-            ui.postData({ type: "switch_lang", lang: "vi", localeItems });
-          }}
-        >
-          To VI
-        </button>
-        <button
-          className="button button--secondary ml-8"
-          onClick={() => {
-            ui.postData({ type: "switch_lang", lang: "en", localeItems });
-          }}
-        >
-          To EN
-        </button>
-      </footer>
+    <div
+      css={`
+        background: var(--white);
+        padding: 16px;
+      `}
+    >
+ 
       <CurrentTextInfo />
       <MatchedItem />
       <SheetManagement />
 
-      {selectedText && !matchedItem ? (
-        
-        <div className="mt-24">
-          <Field
+      {selectedText && !selectedText.multiple && !matchedItem ? (
+        <div className="flex w-full gap-8 align-items-end mt-16">
+          <TextBox
             label="Add new key to sheet?"
             id="key"
+            className="flex-grow-1"
             defaultValue={
-              selectedText && (selectedText.key ? selectedText.key :
-              snakeCase(removeVietnameseAccent(selectedText.characters)))
+              selectedText &&
+              (selectedText.key
+                ? selectedText.key
+                : snakeCase(removeVietnameseAccent(selectedText.characters)))
             }
           />
-          <button
-            className="button button--secondary mt-12"
+          <Button 
+            // variant="secondary"
+            // className="mt-12"
             onClick={addNewKey}
           >
-            Add new key
-          </button>
+            Add
+          </Button>
         </div>
-    ) : null}
+      ) : null}
     </div>
   );
 };

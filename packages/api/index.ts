@@ -33,9 +33,10 @@ app.get("/api/:id", async (req: Request, res: Response) => {
     spreadsheetId: sheetId,
     range,
   });
-  const lastUpdated = await drive.files.get({
+  const sheetFile = await drive.files.get({
     fileId: sheetId,
-    fields: "modifiedTime",
+    // fields: "modifiedTime",
+    fields: "*",
   });
   console.log();
   if (response.data.values) {
@@ -43,7 +44,8 @@ app.get("/api/:id", async (req: Request, res: Response) => {
     let header = values.shift() as string[];
     if (header) {
       let returnData = {
-        modifiedTime: lastUpdated.data.modifiedTime,
+        sheetName: sheetFile.data.name,
+        modifiedTime: sheetFile.data.modifiedTime,
         items: values.reduce((acc, current) => {
           acc.push(
             header.reduce((obj, col, i) => {

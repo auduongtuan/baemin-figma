@@ -12,6 +12,7 @@ listenerMiddleware.startListening({
   effect: (action, listenerApi) => {
     const state = (listenerApi.getState() as RootState);
     const localeData = JSON.stringify({
+      sheetName: state.locale.sheetName,
       sheetId: state.locale.sheetId,
       modifiedTime: new Date().toJSON(),
       items: state.locale.localeItems,

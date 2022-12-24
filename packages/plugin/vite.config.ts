@@ -7,9 +7,9 @@ export default defineConfig({
   root: "./src/ui",
   plugins: [
     react({
-      jsxImportSource: "@emotion/react",
+      // jsxImportSource: "@emotion/react",
       babel: {
-        plugins: ["@emotion/babel-plugin"],
+        plugins: ["babel-plugin-styled-components"],
       },
     }),
     viteSingleFile(),

@@ -1,10 +1,10 @@
 import * as h from "./commandHelper";
-import {LANGUAGES, PREFIX} from '../constant/locale';
+import {LANGUAGES, PREFIX, MIXED_VALUE} from '../constant/locale';
 import {findItemByKey, findItemByCharacters} from '../lib/localeData';
 
 const locale = {
   run: async () => {
-    figma.showUI(__html__, { title: "Locale editor", width: 320, height: 600 });
+    figma.showUI(__html__, { title: "Locale editor", width: 360, height: 520 });
     h.postData({ type: "locale"});
     locale.onSelectionChange();
   },
@@ -57,22 +57,46 @@ const locale = {
     } 
   },
   onSelectionChange: async () => {
+    const getLang = (node) => h.getNodeData(node, `${PREFIX}lang`);
+    const getKey = (node) => h.getNodeData(node, `${PREFIX}key`);
     const selection = h.selection();
     const firstNode = h.selection(0);
-    if(selection.length == 1) {
-      if (h.isText(firstNode)) {
+    if (selection.length == 1 && h.isText(firstNode)) {
+      h.postData({
+        selectedText: {
+          id: firstNode.id,
+          key: getKey(firstNode),
+          lang: getLang(firstNode),
+          characters: firstNode.characters,
+        }
+      });
+    } 
+    else if (selection.length >= 1) {
+      const allTexts: TextNode[] = selection.reduce((acc, selectionItem) => {
+        if(h.isContainer(selectionItem)) {
+          const textNodes = selectionItem.findAll(node => h.isText(node));
+          acc.push(...textNodes);
+        }
+        if(h.isText(selectionItem)) {
+          acc.push(selectionItem);
+        }
+        return acc;
+      }, []);
+      if(allTexts.length > 0) {
+        const firstLang = getLang(allTexts[0]);
+        const firstKey = getKey(allTexts[0]);
+        const isSameLang = allTexts.every(textNode => getLang(textNode) == firstLang);
+        const isSameKey = allTexts.every(textNode => getKey(textNode) == firstKey);
         h.postData({
           selectedText: {
-            id: firstNode.id,
-            key: h.getNodeData(firstNode, `${PREFIX}key`),
-            lang: h.getNodeData(firstNode, `${PREFIX}lang`),
-            characters: firstNode.characters,
+            multiple: true,
+            lang: isSameLang ? firstLang : MIXED_VALUE,
+            key: isSameKey ? firstKey : MIXED_VALUE,
+            characters: null,
           }
-        });
-      } else {
-        h.postData({selectedText: null});
+        })
       }
-    } else if (selection.length > 1) {
+
       // const firstLang = h.getNodeData(firstNode, `${PREFIX}lang`);
       // const firstKey = h.getNodeData(firstNode, `${PREFIX}key`);
       // let isSameLang = selection.every((node) => {

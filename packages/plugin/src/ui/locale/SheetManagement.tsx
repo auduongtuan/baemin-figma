@@ -1,5 +1,4 @@
-import React from "react";
-import { css } from "@emotion/react";
+import React, {useState} from "react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setLocaleData } from "../state/localeSlice";
@@ -7,15 +6,38 @@ import { setLocaleData } from "../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
 // English.
 import en from "javascript-time-ago/locale/en";
-import Button, { IconButton } from '../components/Button';
+import Button, { IconButton } from "../components/Button";
 import { TextBox } from "../components/Field";
 import { useForm } from "react-hook-form";
 import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
-import { copyToClipboard } from "../../lib/helpers";
+import { copyToClipboard, copyToClipboardAsync, clipWithSelection } from "../../lib/helpers";
 import Tooltip from "../components/Tooltip";
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
-
+const CopyButton = ({ url }) => {
+  const [copied, setCopied] = useState(false);
+  console.log('re-render');
+  return (
+    <Tooltip content={copied ? "Sheet url copied" : "Copy sheet url"} contentProps={{
+      onPointerDownOutside: (e) => {
+        e.preventDefault();
+      }
+    }}>
+      <IconButton
+        onClick={(e) => {
+          e.preventDefault();
+          clipWithSelection(url);
+          setCopied(true);
+        }}
+        onMouseOut={(e) => {
+          if(copied) setCopied(false);
+        }}
+      >
+        <CopyIcon />
+      </IconButton>
+    </Tooltip>
+  );
+};
 const SheetManagement = () => {
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const modifiedTime = useAppSelector((state) => state.locale.modifiedTime);
@@ -46,7 +68,10 @@ const SheetManagement = () => {
   const sync = () => {
     axios.get(`http://localhost:8001/api/${sheetId}`).then((res) => {
       // console.log(res.data.modifiedTime > modifiedTime);
-      if (new Date(res.data.modifiedTime).getTime() > new Date(modifiedTime).getTime()) {
+      if (
+        new Date(res.data.modifiedTime).getTime() >
+        new Date(modifiedTime).getTime()
+      ) {
         dispatch(setLocaleData(res.data));
       } else {
         postRemoteData();
@@ -111,17 +136,7 @@ const SheetManagement = () => {
                   <LinkBreak1Icon />
                 </IconButton>
               </Tooltip>
-              <Tooltip content="Copy sheet url">
-              <IconButton
-                onClick={() =>
-                  copyToClipboard(
-                    `https://docs.google.com/spreadsheets/d/${sheetId}/edit`
-                  )
-                }
-              >
-                <CopyIcon />
-              </IconButton>
-              </Tooltip>
+              <CopyButton url={`https://docs.google.com/spreadsheets/d/${sheetId}/edit`} />
             </div>
 
             <p

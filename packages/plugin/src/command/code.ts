@@ -1,18 +1,6 @@
 import * as _ from "lodash"
-// import {truncateInit, truncateSetup} from "./truncateText"
-// import * as h from "./commandHelper"
-// import * as verticalDataValue from "./verticalDataValue_v2"
-// import * as gridHelper from "./gridHelper"
-// import * as tabBar from "./tabBar"
-// import * as avatar from "./avatar"
-// import toggleSensitiveMask from "./toggleSensitiveMask"
-// import textBoxTextAreaInt from "./textArea"
-// import multiSelect from "./multiSelect"
-// import getDsKeys from "./getDsKeys"
-// import * as codeHighlighter from "./codeHighlighter";
-// import test from "./test";
-// import pluginData from './pluginData'
 import locale from "./locale";
+import ds from "./ds";
 const dsFonts = [
   // {family: "Inter", style: "Regular"},
   // {family: "Inter", style: "Medium"},
@@ -36,6 +24,7 @@ const uiCommands = {
 }
 
 const nonuiCommands = {
+  ...ds,
   // "tabbar_init": tabBar.truncate,
   // "name_avatar_init": avatar.nameInit,
   // "truncate_init": truncateInit,
@@ -86,12 +75,12 @@ figma.on("run", async ({ command, parameters }: RunEvent) => {
       if('run' in value) value.run();
     }
   });
-  // _.forOwn(nonuiCommands, async (value, key) => {
-  //   if (command == key) {
-  //     await value();
-  //     figma.closePlugin();
-  //   }
-  // });
+  _.forOwn(nonuiCommands, async (value, key) => {
+    if (command == key) {
+      await value();
+      figma.closePlugin();
+    }
+  });
 
 });
 

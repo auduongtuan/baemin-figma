@@ -165,6 +165,7 @@ const DownshiftSelect = ({
   className = "",
   options,
   placeholder = null,
+  disabled = false,
   onChange,
   ...rest
 }: SelectProps) => {
@@ -201,12 +202,12 @@ const DownshiftSelect = ({
         {label}
       </label>
       <div className="select-menu">
-        <div className="select-menu__button" {...getToggleButtonProps()}>
+        <button className="select-menu__button" {...getToggleButtonProps()} disabled={disabled}>
           <span className={`select-menu__label ${!selectedItem ? 'select-menu__label--placeholder' : ''}`}>
             {selectedItem ? selectedItem.name : placeholder}
           </span>
           <span className="select-menu__caret"></span>
-        </div>
+        </button>
 
         {isOpen && (
           <div

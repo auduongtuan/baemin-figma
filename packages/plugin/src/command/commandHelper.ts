@@ -75,6 +75,9 @@ export const isFrame = (node: BaseNode): node is FrameNode => {
 	return node && node.type == "FRAME"
 }
 
+export const isComponent = (node: BaseNode): node is FrameNode => {
+	return node && node.type == "COMPONENT"
+}
 
 export const isInstance = (node: BaseNode, componentName: string | null = null): node is InstanceNode => {
 	// if (componentName && bootstrapComponents[componentName])

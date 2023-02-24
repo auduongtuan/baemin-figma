@@ -1,6 +1,10 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import * as RadixTooltip from "@radix-ui/react-tooltip";
-const Tooltip = ({ children, content }) => {
+const Tooltip = ({ children, content, contentProps }: {
+  children: React.ReactNode,
+  content: string,
+  contentProps?: RadixTooltip.TooltipContentProps
+}) => {
   console.log(content);
   return (
       <RadixTooltip.Root
@@ -22,6 +26,7 @@ const Tooltip = ({ children, content }) => {
               will-change: transform, opacity; */
             `}
             sideOffset={2}
+            {...contentProps}
           >
             {content}
             {/* <Tooltip.Arrow className="TooltipArrow" /> */}

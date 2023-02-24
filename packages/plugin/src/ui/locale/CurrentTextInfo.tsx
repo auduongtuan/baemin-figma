@@ -70,7 +70,7 @@ const CurrentTextInfo = () => {
               })
             );
           }}
-          disabled={selectedText ? false : true}
+          disabled={selectedText && selectedText.key != MIXED_VALUE ? false : true}
           className="w-half"
         ></Combobox>
         <Select
@@ -105,6 +105,7 @@ const CurrentTextInfo = () => {
             })
           )}
           className="w-half"
+          disabled={selectedText ? false : true}
         ></Select>
       </div>
       {selectedText && !selectedText.multiple && !selectedText.key ? (

@@ -51,6 +51,7 @@ importers:
       '@vitejs/plugin-react': ^2.2.0
       axios: ^1.2.1
       babel-plugin-styled-components: ^2.0.7
+      classnames: ^2.3.2
       concurrently: ^6.5.1
       downshift: ^7.0.5
       esbuild: ^0.13.15
@@ -79,6 +80,7 @@ importers:
       '@reduxjs/toolkit': 1.9.1_3m5k4ry2nwm36zz5ojtujpfkvq
       axios: 1.2.1
       babel-plugin-styled-components: 2.0.7_styled-components@5.3.6
+      classnames: 2.3.2
       downshift: 7.0.5_react@17.0.2
       figma-plugin-ds: 1.0.1
       javascript-time-ago: 2.5.9
@@ -1349,6 +1351,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: false
 
   /client-only/0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}

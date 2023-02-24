@@ -922,8 +922,8 @@ select.select-menu {
       outline: 1px solid var(--blue);
       outline-offset: -2px;
     }
-    &:disabled:hover {
-      justify-content: flex-start;
+    &:disabled:hover, &--disabled:hover {
+      // justify-content: flex-start;
       border-color: transparent;
     }
     // * {
@@ -937,7 +937,8 @@ select.select-menu {
   &__button--focus &__label--placeholder  {
     color: var(--black8);
   }
-  &__button:disabled:hover &__label--placeholder {
+  &__button:disabled:hover &__label--placeholder,
+  &__button--disabled:hover &__label--placeholder {
     color: var(--black3);
   }
   &__button:hover &__caret,
@@ -946,14 +947,16 @@ select.select-menu {
     opacity: 1;
     margin-left: auto;
   }
-  &__button:disabled:hover &__caret {
+  &__button:disabled:hover &__caret,
+  &__button--disabled:hover &__careet {
     opacity: 0.3;
     margin-left: -12px;
   }
-  &__button:disabled &__label {
+  &__button:disabled &__label,
+  &__button--disabled &__label {
     color: var(--black3);
   }
-  &__button[data-placeholder] {
+  &__button[data-placeholder], &__button::placeholder {
     color: var(--black3);
   }
 

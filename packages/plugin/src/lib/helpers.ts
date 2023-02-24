@@ -17,7 +17,7 @@ export function copyToClipboard(value: string) {
       const area = document.createElement('textarea');
       document.body.appendChild(area);
       area.value = value;
-      area.focus();
+      // area.focus();
       area.select();
       const result = document.execCommand('copy');
       document.body.removeChild(area);
@@ -30,4 +30,34 @@ export function copyToClipboard(value: string) {
     return false;
   }
   return true;
+}
+export function clipWithSelection(text) {
+  const node = document.createTextNode(text),
+      selection = window.getSelection(),
+      range = document.createRange();
+  let clone = null;
+
+  if (selection.rangeCount > 0) {
+      clone = selection.getRangeAt(selection.rangeCount - 1).cloneRange();
+  }
+
+  document.body.appendChild(node);
+  selection.removeAllRanges();
+  range.selectNodeContents(node);
+  selection.addRange(range);
+  document.execCommand("copy");
+
+  selection.removeAllRanges();
+  document.body.removeChild(node);
+
+  if (clone !== null) {
+      selection.addRange(clone);
+  }
+}
+
+export function copyToClipboardAsync(value: string): Promise<void> {
+  if (navigator.clipboard) {
+    return navigator.clipboard.writeText(value);
+  }
+  return Promise.reject(`Clipboard API is NOT supported in the browser`);
 }

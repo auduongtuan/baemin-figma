@@ -20,36 +20,11 @@ import {
 import { figmaAliasLight } from "../constant/tokens/aliasColors";
 import globalColors from "../constant/tokens/globalColors";
 import { groupBy, isEqual, isObject, isString } from "lodash";
-// h.selection().forEach(selectionItem => {
-// 	if(!isFrame(selectionItem)) return;
-// 	const tokenItems = selectionItem.findAll(node => isInstance(node) && node.name
-// 	 == 'Token Item') as InstanceNode[];
-// 	 tokenItems.forEach(tokenInstance => {
-// 		const nameNode = tokenInstance.findOne(node => isText(node) && node.name == 'Name') as TextNode;
-// 		const aliasNode = tokenInstance.findOne(node => isText(node) && node.name == 'Alias') as TextNode;
-// 		const descriptionNode = tokenInstance.findOne(node => isText(node) && node.name == 'Description') as TextNode;
-// 		const valueNode = tokenInstance.findOne(node => isText(node) && node.name == 'Value') as TextNode;
-// 		const colorNode = tokenInstance.findOne(node => isFrame(node) && node.name == 'Color') as FrameNode;
-// 		if(nameNode.characters in figma_alias) {
-// 			aliasNode.characters = figma_alias[nameNode.characters].name;
-// 		}
-// 		});
+
 const ds: { [key: string]: Function } = {};
 
-// for(const name in globalTokens) {
-// 	createOrUpdateToken('Global', name, globalTokens[name]);
-// }
-
 ds.test = () => {
-  // const paintStyles = figma.getLocalPaintStyles();
-  // paintStyles.forEach(paintStyle => {
-  //   // paintStyle.name = paintStyle.name.replace('-', '.');
-  //   const match = new RegExp(/([A-Z][a-z]+)(\d+)/g).exec(paintStyle.name);
-  //   if(match) {
-  //     // console.log(paintStyle.name, match);
-  //     paintStyle.name = 'global/' + match[1].toLowerCase() + '/' + match[1].toLowerCase() + '.' + match[2];
-  //   }
-  // });
+
   const container = selection(0) as FrameNode;
   const palettes = container.findChildren(
     (node) => isFrame(node) && /[A-Za-z]+/.test(node.name)
@@ -100,7 +75,12 @@ function createOrUpdateToken(
     const paintStyleFound = paintStyles.find(
       (paintStyle) => paintStyle.name == prefix + "/" + name
     );
-    const paintStyle = paintStyleFound || figma.createPaintStyle();
+    // const paintStyle = paintStyleFound || figma.createPaintStyle();
+    if(!paintStyleFound) {
+      figma.notify(`Cannot found ${name} style`);
+      return;
+    }
+    const paintStyle = paintStyleFound;
     paintStyle.name = prefix + "/" + name;
     const parts = name.split(".");
     const type = parts[0];
@@ -115,33 +95,55 @@ function createOrUpdateToken(
       "success": ["positive"],
       "primary": ["brand"],
       "warning": ["attentive"],
-      "new": ["updated"]
+      "new": ["updated"],
+      "subtle": ["weak"]
+      // "weakest": ["placeholder"]
     }
     if(role in roleAlt) {
       role = [role, ...roleAlt[role]].join(', ')
+      if(role == 'onColor') {
+        role = 'on-color-background'
+      }
     }
-    const specials = {
+    const suffixs = {
+      "bg.emphasis": " like tooltips",
+      "bg.backdrop": " like dialog backdrop",
+      "bg.overlay": " like image/video overlay",
       "fg.strong": ", and headings",
-      "fg.week": ", labels, and control icons",
-      "fg.weekest": ", and placeholder",
-      "fg.secondary": ", help texts, subtexts, subheadings, and subtitles",
+      "fg.secondary": " like help texts, subtexts, subheadings, and subtitles",
+      "fg.tertiary": " like labels, and control icons",
+      "fg.subtle": " like placeholder texts",
+      "border.action": " like inputs or buttons",
+      "border.modal": " like popups (popover), dialogs, dropdown menus",
+      "border.default": " like containers/boxes",
     };
+    function getSuffix(name: string): string {
+      if(name in suffixs) {
+        return suffixs[name];
+      } else {
+        for(const key in suffixs) {
+          if(key.includes(name)) {
+            return suffixs[key];
+          }
+        }
+      }
+      return '';
+    }
     const interaction = parts.slice(-1)[0];
     const states = {
       'default': ' in rest state',
       'hover': ' in hover state',
-      'disabled':  'in disabled state',
+      'disabled':  ' in disabled state',
       'pressed': ' in pressed, active state',
     }
-    paintStyle.description = "";
-    console.log(name, type, parts, labels[type], specials[name]);
+    console.log(name, type, parts, labels[type], suffixs[name]);
     if (role && (type == "fg" || type == "bg" || type == "border")) {
       let description =
         ["Used for", role, labels[type]].join(" ") +
-        (name in specials ? specials[name] : "") +
+        getSuffix(name) +
         (interaction in states && parts.length > 2 ? states[interaction] : '') +
         ".";
-      paintStyle.description = description;
+      if(paintStyle.description != description) paintStyle.description = description;
     } else {
       // console.log(name, type, parts);
     }

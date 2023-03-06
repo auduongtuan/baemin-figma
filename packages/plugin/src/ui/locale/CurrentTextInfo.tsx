@@ -24,9 +24,9 @@ const CurrentTextInfo = () => {
       data: { id: selectedText.id, key: matchedItem.key },
     });
   };
-  console.log({ selectedText });
+  // console.log({ selectedText });
 
-  console.log("Re-render Current Text Info");
+  // console.log("Re-render Current Text Info");
   return (
     <div>
       <h4 className="mt-0">Current text info</h4>
@@ -49,6 +49,7 @@ const CurrentTextInfo = () => {
           label="Key"
           value={selectedText ? selectedText.key : undefined}
           placeholder="Select key"
+          menuWidth={"300px"}
           options={(selectedText && selectedText.key === MIXED_VALUE
             ? [
                 {
@@ -59,18 +60,29 @@ const CurrentTextInfo = () => {
                 },
               ]
             : []
-          ).concat(localeItems.map((item) => {
-            return { id: item.key, value: item.key, name: item.key, disabled: false };
-          }))}
+          ).concat(
+            localeItems.map((item) => {
+              return {
+                id: item.key,
+                value: item.key,
+                name: item.key,
+                disabled: false,
+                content: item.vi,
+                altContent: item.en,
+              };
+            })
+          )}
           onChange={(value) => {
-            console.log(value);
+            // console.log(value);
             dispatch(
               updateSelectedText({
                 key: value,
               })
             );
           }}
-          disabled={selectedText && selectedText.key != MIXED_VALUE ? false : true}
+          disabled={
+            selectedText && selectedText.key != MIXED_VALUE ? false : true
+          }
           className="w-half"
         ></Combobox>
         <Select

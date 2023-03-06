@@ -10,11 +10,13 @@ export const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
   matcher: isAnyOf(setLocaleData, addLocaleItemsItem, updateMatchedItem),
   effect: (action, listenerApi) => {
+    const modifiedTime = new Date().toJSON();
+    console.log('Update local items', modifiedTime);
     const state = (listenerApi.getState() as RootState);
     const localeData = JSON.stringify({
       sheetName: state.locale.sheetName,
       sheetId: state.locale.sheetId,
-      modifiedTime: new Date().toJSON(),
+      modifiedTime: modifiedTime,
       items: state.locale.localeItems,
     });
     // console.log(localeItems);

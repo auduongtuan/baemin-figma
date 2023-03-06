@@ -16,7 +16,6 @@ TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
 const CopyButton = ({ url }) => {
   const [copied, setCopied] = useState(false);
-  console.log('re-render');
   return (
     <Tooltip content={copied ? "Sheet url copied" : "Copy sheet url"} contentProps={{
       onPointerDownOutside: (e) => {
@@ -62,12 +61,13 @@ const SheetManagement = () => {
         items: localeItems,
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       });
   };
   const sync = () => {
+    console.log(sheetId);
     axios.get(`http://localhost:8001/api/${sheetId}`).then((res) => {
-      // console.log(res.data.modifiedTime > modifiedTime);
+      console.log({remote:res.data.modifiedTime, local:modifiedTime});
       if (
         new Date(res.data.modifiedTime).getTime() >
         new Date(modifiedTime).getTime()
@@ -90,7 +90,7 @@ const SheetManagement = () => {
       })
     );
   };
-  console.log("Navigator", navigator.clipboard);
+  // console.log("Navigator", navigator.clipboard);
   return (
     <footer
       css={`

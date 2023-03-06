@@ -1049,7 +1049,7 @@ select.select-menu {
     font-weight: var(--font-weight-normal);
     letter-spacing: var(--font-letter-spacing-neg-xsmall);
     line-height: var(--font-line-height);
-    height: var(--size-small);
+    // height: var(--size-small);
     padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
     user-select: none;
     outline: none;
@@ -1069,10 +1069,22 @@ select.select-menu {
   }
 
   &__item-label {
-    overflow-x: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    padding: var(--size-xxxsmall) 0;
+    width: calc(100% - 16px);
+    .name, .content {
+      width: 100%;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      pointer-events: none;
+    }
+    .content {
+      font-size: var(--font-size-xsmall);
+      color: var(--figma-color-text-onbrand-secondary);
+    }
+    
     // flex-grow: 1;
     // flex-shrink: 0;
   }

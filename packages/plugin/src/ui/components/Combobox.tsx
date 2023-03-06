@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ComponentType } from "react";
 import { useCombobox } from "downshift";
 import classnames from "classnames";
+import Menu from "./Menu";
 interface ComboboxProps {
   label?: string;
   id?: string;
@@ -12,10 +13,13 @@ interface ComboboxProps {
     id?: string;
     value: string;
     name: string;
+    content?: string;
+    altContent?: string;
     disabled?: boolean;
   }[];
   disabled?: boolean;
   onChange?: Function;
+  menuWidth?: string | number;
 }
 const Combobox = ({
   label,
@@ -27,6 +31,7 @@ const Combobox = ({
   placeholder = null,
   disabled = false,
   onChange,
+  menuWidth = '100%',
   ...rest
 }: ComboboxProps) => {
   const optionToString = (option) => (option ? option.name : "");
@@ -60,7 +65,9 @@ const Combobox = ({
         options.filter(
           (option) =>
             option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-            option.value.toLowerCase().includes(inputValue.toLowerCase())
+            option.value.toLowerCase().includes(inputValue.toLowerCase()) ||
+            option.content && option.content.toLowerCase().includes(inputValue.toLowerCase()) ||
+            option.altContent && option.altContent.toLowerCase().includes(inputValue.toLowerCase())
         )
       );
     },
@@ -117,28 +124,23 @@ const Combobox = ({
         </div>
 
         {isOpen && (
-          <div
-            className="select-menu__menu select-menu__menu--active"
+          <Menu
+            style={{width: menuWidth}}
             {...getMenuProps()}
           >
             {items.map((item, index) => (
-              <div
-                className={`select-menu__item ${
-                  selectedItem == item ? "select-menu__item--selected" : ""
-                } ${
-                  highlightedIndex == index
-                    ? "select-menu__item--highlighted"
-                    : ""
-                }`}
+              <Menu.Item
+                selected={selectedItem == item}
+                highlighted={highlightedIndex == index}
                 key={`${item.value}${index}`}
+                name={item.name}
+                content={item.content}
                 {...getItemProps({ item, index, disabled: item.disabled })}
               >
-                <span className="select-menu__item-icon"></span>
-                <span className="select-menu__item-label">{item.name}</span>
-              </div>
+              </Menu.Item>
             ))}
-          </div>
-        )}
+          </Menu>
+         )} 
       </div>
     </div>
   );

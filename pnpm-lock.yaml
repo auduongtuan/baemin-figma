@@ -26,13 +26,13 @@ importers:
       dotenv: 16.0.3
       express: 4.18.2
       googleapis: 109.0.1
+      typescript: 4.9.4
     devDependencies:
       '@types/cors': 2.8.13
       '@types/express': 4.17.15
       '@types/node': 18.11.16
       concurrently: 7.6.0
       nodemon: 2.0.20
-      typescript: 4.9.4
 
   packages/plugin:
     specifiers:
@@ -61,7 +61,9 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       react-hook-form: ^7.40.0
+      react-is: '>=16.8.0'
       react-redux: ^8.0.5
+      redux: ^4.2.1
       redux-persist: ^6.0.0
       sass: ^1.56.2
       styled-components: ^5.3.6
@@ -86,9 +88,11 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.40.0_react@17.0.2
-      react-redux: 8.0.5_74b3ggvk3akyhuq4eydyx3fqim
-      redux-persist: 6.0.0_react@17.0.2
-      styled-components: 5.3.6_sfoxds7t5ydpegc3knd667wn6m
+      react-is: 18.2.0
+      react-redux: 8.0.5_27nnqo76gztpod7yf2ma4s6bee
+      redux: 4.2.1
+      redux-persist: 6.0.0_react@17.0.2+redux@4.2.1
+      styled-components: 5.3.6_v5ja746gkdtknuc6tj46sve3be
     devDependencies:
       '@figma/plugin-typings': 1.57.1
       '@types/lodash': 4.14.191
@@ -842,9 +846,9 @@ packages:
     dependencies:
       immer: 9.0.16
       react: 17.0.2
-      react-redux: 8.0.5_74b3ggvk3akyhuq4eydyx3fqim
-      redux: 4.2.0
-      redux-thunk: 2.4.2_redux@4.2.0
+      react-redux: 8.0.5_27nnqo76gztpod7yf2ma4s6bee
+      redux: 4.2.1
+      redux-thunk: 2.4.2_redux@4.2.1
       reselect: 4.1.7
     dev: false
 
@@ -1114,7 +1118,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.6_sfoxds7t5ydpegc3knd667wn6m
+      styled-components: 5.3.6_v5ja746gkdtknuc6tj46sve3be
     dev: false
 
   /babel-plugin-syntax-jsx/6.18.0:
@@ -2642,7 +2646,7 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: false
 
-  /react-redux/8.0.5_74b3ggvk3akyhuq4eydyx3fqim:
+  /react-redux/8.0.5_27nnqo76gztpod7yf2ma4s6bee:
     resolution: {integrity: sha512-Q2f6fCKxPFpkXt1qNRZdEDLlScsDWyrgSj0mliK59qU6W5gvBiKkdMEG2lJzhd1rCctf0hb6EtePPLZ2e0m1uw==}
     peerDependencies:
       '@types/react': ^16.8 || ^17.0 || ^18.0
@@ -2672,6 +2676,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-is: 18.2.0
+      redux: 4.2.1
       use-sync-external-store: 1.2.0_react@17.0.2
     dev: false
 
@@ -2747,7 +2752,7 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /redux-persist/6.0.0_react@17.0.2:
+  /redux-persist/6.0.0_react@17.0.2+redux@4.2.1:
     resolution: {integrity: sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==}
     peerDependencies:
       react: '>=16'
@@ -2757,18 +2762,19 @@ packages:
         optional: true
     dependencies:
       react: 17.0.2
+      redux: 4.2.1
     dev: false
 
-  /redux-thunk/2.4.2_redux@4.2.0:
+  /redux-thunk/2.4.2_redux@4.2.1:
     resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}
     peerDependencies:
       redux: ^4
     dependencies:
-      redux: 4.2.0
+      redux: 4.2.1
     dev: false
 
-  /redux/4.2.0:
-    resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
+  /redux/4.2.1:
+    resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
     dependencies:
       '@babel/runtime': 7.20.6
     dev: false
@@ -2965,7 +2971,7 @@ packages:
       ansi-regex: 5.0.1
     dev: true
 
-  /styled-components/5.3.6_sfoxds7t5ydpegc3knd667wn6m:
+  /styled-components/5.3.6_v5ja746gkdtknuc6tj46sve3be:
     resolution: {integrity: sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==}
     engines: {node: '>=10'}
     requiresBuild: true
@@ -2984,6 +2990,7 @@ packages:
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-is: 18.2.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
     dev: false
@@ -3078,7 +3085,6 @@ packages:
     resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /undefsafe/2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}

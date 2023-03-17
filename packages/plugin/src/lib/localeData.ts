@@ -1,7 +1,20 @@
+export interface LocaleSelection {
+  multiple?: boolean;
+  key?: string;
+  lang?: 'en' | 'vi';
+  texts: LocaleText[]
+}
 export interface LocaleItem {
   key: string;
   en: string;
   vi: string;
+}
+export interface LocaleText {
+  id: string;
+  key?: string;
+  lang?: 'en' | 'vi';
+  characters: string;
+  variables?: string;
 }
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems ? localeItems.find(item => item.key == key) : null;

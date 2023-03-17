@@ -17,14 +17,109 @@ import {
   isInstance,
   isComponent,
 } from "./commandHelper";
-import { figmaAliasLight } from "../constant/tokens/aliasColors";
+import {
+  figmaAliasDark,
+  figmaAliasLight,
+} from "../constant/tokens/aliasColors";
 import globalColors from "../constant/tokens/globalColors";
 import { groupBy, isEqual, isObject, isString } from "lodash";
-
+import paintStyles from "../constant/paintStyles";
+import * as h from "./commandHelper";
 const ds: { [key: string]: Function } = {};
 
-ds.test = () => {
+ds.changeTheme = async () => {
+  const importedIds = {};
+  const promises: Promise<BaseStyle>[] = [];
+  for (const paintStyleName in paintStyles) {
+    promises.push(figma.importStyleByKeyAsync(paintStyles[paintStyleName]));
+  }
+  await Promise.all(promises).then((paintStyles) => {
+    paintStyles.forEach((paintStyle) => {
+      importedIds[paintStyle.name] = paintStyle.id;
+    });
+  });
+  function getReversedStyleId(styleId): string | null {
+    const oPaintStyle = figma.getStyleById(styleId);
+    if(oPaintStyle) {
+      if (oPaintStyle.name.startsWith("light")) {
+        const darkStyleName = oPaintStyle.name.replace("light", "dark");
+        if (darkStyleName in importedIds) {
+          return importedIds[darkStyleName];
+        }
+        else {
+          console.log(darkStyleName + ' not found');
+        }
+      }
+      if (oPaintStyle.name.startsWith("dark")) {
+        const lightStyleName = oPaintStyle.name.replace("dark", "light");
+        if (lightStyleName in importedIds) {
+          return importedIds[lightStyleName];
+        } else {
+          console.log(lightStyleName + ' not found');
 
+        }
+      }
+    } else {
+      console.log('Paint style not found '+styleId);
+    }
+    return null;
+  }
+  function replaceStyle(
+    node: SceneNode,
+    styleType: "fillStyleId" | "strokeStyleId"
+  ) {
+    if (styleType in node && typeof node[styleType] == "string") {
+      if(node.type == 'TEXT' && styleType == 'fillStyleId') {
+        const segments = node.getStyledTextSegments(["fillStyleId"]);
+        segments.forEach((segment) => {
+          const reversedStyleId = getReversedStyleId(segment.fillStyleId);
+          if (reversedStyleId)
+            node.setRangeFillStyleId(
+              segment.start,
+              segment.end,
+              reversedStyleId
+            );
+        });
+      } else {
+        const reversedStyleId = getReversedStyleId(node[styleType]);
+        if (reversedStyleId) {
+          node[styleType] = reversedStyleId;
+        }
+      }
+  
+    }
+  }
+  for (const selection of h.selection()) {
+    replaceStyle(selection, "fillStyleId");
+    replaceStyle(selection, "strokeStyleId");
+    if (h.isContainer(selection)) {
+      const layers = selection.findAll();
+      for (const node of layers) {
+        if (
+          node.type == "COMPONENT" ||
+          node.type == "COMPONENT_SET" ||
+          node.type == "ELLIPSE" ||
+          node.type == "FRAME" ||
+          node.type == "HIGHLIGHT" ||
+          node.type == "INSTANCE" ||
+          node.type == "LINE" ||
+          node.type == "POLYGON" ||
+          node.type == "RECTANGLE" ||
+          node.type == "SECTION" ||
+          node.type == "STAMP" ||
+          node.type == "STAR" ||
+          node.type == "STICKY" ||
+          node.type == "TEXT" ||
+          node.type == "VECTOR"
+        ) {
+          replaceStyle(node, "fillStyleId");
+          replaceStyle(node, "strokeStyleId");
+        }
+      }
+    }
+  }
+};
+ds.test = () => {
   const container = selection(0) as FrameNode;
   const palettes = container.findChildren(
     (node) => isFrame(node) && /[A-Za-z]+/.test(node.name)
@@ -76,11 +171,11 @@ function createOrUpdateToken(
       (paintStyle) => paintStyle.name == prefix + "/" + name
     );
     // const paintStyle = paintStyleFound || figma.createPaintStyle();
-    if(!paintStyleFound) {
-      figma.notify(`Cannot found ${name} style`);
-      return;
-    }
-    const paintStyle = paintStyleFound;
+    // if(!paintStyleFound) {
+    //   figma.notify(`Cannot found ${name} style, create new one`);
+    //   return;
+    // }
+    const paintStyle = paintStyleFound || figma.createPaintStyle();
     paintStyle.name = prefix + "/" + name;
     const parts = name.split(".");
     const type = parts[0];
@@ -91,18 +186,18 @@ function createOrUpdateToken(
     };
     let role = parts[1];
     const roleAlt = {
-      "error": ["negative"],
-      "success": ["positive"],
-      "primary": ["brand"],
-      "warning": ["attentive"],
-      "new": ["updated"],
-      "subtle": ["weak"]
+      error: ["negative"],
+      success: ["positive"],
+      primary: ["brand"],
+      warning: ["attentive"],
+      new: ["updated"],
+      subtle: ["weak"],
       // "weakest": ["placeholder"]
-    }
-    if(role in roleAlt) {
-      role = [role, ...roleAlt[role]].join(', ')
-      if(role == 'onColor') {
-        role = 'on-color-background'
+    };
+    if (role in roleAlt) {
+      role = [role, ...roleAlt[role]].join(", ");
+      if (role == "onColor") {
+        role = "on-color-background";
       }
     }
     const suffixs = {
@@ -118,32 +213,32 @@ function createOrUpdateToken(
       "border.default": " like containers/boxes",
     };
     function getSuffix(name: string): string {
-      if(name in suffixs) {
+      if (name in suffixs) {
         return suffixs[name];
       } else {
-        for(const key in suffixs) {
-          if(key.includes(name)) {
+        for (const key in suffixs) {
+          if (key.includes(name)) {
             return suffixs[key];
           }
         }
       }
-      return '';
+      return "";
     }
-    const interaction = parts.slice(-1)[0];
+    const interaction = parts.length >= 1 ? parts.slice(-1)[0] : "";
     const states = {
-      'default': ' in rest state',
-      'hover': ' in hover state',
-      'disabled':  ' in disabled state',
-      'pressed': ' in pressed, active state',
-    }
-    console.log(name, type, parts, labels[type], suffixs[name]);
+      default: " in rest state",
+      hover: " in hover state",
+      disabled: " in disabled state",
+      pressed: " in pressed, active state",
+    };
     if (role && (type == "fg" || type == "bg" || type == "border")) {
       let description =
         ["Used for", role, labels[type]].join(" ") +
         getSuffix(name) +
-        (interaction in states && parts.length > 2 ? states[interaction] : '') +
+        (interaction in states && parts.length > 2 ? states[interaction] : "") +
         ".";
-      if(paintStyle.description != description) paintStyle.description = description;
+      if (paintStyle.description != description)
+        paintStyle.description = description;
     } else {
       // console.log(name, type, parts);
     }
@@ -231,15 +326,27 @@ ds.updateTokens = () => {
       parsedGlobalTokens[name]
     );
   }
-  // update alias tokens
-  let parsedAliasTokens = parseTokens(figmaAliasLight);
-  for (const name in parsedAliasTokens) {
+  // update light alias tokens
+  let parsedLightAliasTokens = parseTokens(figmaAliasLight);
+  for (const name in parsedLightAliasTokens) {
     const type = name.split(".")[0] || "";
     createOrUpdateToken(
       paintStyles,
       `light/${type}`,
       name,
-      parsedAliasTokens[name]
+      parsedLightAliasTokens[name]
+    );
+  }
+  // update dark alias tokens
+  let parsedDarkAliasTokens = parseTokens(figmaAliasDark);
+  console.log(parsedDarkAliasTokens);
+  for (const name in parsedDarkAliasTokens) {
+    const type = name.split(".")[0] || "";
+    createOrUpdateToken(
+      paintStyles,
+      `dark/${type}`,
+      name,
+      parsedDarkAliasTokens[name]
     );
   }
 };
@@ -267,6 +374,10 @@ function parseTokens(aliasList) {
   const re = new RegExp(/([A-Za-z]+)(?:\.(\d+))?(?:\/(\d+\.\d+))?/);
   for (const tokenName in convertedTokens) {
     let currentValue = convertedTokens[tokenName] as string;
+    // special treatment for transparent
+    if (currentValue == "transparent") {
+      currentValue = "white/0.001";
+    }
     if (currentValue.startsWith("rgb") || currentValue.startsWith("#")) {
       parsedTokens[tokenName] = webStringToWebRgb(currentValue);
     } else {
@@ -298,26 +409,27 @@ function parseTokens(aliasList) {
   }
   return parsedTokens;
 }
-ds.displayTokens = async () => {
+async function displayTokenList(prefix = "light", aliasTokens, containerName) {
   await figma.loadFontAsync({ family: "Roboto Mono", style: "Regular" });
   await figma.loadFontAsync({ family: "Roboto", style: "Regular" });
   await figma.loadFontAsync({ family: "Roboto Mono", style: "SemiBold" });
   await (async () => {
-    let convertedTokens = convertToken(figmaAliasLight);
+    let convertedTokens = convertToken(aliasTokens);
     const MAX_ITEMS_PER_LINE = 5;
     const X_SPACING = 16;
     const Y_SPACING = 32;
     const paintStyles = figma
       .getLocalPaintStyles()
-      .filter((paintStyle) => paintStyle.name.startsWith("light/"));
+      .filter((paintStyle) => paintStyle.name.startsWith(`${prefix}/`));
     const TokenItem = figma.currentPage.findOne(
       (node) => node.type == "COMPONENT" && node.name == "Token Item"
     ) as ComponentNode;
     const TokenContainer = figma.currentPage.findOne(
-      (node) => isFrame(node) && node.name == "TOKEN DISPLAY CONTAINER"
+      (node) => isFrame(node) && node.name == containerName
     ) as FrameNode;
     function getTokenName(paintStyle: PaintStyle) {
       const parts = paintStyle.name.split("/") as string[];
+      if (!parts) console.log(paintStyle.name);
       return parts.slice(-1)[0];
     }
     function createTokenItem(paintStyle): InstanceNode {
@@ -408,6 +520,18 @@ ds.displayTokens = async () => {
       TokenContainer.appendChild(frame);
     }
   })();
+}
+ds.displayTokens = async () => {
+  await displayTokenList(
+    "light",
+    figmaAliasLight,
+    "TOKEN DISPLAY CONTAINER - LIGHT"
+  );
+  await displayTokenList(
+    "dark",
+    figmaAliasDark,
+    "TOKEN DISPLAY CONTAINER - DARK"
+  );
 };
 
 // check cover

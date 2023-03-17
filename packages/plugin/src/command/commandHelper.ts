@@ -32,13 +32,13 @@ export const getComponent = (node: InstanceNode): ComponentNode | ComponentSetNo
 	return node.mainComponent;
 }
 
-export const getData = (node: SceneNode, key: string) => {
-	return node.getSharedPluginData('aperia', key);
-}
+// export const getData = (node: SceneNode, key: string) => {
+// 	return node.getSharedPluginData('aperia', key);
+// }
 
-export const setData = (node: SceneNode, key: string, value: string) => {
-	node.setSharedPluginData('aperia', key, value);
-}
+// export const setData = (node: SceneNode, key: string, value: string) => {
+// 	node.setSharedPluginData('aperia', key, value);
+// }
 
 export const getDS = (node: SceneNode): 'bootstrap' | 'pixel' | string => {
 	return node.getSharedPluginData('aperia', 'ds');
@@ -101,6 +101,16 @@ export const findContainer = (parentContainer: ContainerNode, containerName: str
 	return <ContainerNode | null>parentContainer.findOne(node => isContainer(node) && node.name == containerName);
 }
 
+export const loadRobotoFontsAsync = async () => {
+  await figma.loadFontAsync({ family: "Roboto", style: "Regular" });
+  await figma.loadFontAsync({ family: "Roboto", style: "Medium" });
+  await figma.loadFontAsync({ family: "Roboto", style: "SemiBold" });
+  await figma.loadFontAsync({ family: "Roboto", style: "Bold" });
+	await figma.loadFontAsync({ family: "Roboto Mono", style: "Regular" });
+  await figma.loadFontAsync({ family: "Roboto Mono", style: "Medium" });
+  await figma.loadFontAsync({ family: "Roboto Mono", style: "SemiBold" });
+  await figma.loadFontAsync({ family: "Roboto Mono", style: "Bold" });
+}
 export const loadFontsAsync = async (node: TextNode) => {
 	const fonts = node.getRangeAllFontNames(0, node.characters.length);
 	for (const font of fonts) {

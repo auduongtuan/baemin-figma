@@ -72,14 +72,14 @@ const Combobox = ({
       );
     },
     onSelectedItemChange: ({ selectedItem: newSelectedItem }) => {
-      setSelectedItem(newSelectedItem);
-      if (onChange) onChange(newSelectedItem.value);
+      if(newSelectedItem && 'value' in newSelectedItem) {
+        setSelectedItem(newSelectedItem);
+        if (onChange) onChange(newSelectedItem.value);
+      }
     },
     onStateChange: (changes) => {
-      console.log(changes);
     },
   });
-  console.log({ items });
   return (
     <div className={`show-border ${className && className}`}>
       <label htmlFor={id} className="mb-8" {...getLabelProps()}>
@@ -109,7 +109,6 @@ const Combobox = ({
             {...getInputProps({
               disabled,
               onFocus: () => {
-                // console.log('focus');
                 setIsFocus(true);
               },
               onBlur: () => {

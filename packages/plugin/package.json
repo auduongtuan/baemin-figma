@@ -23,6 +23,7 @@
   "license": "",
   "devDependencies": {
     "@figma/plugin-typings": "^1.57.1",
+    "@types/js-beautify": "^1.13.3",
     "@types/lodash": "^4.14.191",
     "@types/react": "^17.0.52",
     "@types/react-dom": "^17.0.18",
@@ -39,6 +40,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.6",
+    "@radix-ui/react-accordion": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-icons": "^1.1.1",
     "@radix-ui/react-select": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.0.2",
@@ -49,6 +52,7 @@
     "downshift": "^7.0.5",
     "figma-plugin-ds": "^1.0.1",
     "javascript-time-ago": "^2.5.9",
+    "js-beautify": "^1.14.7",
     "lodash": "^4.17.21",
     "prismjs": "^1.29.0",
     "react": "^17.0.2",

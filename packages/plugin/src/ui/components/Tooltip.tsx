@@ -5,7 +5,6 @@ const Tooltip = ({ children, content, contentProps }: {
   content: string,
   contentProps?: RadixTooltip.TooltipContentProps
 }) => {
-  console.log(content);
   return (
       <RadixTooltip.Root
         delayDuration={50}

@@ -9,11 +9,12 @@ import { TextBox } from "../components/Field";
 import { orderBy } from "lodash";
 import { IconButton } from "../components/Button";
 import Accordion from "../components/Accordion";
-import { Crosshair2Icon, Pencil2Icon } from "@radix-ui/react-icons";
+import { Crosshair2Icon, Pencil2Icon, PlusIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../uiHelper";
+import { setNewDialogOpened } from "../state/localeAppSlice";
 const LocaleItems = () => {
   const matchedItem = useAppSelector((state) => state.locale.matchedItem);
-  const selectedText = useAppSelector((state) => state.locale.selectedText);
+  const localeSelection = useAppSelector((state) => state.locale.localeSelection);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
 
   const dispatch = useAppDispatch();
@@ -45,16 +46,23 @@ const LocaleItems = () => {
     };
   }, [watch]);
 
-  return !selectedText ? (
+  return !localeSelection ? (
     <div className="p-16">
-      <h4 className="mt-0">{localeItems.length} items</h4>
+      <header className="flex">
+        {localeItems && <h4 className="mt-0 flex-grow-1">{localeItems.length} items</h4>}
+        <div>
+          <Tooltip content="Add new item">
+            <IconButton onClick={() => dispatch(setNewDialogOpened(true))}><PlusIcon /></IconButton>
+          </Tooltip>
+        </div>
+      </header>
       <div
         className="mt-8 flex flex-column"
         css={`
           gap: 4px;
         `}
       >
-        {orderBy(localeItems, ["key"]).map((item) => (
+        {localeItems && orderBy(localeItems, ["key"]).map((item) => (
           <Accordion type="single" key={item.key + "_edit"} collapsible>
             <Accordion.Item
               title={

@@ -18,6 +18,42 @@ const firstPage = figma.root.children[0];
 let localeDataFrame = firstPage.findOne(
   (node) => h.getNodeData(node, `${PREFIX}data`) != ""
 );
+
+function getLang(node: TextNode) {
+  const lang = h.getNodeData(node, `${PREFIX}lang`);
+  if(lang == 'en' || lang == 'vi') {
+    return lang;
+  } else {
+    return DEFAULT_LANG;
+  }
+}
+
+function setLang(node: TextNode, lang: string) {
+  h.setNodeData(node, `${PREFIX}lang`, lang);
+}
+function getKey(node: TextNode) {
+  return h.getNodeData(node, `${PREFIX}key`);
+}
+function setKey(node: TextNode, key: string) {
+  h.setNodeData(node, `${PREFIX}key`, key);
+}
+
+function changeLang(textNode: TextNode, lang, localeItems: LocaleItem[]) {
+  const key = getKey(textNode);
+  const item =
+    findItemByKey(key, localeItems) ||
+    findItemByCharacters(textNode.characters, localeItems);
+  if (item && item[lang]) {
+    textNode.characters = item[lang];
+    setLang(textNode, lang);
+  }
+}
+function autoSetKey(textNode: TextNode, localeItems: LocaleItem[]) {
+  const item = findItemByCharacters(textNode.characters, localeItems);
+  if(item) {
+    setKey(textNode, item.key);
+  }
+}
 const locale = {
   run: async () => {
     figma.showUI(__html__, { title: "Locale editor", width: 360, height: 520 });
@@ -26,23 +62,14 @@ const locale = {
   },
 
   switchLang: (lang, localeItems) => {
-    function changeLang(textNode: TextNode) {
-      const key = h.getNodeData(textNode, `${PREFIX}key`);
-      const item =
-        findItemByKey(key, localeItems) ||
-        findItemByCharacters(textNode.characters, localeItems);
-      if (item && item[lang]) {
-        textNode.characters = item[lang];
-        h.setNodeData(textNode, `${PREFIX}lang`, lang);
-      }
-    }
+
     h.selection().forEach((selection) => {
       if (h.isText(selection)) {
-        changeLang(selection);
+        changeLang(selection, lang, localeItems);
       } else if (h.isContainer(selection)) {
         const texts = selection.findAll((node) => h.isText(node)) as TextNode[];
         texts.forEach((textNode) => {
-          changeLang(textNode);
+          changeLang(textNode, lang, localeItems);
         });
       }
     });
@@ -59,11 +86,26 @@ const locale = {
           figma.currentPage.selection = [...textNodes];
         }
         break;
+      case "auto_set_key":
+        console.log('auto set key');
+        let count = 0;
+        h.selection().forEach((selection) => {
+          if (h.isText(selection)) {
+            autoSetKey(selection, msg.localeItems);
+            count++;
+          } else if (h.isContainer(selection)) {
+            const texts = selection.findAll((node) => h.isText(node)) as TextNode[];
+            texts.forEach((textNode) => {
+              autoSetKey(textNode, msg.localeItems);
+              count++;
+            });
+          }
+        });
+        locale.onSelectionChange();
+        break;
       case "update_text":
-        console.log("run update_text");
+        // find text node
         const textNode = figma.currentPage.findOne((node) => node.id == msg.id);
-        console.log(textNode);
-
         if (textNode && h.isText(textNode)) {
           if (msg.key) h.setNodeData(textNode, `${PREFIX}key`, msg.key);
           if (msg.lang) {
@@ -76,6 +118,7 @@ const locale = {
             console.log("Locale item changed", msg.localeItem);
             const currentLang =
               h.getNodeData(textNode, `${PREFIX}lang`) || DEFAULT_LANG;
+            h.setNodeData(textNode, `${PREFIX}key`, msg.localeItem.key);
             if (currentLang) textNode.characters = msg.localeItem[currentLang];
           }
           locale.onSelectionChange();
@@ -146,30 +189,20 @@ const locale = {
     }
   },
   onSelectionChange: async () => {
-    const getLang = (node) => {
-      const lang = h.getNodeData(node, `${PREFIX}lang`);
-      if(lang == 'en' || lang == 'vi') {
-        return lang;
-      } else {
-        return DEFAULT_LANG;
-      }
-    }
-    const getKey = (node) => h.getNodeData(node, `${PREFIX}key`);
     const selection = h.selection();
     const firstNode = h.selection(0);
-    console.log("selection: ", selection);
-
     if (selection.length == 1 && h.isText(firstNode)) {
       h.postData({
-        type: "change_selected_text",
-        selectedText: {
+        type: "change_locale_selection",
+        localeSelection: {
           id: firstNode.id,
           key: getKey(firstNode),
           lang: getLang(firstNode),
           characters: firstNode.characters,
         },
-      });
-    } else if (selection.length >= 1) {
+      });  
+    }
+    else if (selection.length >= 1) {
       const allTexts: TextNode[] = selection.reduce((acc, selectionItem) => {
         if (h.isContainer(selectionItem)) {
           const textNodes = selectionItem.findAll((node) => h.isText(node));
@@ -180,7 +213,7 @@ const locale = {
         }
         return acc;
       }, []);
-      if (allTexts.length > 0) {
+      if (allTexts && allTexts.length > 0) {
         const firstLang = getLang(allTexts[0]);
         const firstKey = getKey(allTexts[0]);
         const isSameLang = allTexts.every(
@@ -207,8 +240,8 @@ const locale = {
             characters: textNode.characters,
           }));
         h.postData({
-          type: "change_selected_text",
-          selectedText: {
+          type: "change_locale_selection",
+          localeSelection: {
             multiple: true,
             lang: isSameLang ? firstLang : MIXED_VALUE,
             key: isSameKey ? firstKey : MIXED_VALUE,
@@ -217,6 +250,7 @@ const locale = {
           },
         });
       }
+    }
 
       // const firstLang = h.getNodeData(firstNode, `${PREFIX}lang`);
       // const firstKey = h.getNodeData(firstNode, `${PREFIX}key`);
@@ -228,8 +262,8 @@ const locale = {
       // } else {
       //   console.log('mixed lang');
       // }
-    } else {
-      h.postData({ type: "change_selected_text", selectedText: null });
+    else {
+      h.postData({ type: "change_locale_selection", localeSelection: null });
     }
   },
 };

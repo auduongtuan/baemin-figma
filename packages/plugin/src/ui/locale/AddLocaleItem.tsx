@@ -1,14 +1,22 @@
 import React, { useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { addLocaleItemsItem, updateSelectedText } from "../state/localeSlice";
+import { addLocaleItem, updateLocaleSelection } from "../state/localeSlice";
 import { useForm } from "react-hook-form";
 import { TextBox } from "../components/Field";
 import { removeVietnameseAccent } from "../../lib/helpers";
 import { snakeCase } from "lodash";
 import Button from "../components/Button";
-const AddLocaleItem = () => {
+const AddLocaleItem = ({
+  showTitle = true,
+  onDone = null,
+}: {
+  showTitle?: boolean;
+  onDone?: Function;
+}) => {
   const matchedItem = useAppSelector((state) => state.locale.matchedItem);
-  const selectedText = useAppSelector((state) => state.locale.selectedText);
+  const localeSelection = useAppSelector(
+    (state) => state.locale.localeSelection
+  );
   const dispatch = useAppDispatch();
   const {
     register,
@@ -22,54 +30,59 @@ const AddLocaleItem = () => {
   // reset when key is change
 
   useEffect(() => {
-    if (selectedText && selectedText.characters) {
-      if (!selectedText.key) {
+    if (localeSelection && localeSelection.characters) {
+      if (!localeSelection.key) {
         const newKey = snakeCase(
-          removeVietnameseAccent(selectedText.characters)
+          removeVietnameseAccent(localeSelection.characters)
         );
         setValue("new_key", newKey);
-        setValue("en", selectedText.characters);
-        setValue("vi", selectedText.characters);
+        setValue("en", localeSelection.characters);
+        setValue("vi", localeSelection.characters);
       }
     }
-    if (!selectedText) {
+    if (!localeSelection) {
       setValue("en", "");
       setValue("vi", "");
     }
-  }, [selectedText]);
+  }, [localeSelection]);
   const addNewKey = useCallback(() => {
     const [new_key, en, vi] = getValues(["new_key", "en", "vi"]);
     dispatch(
-      addLocaleItemsItem({
+      addLocaleItem({
         key: new_key,
-        en: en ? en : selectedText.characters,
-        vi: vi ? vi : selectedText.characters,
+        en: en ? en : localeSelection.characters,
+        vi: vi ? vi : localeSelection.characters,
       })
     );
-    dispatch(updateSelectedText({ key: new_key }));
-  }, [selectedText]);
+    dispatch(updateLocaleSelection({ key: new_key }));
+    if(onDone) onDone();
+  }, [localeSelection]);
   return (
     <div>
-      <h4
-        css={`
-          margin: 0;
-        `}
-      >
-        Add new locale item
-      </h4>
-      <p
-        className="mt-8"
-        css={`
-          color: var(--figma-color-text-secondary);
-        `}
-      >
-        No matched item found
-      </p>
-      <div className="pt-4">
+      {showTitle && (
+        <header className="mb-16">
+          <h4
+            css={`
+              margin: 0;
+            `}
+          >
+            Add new locale item
+          </h4>
+          <p
+            className="mt-8"
+            css={`
+              color: var(--figma-color-text-secondary);
+            `}
+          >
+            No matched item found
+          </p>
+        </header>
+      )}
+      <div className="">
         <TextBox
           label="Key"
           id="key"
-          className="mt-12"
+          className=""
           helpText={`Tip: Use "." for groupping, e.g: feature_a.message`}
           {...register("new_key")}
         />

@@ -1,40 +1,52 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   findItemByCharacters,
   findItemByKey,
   findItemByKeyOrCharacters,
 } from "../../lib/localeData";
 import { runCommand } from "../uiHelper";
-const initialState = {
+import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
+const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
-  selectedText: null,
+  localeSelection: null,
   localeItems: [],
   matchedItem: null,
   modifiedTime: null,
 };
+export const localeAppSlice = createSlice({
+  name: "localeApp",
+  initialState: {
+    newDialogOpened: false
+  },
+  reducers: {
+    setNewDialogOpened: (state, action: PayloadAction<boolean>) => {
+      state.newDialogOpened = action.payload;
+    }
+  }
+});
 export const localeSlice = createSlice({
   name: "locale",
   initialState,
   reducers: {
-    setLocaleData: (state, action) => {
+    setLocaleData: (state, action: PayloadAction<LocaleData>) => {
       if ("sheetId" in action.payload) state.sheetId = action.payload.sheetId;
       if ("sheetName" in action.payload)
         state.sheetName = action.payload.sheetName;
       if ("modifiedTime" in action.payload)
         state.modifiedTime = action.payload.modifiedTime;
-      if ("items" in action.payload) state.localeItems = action.payload.items;
+      if ("localeItems" in action.payload) state.localeItems = action.payload.localeItems;
     },
-    setSelectedText: (state, action) => {
-      state.selectedText = action.payload;
+    setLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
+      state.localeSelection = action.payload;
       if (
+        state.localeSelection &&
         state.localeItems &&
-        state.selectedText &&
-        !state.selectedText.multiple
+        !state.localeSelection.multiple
       ) {
         let finder = findItemByKeyOrCharacters(
-          state.selectedText.key,
-          state.selectedText.characters,
+          state.localeSelection.key,
+          state.localeSelection.characters,
           state.localeItems
         );
         if (finder) {
@@ -46,32 +58,27 @@ export const localeSlice = createSlice({
         state.matchedItem = null;
       }
     },
-    updateSelectedText: (state, action) => {
-      if (state.selectedText) {
-        if (action.payload.key) state.selectedText.key = action.payload.key;
-        if (action.payload.lang) state.selectedText.lang = action.payload.lang;
+    updateLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
+      if (state.localeSelection) {
+        if (action.payload.key) state.localeSelection.key = action.payload.key;
+        if (action.payload.lang) state.localeSelection.lang = action.payload.lang;
       }
       if (state.localeItems) {
-        const finder = findItemByKey(state.selectedText.key, state.localeItems);
+        const finder = findItemByKey(state.localeSelection.key, state.localeItems);
         if (finder) {
           state.matchedItem = finder;
         } else {
           state.matchedItem = null;
         }
       }
-      runCommand("update_text", {
-        id: state.selectedText.id,
-        ...action.payload,
-        localeItem: state.matchedItem ? { ...state.matchedItem } : undefined,
-      });
     },
-    addLocaleItemsItem: (state, action) => {
+    addLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
       state.localeItems = [...state.localeItems, action.payload];
     },
-    updateLocaleItems: (state, action) => {
+    updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
       state.localeItems = [...action.payload];
     },
-    updateMatchedItem: (state, action) => {
+    updateMatchedItem: (state, action: PayloadAction<LocaleItem>) => {
       state.matchedItem = action.payload;
       state.localeItems = [...state.localeItems].map((item) =>
         item.key == action.payload.key ? action.payload : item
@@ -84,11 +91,14 @@ export const localeSlice = createSlice({
 });
 
 export const {
-  setSelectedText,
-  addLocaleItemsItem,
+  setLocaleSelection,
+  addLocaleItem,
   updateMatchedItem,
-  updateSelectedText,
+  updateLocaleSelection,
   setLocaleData,
   updateLocaleItems,
 } = localeSlice.actions;
+export const {
+  setNewDialogOpened
+} = localeAppSlice.actions;
 export default localeSlice.reducer;

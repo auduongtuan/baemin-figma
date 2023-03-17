@@ -2,21 +2,25 @@ import React, { useEffect, useState, ComponentType } from "react";
 import { useCombobox } from "downshift";
 import classnames from "classnames";
 import Menu from "./Menu";
-interface ComboboxProps {
+
+export interface ComboboxOption {
+  id?: string;
+  value?: string;
+  name: string;
+  content?: string;
+  altContent?: string;
+  disabled?: boolean;
+  onSelect?: Function;
+}
+
+export interface ComboboxProps {
   label?: string;
   id?: string;
   defaultValue?: string;
   value?: string;
   className?: string;
   placeholder?: string;
-  options: {
-    id?: string;
-    value: string;
-    name: string;
-    content?: string;
-    altContent?: string;
-    disabled?: boolean;
-  }[];
+  options?: ComboboxOption[];
   disabled?: boolean;
   onChange?: Function;
   menuWidth?: string | number;
@@ -34,8 +38,9 @@ const Combobox = ({
   menuWidth = '100%',
   ...rest
 }: ComboboxProps) => {
-  const optionToString = (option) => (option ? option.name : "");
-  const [items, setItems] = useState(options);
+  // return <div></div>;
+  const itemToString = (item) => (item ? item.name : "");
+  const [items, setItems] = useState<ComboboxOption[]>(options);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   useEffect(() => {
@@ -58,33 +63,47 @@ const Combobox = ({
     inputValue
   } = useCombobox({
     items: items,
-    itemToString: optionToString,
+    itemToString: itemToString,
     selectedItem,
     onInputValueChange({ inputValue }) {
-      setItems(
-        options.filter(
-          (option) =>
+      const filteredOptions = options.filter(
+        (option) =>
+          !option.onSelect && (
+            !inputValue ||
             option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-            option.value.toLowerCase().includes(inputValue.toLowerCase()) ||
+            'value' in option && option.value.toLowerCase().includes(inputValue.toLowerCase()) ||
             option.content && option.content.toLowerCase().includes(inputValue.toLowerCase()) ||
             option.altContent && option.altContent.toLowerCase().includes(inputValue.toLowerCase())
-        )
+          )
       );
+      const suggestions = options.filter(option => option.onSelect);
+      if(filteredOptions && filteredOptions.length > 0) {
+        setItems(filteredOptions);
+      } else {
+        setItems(suggestions);
+      }
     },
     onSelectedItemChange: ({ selectedItem: newSelectedItem }) => {
-      if(newSelectedItem && 'value' in newSelectedItem) {
-        setSelectedItem(newSelectedItem);
-        if (onChange) onChange(newSelectedItem.value);
-      }
+      if(newSelectedItem) {
+        if('value' in newSelectedItem) {
+          setSelectedItem(newSelectedItem);
+          if (onChange) onChange(newSelectedItem.value);
+        } else {
+          if('onSelect' in newSelectedItem) {
+            newSelectedItem.onSelect();
+          }
+        }
+      } 
+
     },
     onStateChange: (changes) => {
     },
   });
   return (
     <div className={`show-border ${className && className}`}>
-      <label htmlFor={id} className="mb-8" {...getLabelProps()}>
+      {label && <label htmlFor={id} className="mb-8" {...getLabelProps()}>
         {label}
-      </label>
+      </label>}
       <div className={`select-menu`}>
         <div
           className={classnames("select-menu__button", {
@@ -127,7 +146,7 @@ const Combobox = ({
             style={{width: menuWidth}}
             {...getMenuProps()}
           >
-            {items.map((item, index) => (
+            {items && items.map((item, index) => (
               <Menu.Item
                 selected={selectedItem == item}
                 highlighted={highlightedIndex == index}

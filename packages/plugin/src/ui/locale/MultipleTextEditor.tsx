@@ -7,14 +7,16 @@ import { TextBox } from "../components/Field";
 import { orderBy } from "lodash";
 import { IconButton } from "../components/Button";
 import Accordion from "../components/Accordion";
-import { Crosshair2Icon, Pencil2Icon, TextIcon } from "@radix-ui/react-icons";
+import { Crosshair2Icon, MagicWandIcon, Pencil2Icon, TextIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../uiHelper";
 import { findItemByKey } from "../../lib/localeData";
 import LocaleItemForm from "./LocaleItemForm";
 import Combobox from "../components/Combobox";
+import KeyCombobox from "./KeyCombobox";
+import pluralize from "pluralize";
 const MultipleTextEditor = () => {
   // const matchedItem = useAppSelector((state) => state.locale.matchedItem);
-  const selectedText = useAppSelector((state) => state.locale.selectedText);
+  const localeSelection = useAppSelector((state) => state.locale.localeSelection);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
 
   const dispatch = useAppDispatch();
@@ -46,11 +48,20 @@ const MultipleTextEditor = () => {
     };
   }, [watch]);
 
-  return selectedText && selectedText.multiple ? (
+  return localeSelection && localeSelection.multiple && localeSelection.texts ? (
     <div className="p-16">
-      <h4 className="mt-0">{selectedText.texts.length} texts</h4>
+      <header className="flex align-items-center">
+        <h4 className="mt-0 flex-grow-1">{localeSelection.texts.length} {pluralize('text', localeSelection.texts.length)} in selection</h4>
+        <div className="flex-shrink-0">
+          <Tooltip content="Auto assign key">
+            <IconButton onClick={() => runCommand('auto_set_key', {
+              localeItems
+            })}><MagicWandIcon /></IconButton>
+          </Tooltip>
+        </div>
+      </header>
       <div className="mt-16 flex flex-column gap-16">
-        {selectedText.texts.map((text) => {
+        {localeSelection.texts.map((text) => {
           const localeItem = text.key
             ? findItemByKey(text.key, localeItems)
             : null;
@@ -69,60 +80,19 @@ const MultipleTextEditor = () => {
                 `}
               >
                 <TextIcon
-                  className="text-secondary mr-4 flex-shrink-0 flex-grow-0"
+                  className="text-secondary mr-8 flex-shrink-0 flex-grow-0"
                   css={`
-                    width: 12px;
-                    height: 12px;
+                    width: 16px;
+                    height: 16px;
                   `}
                 />
                 <div className="flex-grow-1 flex-shrink-1 font-medium truncate">
                   {text.characters}
                 </div>
               </div>
-              <div className="pl-16 mt-4">
-                <Combobox
-                  label="Key"
-                  value={text && "key" in text ? text.key : undefined}
-                  placeholder="Select key"
-                  menuWidth={"300px"}
-                  options={
-                    //   (selectedText && selectedText.key === MIXED_VALUE
-                    //   ? [
-                    //       {
-                    //         id: "mixed",
-                    //         value: MIXED_VALUE,
-                    //         name: "Mixed",
-                    //         disabled: true,
-                    //       },
-                    //     ]
-                    //   : []
-                    // ).concat(
-                    localeItems.map((item) => {
-                      return {
-                        id: item.key,
-                        value: item.key,
-                        name: item.key,
-                        disabled: false,
-                        content: item.vi,
-                        altContent: item.en,
-                      };
-                    })
-                    // )
-                  }
-                  onChange={(value) => {
-                    // console.log(value);
-                    // dispatch(
-                    //   updateSelectedText({
-                    //     key: value
-                    //   })
-                    // );
-                  }}
-                  // disabled={
-                  //   selectedText && selectedText.key != MIXED_VALUE ? false : true
-                  // }
-                  className="w-half"
-                ></Combobox>
-                {localeItem && <LocaleItemForm item={localeItem} />}
+              <div className="pl-24 mt-8">
+                <KeyCombobox label={''} value={localeItem ? localeItem.key : undefined} text={text} />
+                {/* {localeItem && <LocaleItemForm item={localeItem} showKey={false} />} */}
               </div>
             </div>
             // </Accordion>

@@ -8,14 +8,14 @@ import AddLocaleItem from "./AddLocaleItem";
 import { findItemByKey } from "../../lib/localeData";
 import { runCommand } from "../uiHelper";
 import Combobox from "../components/Combobox";
-function LocaleItemForm({item}) {
+function LocaleItemForm({item, showKey = true}) {
   const key = item ? item.key : undefined;
   console.log(item);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const matchedItem = findItemByKey(key, localeItems);
   console.log('Matched item', matchedItem);
   console.log('Key', key);
-  const selectedText = useAppSelector((state) => state.locale.selectedText);
+  const localeSelection = useAppSelector((state) => state.locale.localeSelection);
   const dispatch = useAppDispatch();
   const {
     register,
@@ -41,19 +41,16 @@ function LocaleItemForm({item}) {
       console.log('Update', data);
       dispatch(updateMatchedItem(data));
       // update selected text also
-      if (selectedText && !selectedText.multiple) {
-        if (selectedText.key == data.key) {
-          console.log("Update matched item and text", selectedText.id, {
-            item: matchedItem
-          });
+      if (localeSelection && !localeSelection.multiple) {
+        if (localeSelection.key == data.key) {
           runCommand("update_text", {
-            id: selectedText.id,
+            id: localeSelection.id,
             localeItem: data,
           });
         }
       }
-      else if (selectedText && selectedText.multiple) {
-        const texts = selectedText.texts.filter(text => text.key == data.key);
+      else if (localeSelection && localeSelection.multiple) {
+        const texts = localeSelection.texts.filter(text => text.key == data.key);
         texts.forEach(text => {
           runCommand("update_text", {
             id: text.id,
@@ -87,8 +84,8 @@ function LocaleItemForm({item}) {
     <div>
       {matchedItem && (
         <>
-          <h4 className="mt-0 font-medium text-secondary">{matchedItem.key}</h4>
-          <div className="pt-4">
+          {showKey && <h4 className="mt-0 mb-4 font-medium text-secondary">Edit {matchedItem.key}</h4>}
+          <div className="">
             <TextBox
               label="English"
               id="en"

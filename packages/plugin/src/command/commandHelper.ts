@@ -53,7 +53,7 @@ export function selection(index: number): SceneNode | undefined;
 export function selection(index?: number) {
 	const s = figma.currentPage.selection.slice();
 	if (typeof index !== 'undefined') {
-		if (s.length > 0 && s[index]) return s[index];
+		if (s && s.length > 0 && s[index]) return s[index];
 		return undefined;
 	} else {
 		return s;
@@ -112,9 +112,11 @@ export const loadRobotoFontsAsync = async () => {
   await figma.loadFontAsync({ family: "Roboto Mono", style: "Bold" });
 }
 export const loadFontsAsync = async (node: TextNode) => {
-	const fonts = node.getRangeAllFontNames(0, node.characters.length);
-	for (const font of fonts) {
-		await figma.loadFontAsync(font);
+	if(node && node.characters) {
+		const fonts = node.getRangeAllFontNames(0, node.characters.length);
+		for (const font of fonts) {
+			await figma.loadFontAsync(font);
+		}
 	}
 }
 export const getLocalPaintStyle = (name: string) => {

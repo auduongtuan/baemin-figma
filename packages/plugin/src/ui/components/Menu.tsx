@@ -6,9 +6,8 @@ const MenuContainer = ({ children, ...rest }) => {
     <div
       // style={{width: menuWidth}}
       css={`
-        position: absolute;
-        left: 0;
-        width: 100%;
+        /* position: absolute; */
+        /* left: 0; */
         background-color: var(--hud);
         box-shadow: var(--shadow-hud);
         padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
@@ -17,7 +16,7 @@ const MenuContainer = ({ children, ...rest }) => {
         z-index: 1000;
         overflow-x: overlay;
         overflow-y: auto;
-        top: calc(100% + 1px);
+        /* top: calc(100% + 1px); */
         &::-webkit-scrollbar {
           width: 12px;
           background-color: transparent;

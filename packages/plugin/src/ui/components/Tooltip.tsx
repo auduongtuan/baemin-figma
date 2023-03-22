@@ -5,7 +5,6 @@ const Tooltip = ({ children, content, contentProps }: {
   content: string,
   contentProps?: RadixTooltip.TooltipContentProps
 }) => {
-  console.log(content);
   return (
       <RadixTooltip.Root
         delayDuration={50}
@@ -25,7 +24,8 @@ const Tooltip = ({ children, content, contentProps }: {
               animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
               will-change: transform, opacity; */
             `}
-            sideOffset={2}
+            sideOffset={4}
+            collisionPadding={4}
             {...contentProps}
           >
             {content}

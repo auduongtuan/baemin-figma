@@ -1,5 +1,5 @@
 {
-  "name": "Baemin Figma",
+  "name": "BAEMIN Figma",
   "id": "1180446958868214960",
   "api": "1.0.0",
   "editorType": [
@@ -9,10 +9,6 @@
   "ui": "dist/index.html",
   "menu": [
     {"name": "Open locale editor", "command": "locale"},
-    {"name": "Display Tokens", "command": "displayTokens"},
-    {"name": "Update Tokens", "command": "updateTokens"},
-    {"name": "Design System - Test", "command": "test"},
-    {"name": "Copy attributes to child", "command": "copyAttributesToChild"}
-   
+    {"name": "Change theme", "command": "changeTheme"}
   ]
 }

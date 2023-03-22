@@ -1,29 +1,44 @@
-import {createSlice} from '@reduxjs/toolkit'
-import {findItemByCharacters, findItemByKey, findItemByKeyOrCharacters} from '../../lib/localeData';
-import * as ui from "../uiHelper";
-
-const initialState = {
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  findItemByCharacters,
+  findItemByKey,
+  findItemByKeyOrCharacters,
+  LocaleText,
+} from "../../lib/localeData";
+import { runCommand } from "../uiHelper";
+import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
+const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
-  selectedText: null,
+  localeSelection: null,
   localeItems: [],
-  matchedItem: null,
+  // matchedItem: null,
   modifiedTime: null,
-}
+};
 export const localeSlice = createSlice({
-  name: 'locale',
+  name: "locale",
   initialState,
   reducers: {
-    setLocaleData: (state, action) => {
-      if('sheetId' in action.payload) state.sheetId = action.payload.sheetId;
-      if('sheetName' in action.payload) state.sheetName = action.payload.sheetName;
-      if('modifiedTime' in action.payload) state.modifiedTime = action.payload.modifiedTime;
-      if('items' in action.payload) state.localeItems = action.payload.items;
+    setLocaleData: (state, action: PayloadAction<LocaleData>) => {
+      if ("sheetId" in action.payload) state.sheetId = action.payload.sheetId;
+      if ("sheetName" in action.payload)
+        state.sheetName = action.payload.sheetName;
+      if ("modifiedTime" in action.payload)
+        state.modifiedTime = action.payload.modifiedTime;
+      if ("localeItems" in action.payload) state.localeItems = action.payload.localeItems;
     },
-    setSelectedText: (state, action) => {
-      state.selectedText = action.payload; 
-      if (state.localeItems && state.selectedText && !state.selectedText.multiple) {
-        let finder = findItemByKeyOrCharacters(state.selectedText.key, state.selectedText.characters, state.localeItems);
+    setLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
+      state.localeSelection = action.payload;
+      if (
+        state.localeSelection &&
+        state.localeItems &&
+        !state.localeSelection.multiple
+      ) {
+        let finder = findItemByKeyOrCharacters(
+          state.localeSelection.key,
+          state.localeSelection.characters,
+          state.localeItems
+        );
         if (finder) {
           state.matchedItem = finder;
         } else {
@@ -33,37 +48,60 @@ export const localeSlice = createSlice({
         state.matchedItem = null;
       }
     },
-    updateSelectedText: (state, action) => {
-      if (state.selectedText) {
-        if (action.payload.key) state.selectedText.key = action.payload.key;
-        if (action.payload.lang) state.selectedText.lang = action.payload.lang;
+    updateLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
+      if (state.localeSelection) {
+        if (action.payload.key) state.localeSelection.key = action.payload.key;
+        if (action.payload.lang) state.localeSelection.lang = action.payload.lang;
       }
-      ui.postData({
-        type: "update_text",
-        data: { id: state.selectedText.id, ...action.payload},
-      });
-      if (state.localeItems) {
-        let finder = findItemByKey(state.selectedText.key, state.localeItems);
-        if (finder) {
-          state.matchedItem = finder;
-        } else {
-          state.matchedItem = null;
-        }
+      // if (state.localeItems) {
+      //   const finder = findItemByKey(state.localeSelection.key, state.localeItems);
+      //   if (finder) {
+      //     state.matchedItem = finder;
+      //   } else {
+      //     state.matchedItem = null;
+      //   }
+      // }
+    },
+    updateTextInLocaleSelection: (state, action: PayloadAction<LocaleText>) => {
+      // single case
+      if(!state.localeSelection.multiple && state.localeSelection.id == action.payload.id) {
+        state.localeSelection = {...action.payload};
+      }  
+      // multiple case
+      if(state.localeSelection.multiple && state.localeSelection.texts) {
+        state.localeSelection.texts = state.localeSelection.texts.map(text => text.id != action.payload.id ? text : action.payload);
       }
     },
-    addLocaleItemsItem: (state, action) => {
-      state.localeItems = [...state.localeItems, action.payload]
-    },
-    updateMatchedItem: (state, action) => {
-      state.matchedItem = action.payload;
-      state.localeItems = [...state.localeItems].map(item => item.key == action.payload.key ? action.payload : item);
-      console.table(state.localeItems);
-    }
-    // setmatchedItem: (state, action) => {
-    //   state.matchedItem = action.payload; 
-    // }
-  }
-})
 
-export const {setSelectedText, addLocaleItemsItem, updateMatchedItem, updateSelectedText, setLocaleData} = localeSlice.actions;
+    updateTextsInLocaleSelection: (state, action: PayloadAction<LocaleText[]>) => {
+      if(state.localeSelection.multiple) state.localeSelection.texts = [...action.payload];
+    },
+ 
+    addLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
+      state.localeItems = [...state.localeItems, action.payload];
+    },
+    updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
+      state.localeItems = [...action.payload];
+    },
+    updateLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
+      state.localeItems = [...state.localeItems].map((item) =>
+        item.key == action.payload.key ? action.payload : item
+      );
+    },
+    // setmatchedItem: (state, action) => {
+    //   state.matchedItem = action.payload;
+    // }
+  },
+});
+
+export const {
+  setLocaleSelection,
+  addLocaleItem,
+  updateLocaleItem,
+  updateLocaleSelection,
+  setLocaleData,
+  updateLocaleItems,
+  updateTextInLocaleSelection,
+  updateTextsInLocaleSelection
+} = localeSlice.actions;
 export default localeSlice.reducer;

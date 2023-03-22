@@ -1,29 +1,32 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import {
-  addLocaleItemsItem,
-  updateMatchedItem,
-  setLocaleData
+  addLocaleItem,
+  setLocaleData,
+  updateLocaleItems,
+  updateLocaleItem,
 } from "./localeSlice";
 import type { RootState } from "./store";
-import * as ui from "../uiHelper";
+import {runCommand} from "../uiHelper";
+import { LocaleData } from "../../lib/localeData";
 export const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
-  matcher: isAnyOf(setLocaleData, addLocaleItemsItem, updateMatchedItem),
+  matcher: isAnyOf(
+    setLocaleData,
+    addLocaleItem,
+    updateLocaleItem,
+    updateLocaleItems
+  ),
   effect: (action, listenerApi) => {
     const modifiedTime = new Date().toJSON();
-    console.log('Update local items', modifiedTime);
-    const state = (listenerApi.getState() as RootState);
-    const localeData = JSON.stringify({
+    const state = listenerApi.getState() as RootState;
+    const localeData: LocaleData = {
       sheetName: state.locale.sheetName,
       sheetId: state.locale.sheetId,
       modifiedTime: modifiedTime,
-      items: state.locale.localeItems,
-    });
-    // console.log(localeItems);
-    console.log ('update storage');
-    ui.postData({
-      type: "save_locale_data",
-      localeData,
+      localeItems: state.locale.localeItems,
+    };
+    runCommand("save_locale_data", {
+      localeDataString: JSON.stringify(localeData),
     });
   },
 });

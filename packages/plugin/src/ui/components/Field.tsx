@@ -1,10 +1,21 @@
-import React, { useState, ComponentType, Ref, forwardRef, useEffect } from "react";
+import React, {
+  useState,
+  ComponentType,
+  Ref,
+  forwardRef,
+  useEffect,
+} from "react";
 import styled from "styled-components";
 
-export interface TextBoxProps extends React.ComponentPropsWithoutRef<'input'> {
-  label?: string
+export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
+  label?: string;
+  helpText?: React.ReactNode;
 }
-export interface TextareaProps extends React.ComponentPropsWithoutRef<'textarea'> {}
+export interface TextareaProps
+  extends React.ComponentPropsWithoutRef<"textarea"> {
+  label?: string;
+  helpText?: React.ReactNode;
+}
 
 const BaseInput = styled.input<TextBoxProps>`
   font-size: var(--font-size-xsmall);
@@ -26,7 +37,6 @@ const BaseInput = styled.input<TextBoxProps>`
   border-radius: var(--border-radius-small);
   outline: none;
   background-color: var(--white);
-
   &:hover,
   &:placeholder-shown:hover {
     color: var(--black8);
@@ -86,15 +96,24 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
       value,
       type = "text",
       className = "",
+      helpText,
       ...rest
     },
     ref
   ) => {
     return (
       <div className={className && className}>
-        <label htmlFor={id} className="mb-8">
-          {label}
-        </label>
+        {label && (
+          <label
+            htmlFor={id}
+            className="mb-8"
+            css={`
+              font-size: var(----font-size-xsmall);
+            `}
+          >
+            {label}
+          </label>
+        )}
         <BaseInput
           id={id}
           placeholder={label}
@@ -104,18 +123,34 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           {...rest}
           ref={ref}
         />
+        {helpText && (
+          <p
+            css={`
+              color: var(--figma-color-text-secondary);
+              font-size: var(--font-size-xsmall);
+              margin-top: 8px;
+            `}
+          >
+            {helpText}
+          </p>
+        )}
       </div>
     );
   }
 );
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, id, defaultValue = "", className = "", ...rest }, ref) => {
+  (
+    { label, id, defaultValue = "", className = "", helpText, ...rest },
+    ref
+  ) => {
     return (
       <div className={className && className}>
-        <label htmlFor={id} className="mb-8">
-          {label}
-        </label>
+        {label && (
+          <label htmlFor={id} className="mb-8">
+            {label}
+          </label>
+        )}
         <textarea
           id={id}
           placeholder={label}
@@ -123,8 +158,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className="textarea"
           ref={ref}
           {...rest}
-        ></textarea>{" "}
-        :
+        ></textarea>
+        {helpText && (
+          <p
+            css={`
+              color: var(--figma-color-text-secondary);
+              font-size: var(--font-size-xsmall);
+              margin-top: 8px;
+            `}
+          >
+            {helpText}
+          </p>
+        )}
       </div>
     );
   }

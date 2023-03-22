@@ -1,115 +1,49 @@
-import * as h from "./commandHelper";
-import {LANGUAGES, PREFIX, MIXED_VALUE} from '../constant/locale';
-import {findItemByKey, findItemByCharacters} from '../lib/localeData';
-
+import {postData} from "./commandHelper";
+import { switchLang } from "./locale/common";
+import updateText from "./locale/updateText";
+import autoSetKeyForSelection from "./locale/autoSetKey";
+import { getLocaleData, saveLocaleData } from "./locale/localeData";
+import exportCode from "./locale/exportCode";
+import updateSelection from "./locale/updateSelection";
+import selectTexts from "./locale/selectTexts";
+import { LocaleItem } from "../lib/localeData";
 const locale = {
-  run: async () => {
-    figma.showUI(__html__, { title: "Locale editor", width: 360, height: 520 });
-    h.postData({ type: "locale"});
-    locale.onSelectionChange();
+  run: () => {
+    figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
+    postData({ page: "locale" });
+    updateSelection();
   },
-
-  switchLang: (lang, localeItems) => {
-    function changeLang(textNode: TextNode) {
-      const key = h.getNodeData(textNode, `${PREFIX}key`);
-      const item = findItemByKey(key, localeItems) || findItemByCharacters(textNode.characters, localeItems);
-      if(item && item[lang]) {
-        textNode.characters = item[lang];
-        h.setNodeData(textNode, `${PREFIX}lang`, lang);
-      }
-    }
-    h.selection().forEach(selection => {
-      if(h.isText(selection)) {
-        changeLang(selection);
-      } else if (h.isContainer(selection)) {
-        const texts = selection.findAll(node => h.isText(node)) as TextNode[];
-        texts.forEach(textNode => {
-         changeLang(textNode);
-        });
-      }
-    });
-    figma.notify(`Switched selection to ${LANGUAGES[lang]}`);
-    locale.onSelectionChange();
-  },
-  onMessage: async (msg) => {
+  onMessage: (msg) => {
     switch (msg.type) {
-      case 'update_text':
-        const textNode = figma.currentPage.findOne(node => node.id == msg.data.id);
-        if(textNode && h.isText(textNode)) {
-          console.log(textNode.id, msg.data.key);
-          h.setNodeData(textNode, `${PREFIX}key`, msg.data.key);
-          if(msg.data.lang) h.setNodeData(textNode, `${PREFIX}lang`, msg.data.lang);
-          locale.onSelectionChange();
-        }
+      case "select_texts":
+        selectTexts(msg.key);
         break;
-      case 'switch_lang': 
-        locale.switchLang(msg.lang, msg.localeItems);
+      case "auto_set_key":
+        autoSetKeyForSelection(msg.localeItems);
         break;
-      case 'get_locale_data':
-        const localeData = await figma.clientStorage.getAsync('localeData');
-        // console.log(localeItems);
-        h.postData({localeData });
+      case "update_text":
+        updateText(msg);
+        // figma.notify('updateText');
         break;
-      case 'save_locale_data':
-        await figma.clientStorage.setAsync('localeData', msg.localeData);
-        console.log('Saved', msg.localeData);
+      case "switch_lang":
+        switchLang(msg.lang, msg.localeItems);
         break;
-    } 
-  },
-  onSelectionChange: async () => {
-    const getLang = (node) => h.getNodeData(node, `${PREFIX}lang`);
-    const getKey = (node) => h.getNodeData(node, `${PREFIX}key`);
-    const selection = h.selection();
-    const firstNode = h.selection(0);
-    if (selection.length == 1 && h.isText(firstNode)) {
-      h.postData({
-        selectedText: {
-          id: firstNode.id,
-          key: getKey(firstNode),
-          lang: getLang(firstNode),
-          characters: firstNode.characters,
-        }
-      });
-    } 
-    else if (selection.length >= 1) {
-      const allTexts: TextNode[] = selection.reduce((acc, selectionItem) => {
-        if(h.isContainer(selectionItem)) {
-          const textNodes = selectionItem.findAll(node => h.isText(node));
-          acc.push(...textNodes);
-        }
-        if(h.isText(selectionItem)) {
-          acc.push(selectionItem);
-        }
-        return acc;
-      }, []);
-      if(allTexts.length > 0) {
-        const firstLang = getLang(allTexts[0]);
-        const firstKey = getKey(allTexts[0]);
-        const isSameLang = allTexts.every(textNode => getLang(textNode) == firstLang);
-        const isSameKey = allTexts.every(textNode => getKey(textNode) == firstKey);
-        h.postData({
-          selectedText: {
-            multiple: true,
-            lang: isSameLang ? firstLang : MIXED_VALUE,
-            key: isSameKey ? firstKey : MIXED_VALUE,
-            characters: null,
-          }
-        })
-      }
-
-      // const firstLang = h.getNodeData(firstNode, `${PREFIX}lang`);
-      // const firstKey = h.getNodeData(firstNode, `${PREFIX}key`);
-      // let isSameLang = selection.every((node) => {
-      //   return h.getNodeData(node, `${PREFIX}lang`) == firstLang;
-      // });
-      // if(isSameLang) {
-      //   console.log('same lang');
-      // } else {
-      //   console.log('mixed lang');
-      // }
-    } else {
-      h.postData({selectedText: null});
+      case "get_locale_data":
+        getLocaleData();
+        break;
+      case "save_locale_data":
+        saveLocaleData(msg.localeDataString);
+        break;
+      // case "export_code":
+      //   await exportCode(msg.localeItems as LocaleItem[]);
+      //   break;
+      case "show_figma_notify":
+        figma.notify(msg.message);
+        break;
     }
+  },
+  onSelectionChange: () => {
+    updateSelection();
   },
 };
 export default locale;

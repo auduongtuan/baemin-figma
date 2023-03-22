@@ -4,22 +4,22 @@ import { useState, useEffect } from 'react'
 import * as Tooltip from "@radix-ui/react-tooltip";
 // import 'figma-plugin-ds/dist/figma-plugin-ds.css'
 import "./ui.scss";
-import Locale from './Locale';
+import Locale from './locale/LocaleMain';
 import { Provider } from 'react-redux'
 import { store } from './state/store';
 const App = () => {
-  const [type, setType] = useState<string>();
+  const [page, setPage] = useState<string>();
 
   useEffect(() => {
     window.onmessage = async (event) => {
-      if(event.data.pluginMessage && event.data.pluginMessage.type) {
-        setType(event.data.pluginMessage.type);
+      if(event.data.pluginMessage && event.data.pluginMessage.page) {
+        setPage(event.data.pluginMessage.page);
       }
     }
   }, []);
   
   const ui = () => {
-    switch(type) {
+    switch(page) {
       case "locale":
         return <Locale />;
     

@@ -3,6 +3,7 @@ import {
   findItemByCharacters,
   findItemByKey,
   findItemByKeyOrCharacters,
+  LocaleText,
 } from "../../lib/localeData";
 import { runCommand } from "../uiHelper";
 import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
@@ -11,20 +12,9 @@ const initialState: LocaleData = {
   sheetId: null,
   localeSelection: null,
   localeItems: [],
-  matchedItem: null,
+  // matchedItem: null,
   modifiedTime: null,
 };
-export const localeAppSlice = createSlice({
-  name: "localeApp",
-  initialState: {
-    newDialogOpened: false
-  },
-  reducers: {
-    setNewDialogOpened: (state, action: PayloadAction<boolean>) => {
-      state.newDialogOpened = action.payload;
-    }
-  }
-});
 export const localeSlice = createSlice({
   name: "locale",
   initialState,
@@ -63,23 +53,37 @@ export const localeSlice = createSlice({
         if (action.payload.key) state.localeSelection.key = action.payload.key;
         if (action.payload.lang) state.localeSelection.lang = action.payload.lang;
       }
-      if (state.localeItems) {
-        const finder = findItemByKey(state.localeSelection.key, state.localeItems);
-        if (finder) {
-          state.matchedItem = finder;
-        } else {
-          state.matchedItem = null;
-        }
+      // if (state.localeItems) {
+      //   const finder = findItemByKey(state.localeSelection.key, state.localeItems);
+      //   if (finder) {
+      //     state.matchedItem = finder;
+      //   } else {
+      //     state.matchedItem = null;
+      //   }
+      // }
+    },
+    updateTextInLocaleSelection: (state, action: PayloadAction<LocaleText>) => {
+      // single case
+      if(!state.localeSelection.multiple && state.localeSelection.id == action.payload.id) {
+        state.localeSelection = {...action.payload};
+      }  
+      // multiple case
+      if(state.localeSelection.multiple && state.localeSelection.texts) {
+        state.localeSelection.texts = state.localeSelection.texts.map(text => text.id != action.payload.id ? text : action.payload);
       }
     },
+
+    updateTextsInLocaleSelection: (state, action: PayloadAction<LocaleText[]>) => {
+      if(state.localeSelection.multiple) state.localeSelection.texts = [...action.payload];
+    },
+ 
     addLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
       state.localeItems = [...state.localeItems, action.payload];
     },
     updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
       state.localeItems = [...action.payload];
     },
-    updateMatchedItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.matchedItem = action.payload;
+    updateLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
       state.localeItems = [...state.localeItems].map((item) =>
         item.key == action.payload.key ? action.payload : item
       );
@@ -93,12 +97,11 @@ export const localeSlice = createSlice({
 export const {
   setLocaleSelection,
   addLocaleItem,
-  updateMatchedItem,
+  updateLocaleItem,
   updateLocaleSelection,
   setLocaleData,
   updateLocaleItems,
+  updateTextInLocaleSelection,
+  updateTextsInLocaleSelection
 } = localeSlice.actions;
-export const {
-  setNewDialogOpened
-} = localeAppSlice.actions;
 export default localeSlice.reducer;

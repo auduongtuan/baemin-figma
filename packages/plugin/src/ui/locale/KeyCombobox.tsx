@@ -5,9 +5,12 @@ import Combobox, {
   ComboboxProps,
 } from "../components/Combobox";
 import { MIXED_VALUE } from "../../constant/locale";
-import { updateLocaleSelection } from "../state/localeSlice";
+import { updateLocaleSelection, updateTextInLocaleSelection } from "../state/localeSlice";
 import { runCommand } from "../uiHelper";
 import { LocaleText, findItemByKey } from "../../lib/localeData";
+import { setNewDialogOpened, setNewDialogOnDone, setIsWorking } from "../state/localeAppSlice";
+import { LocaleItem } from "../../lib/localeData";
+import { isString } from "lodash";
 export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;
@@ -23,7 +26,6 @@ function KeyCombobox({
     (state) => state.locale.localeSelection
   );
   const localeItems = useAppSelector((state) => state.locale.localeItems);
-  const matchedItem = useAppSelector((state) => state.locale.matchedItem);
   const dispatch = useAppDispatch();
   const localeItemOptions: ComboboxOption[] = [
     ...(localeSelection && localeSelection.key === MIXED_VALUE && forSelection
@@ -52,11 +54,43 @@ function KeyCombobox({
         name: "Add new item",
         content: "Cannot find matched item",
         onSelect: () => {
-          console.log("add new item");
+          dispatch(setNewDialogOnDone((localeItem: LocaleItem) => {
+            updateSelectionOrText(localeItem);
+            // onChangeHandler(localeItem.key);
+          }));
+          dispatch(setNewDialogOpened(true));
         },
       },
     ],
   ];
+  const updateText = (_text: LocaleText, localeItemOrKey: LocaleItem | string) => {
+    const localeItem = (isString(localeItemOrKey)) ? findItemByKey(localeItemOrKey, localeItems) : localeItemOrKey;
+    runCommand("update_text", {
+      id: _text.id,
+      localeItem: localeItem,
+    });
+    dispatch(updateTextInLocaleSelection({..._text, key: localeItem.key, characters: localeItem[_text.lang]}));
+    console.log(`Update text ${_text.id} with locale item`, localeItem);
+  }
+  const updateSelectionOrText = (localeItemOrKey: string | LocaleItem) => {
+    // dang selection
+    if (forSelection && isString(localeItemOrKey)) {
+      dispatch(
+        updateLocaleSelection({
+          key: localeItemOrKey,
+        })
+      );
+      dispatch(setIsWorking(true));
+      updateText(localeSelection, localeItemOrKey);
+    }
+    // dang text
+    else {
+      if (text) {
+        dispatch(setIsWorking(true));
+        updateText(text, localeItemOrKey);
+      }
+    }
+  }
   return (
     <>
     <Combobox
@@ -65,33 +99,7 @@ function KeyCombobox({
       placeholder="Select key"
       menuWidth={"300px"}
       options={localeItemOptions}
-      onChange={(value) => {
-        if (forSelection) {
-          dispatch(
-            updateLocaleSelection({
-              key: value,
-            })
-          );
-          const localeItem = findItemByKey(value, localeItems);
-          if (localeItem) {
-            runCommand("update_text", {
-              id: localeSelection.id,
-              localeItem: localeItem,
-            });
-          }
-        } else {
-          if (text) {
-            const localeItem = findItemByKey(value, localeItems);
-            if (localeItem) {
-              runCommand("update_text", {
-                id: text.id,
-                localeItem: localeItem,
-              });
-            }
-            console.log("Update text with locale item", localeItem);
-          }
-        }
-      }}
+      onChange={updateSelectionOrText}
       disabled={
         forSelection && localeSelection && localeSelection.key == MIXED_VALUE ? true : false
       }

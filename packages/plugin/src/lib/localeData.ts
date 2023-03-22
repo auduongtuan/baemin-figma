@@ -12,10 +12,11 @@ export interface LocaleItem {
   en: string;
   vi: string;
 }
+export type Lang = 'en' | 'vi';
 export interface LocaleText {
   id?: string;
   key?: string;
-  lang?: 'en' | 'vi' | typeof MIXED_VALUE;
+  lang?: Lang | typeof MIXED_VALUE;
   characters?: string;
   variables?: string;
 }

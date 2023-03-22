@@ -56,7 +56,7 @@ figma.on("selectionchange", async () => {
   // debug selection
   // console.log(h.selection(0).getSharedPluginData("aperia", "rawCharacters"));
   // console.log(figma.currentPage.selection);
-  _.forOwn(uiCommands, async (value, key) => {
+  _.forOwn(uiCommands, (value, key) => {
     if (figma.command == key) {
       if('onSelectionChange' in value) {
         value.onSelectionChange();

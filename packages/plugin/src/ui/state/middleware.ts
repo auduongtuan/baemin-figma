@@ -1,9 +1,9 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import {
   addLocaleItem,
-  updateMatchedItem,
   setLocaleData,
   updateLocaleItems,
+  updateLocaleItem,
 } from "./localeSlice";
 import type { RootState } from "./store";
 import {runCommand} from "../uiHelper";
@@ -13,7 +13,7 @@ listenerMiddleware.startListening({
   matcher: isAnyOf(
     setLocaleData,
     addLocaleItem,
-    updateMatchedItem,
+    updateLocaleItem,
     updateLocaleItems
   ),
   effect: (action, listenerApi) => {
@@ -26,7 +26,7 @@ listenerMiddleware.startListening({
       localeItems: state.locale.localeItems,
     };
     runCommand("save_locale_data", {
-      localeData: JSON.stringify(localeData),
+      localeDataString: JSON.stringify(localeData),
     });
   },
 });

@@ -7,18 +7,12 @@ import TimeAgo from "javascript-time-ago";
 // English.
 import en from "javascript-time-ago/locale/en";
 import Button, { IconButton } from "../components/Button";
-import { TextBox } from "../components/Field";
-import { useForm } from "react-hook-form";
-import { CopyIcon, CubeIcon, LinkBreak1Icon, TableIcon } from "@radix-ui/react-icons";
+import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
 import {
-  copyToClipboard,
-  copyToClipboardAsync,
-  clipWithSelection,
+  clipWithSelection
 } from "../../lib/helpers";
 import Tooltip from "../components/Tooltip";
-import * as ui from "../uiHelper";
 import { runCommand } from "../uiHelper";
-import Dialog from "../components/Dialog";
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
 // const API_URL = "http://localhost:8001/api/";
@@ -56,8 +50,6 @@ const SheetManagement = () => {
   const sheetName = useAppSelector((state) => state.locale.sheetName);
   const dispatch = useAppDispatch();
   const [isSyncing, setIsSyncing] = useState(false);
-  const { register, handleSubmit, getValues } = useForm();
-
   const getRemoteData = () => {
     console.log("--Reload data--");
     axios.get(`${API_URL}/${sheetId}`).then((res) => {
@@ -98,54 +90,15 @@ const SheetManagement = () => {
       }
     });
   };
-  const addSheetId = (e) => {
-    let sheetId = getValues().sheetId;
-    const captureId = sheetId.match(/\/d\/(.+)\//);
-    if (captureId) {
-      sheetId = captureId[1];
-    }
-    dispatch(
-      setLocaleData({
-        sheetId: sheetId,
-      })
-    );
-  };
-  // console.log("Navigator", navigator.clipboard);
   return (
-    <footer
-      css={`
-        justify-content: space-between;
-        display: flex;
-        /* position: fixed; */
-        /* bottom: 0; */
-        background: #fff;
-        border-top: 1px solid #eee;
-        width: 100%;
-        /* left: 0; */
-        padding: 12px 16px;
-      `}
-    >
-      {sheetId ? (
-        <div className="flex w-full">
+  <div className="flex w-full">
           <div className="flex-grow-1">
             <div
-              css={`
-                /* button {
-                  opacity: 0;
-                  transition: all 0.2s;
-                }
-                &:hover {
-                  button {
-                    opacity: 1;
-                  }
-                } */
-              `}
               className="flex gap-8"
             >
               <p
                 css={`
                   margin: 0;
-                  /* font-weight: var(--font-weight-medium); */
                 `}
               >
                 {sheetName}
@@ -175,9 +128,6 @@ const SheetManagement = () => {
           </div>
 
           <div className="flex-shrink-0 flex-grow-0 flex gap-4">
-            {/* <Button variant="secondary" onClick={() => getRemoteData()}>
-              Get
-            </Button> */}
             <Button
               variant="secondary"
               onClick={() => sync()}
@@ -187,45 +137,6 @@ const SheetManagement = () => {
             </Button>
           </div>
         </div>
-      ) : (
-        <>
-          <div className="flex-grow-1"></div>
-          <div className="flex flex-grow-0 flex-shrink-0 gap-16">
-          <Tooltip content="Generate Code">
-          <IconButton onClick={() => {
-            runCommand("export_code", {localeItems: localeItems})
-          }}><CubeIcon /></IconButton>
-          </Tooltip>
-          <Dialog>
-            <Tooltip content="Link Google sheet">
-              <Dialog.Trigger asChild>
-                <IconButton>
-                  <TableIcon />
-                </IconButton>
-              </Dialog.Trigger>
-            </Tooltip>
-
-            <Dialog.Content title="Link Google sheet">
-              <form
-                onSubmit={handleSubmit(addSheetId)}
-                // className="flex w-full gap-8 align-items-end"
-              >
-                <TextBox
-                  label="Add a google sheet to continue"
-                  id="sheetId"
-                  className=""
-                  {...register("sheetId")}
-                ></TextBox>
-                <Button type="submit" className="mt-8">
-                  Add sheet
-                </Button>
-              </form>
-            </Dialog.Content>
-          </Dialog>
-          </div>
-        </>
-      )}
-    </footer>
   );
-};
+}
 export default SheetManagement;

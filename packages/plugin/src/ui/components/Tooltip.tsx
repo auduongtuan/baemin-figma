@@ -24,7 +24,8 @@ const Tooltip = ({ children, content, contentProps }: {
               animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
               will-change: transform, opacity; */
             `}
-            sideOffset={2}
+            sideOffset={4}
+            collisionPadding={4}
             {...contentProps}
           >
             {content}

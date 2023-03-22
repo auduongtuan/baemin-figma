@@ -1,13 +1,6 @@
 import React, { useState, ComponentType } from "react";
 import { forwardRef, useEffect } from "react";
-import { UpdateIcon } from "@radix-ui/react-icons";
-import { keyframes } from "styled-components";
-
-const rotate = keyframes`
-  to {
-    transform: rotate(360deg);
-  }
-`;
+import WorkingIcon from "./WorkingIcon";
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   variant?: "primary" | "secondary" | "tertiary";
   destructive?: boolean;
@@ -29,9 +22,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           padding: 4px;
           margin: -4px;
           &:hover {
-            background: var(--figma-color-bg-hover)
+            background: var(--figma-color-bg-hover);
           }
-
         `}
         className={className}
         {...rest}
@@ -178,15 +170,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...rest}
         ref={ref}
       >
-        {loading && (
-          <UpdateIcon
-            width="14"
-            height="14"
-            css={`
-              animation: ${rotate} 1s linear infinite;
-            `}
-          />
-        )}
+        {loading && <WorkingIcon />}
         {children}
       </button>
     );

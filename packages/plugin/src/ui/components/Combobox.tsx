@@ -2,7 +2,8 @@ import React, { useEffect, useState, ComponentType } from "react";
 import { useCombobox } from "downshift";
 import classnames from "classnames";
 import Menu from "./Menu";
-
+import * as Popper from '@radix-ui/react-popper';
+import {Portal} from '@radix-ui/react-portal';
 export interface ComboboxOption {
   id?: string;
   value?: string;
@@ -104,7 +105,11 @@ const Combobox = ({
       {label && <label htmlFor={id} className="mb-8" {...getLabelProps()}>
         {label}
       </label>}
-      <div className={`select-menu`}>
+      <Popper.Root>
+      <div
+      // className={`select-menu`}
+      >
+        <Popper.Anchor asChild>
         <div
           className={classnames("select-menu__button", {
             "select-menu__button--focus": isFocus,
@@ -140,10 +145,15 @@ const Combobox = ({
             {...getToggleButtonProps({ disabled })}
           ></span>
         </div>
+        </Popper.Anchor>
 
-        {isOpen && (
+        {isOpen && <Portal asChild>
+        <Popper.Content sideOffset={2} align="start" collisionPadding={4} avoidCollisions={false}>
           <Menu
-            style={{width: menuWidth}}
+            style={{
+              maxWidth: 'var(--radix-popper-available-width)',
+              maxHeight: 'var(--radix-popper-available-height)'
+            }}
             {...getMenuProps()}
           >
             {items && items.map((item, index) => (
@@ -158,8 +168,12 @@ const Combobox = ({
               </Menu.Item>
             ))}
           </Menu>
-         )} 
+        
+      </Popper.Content>
+      </Portal>}
       </div>
+
+      </Popper.Root>
     </div>
   );
 };

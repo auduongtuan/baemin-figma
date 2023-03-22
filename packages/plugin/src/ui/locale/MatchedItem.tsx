@@ -1,13 +1,11 @@
-import React, { useEffect, useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { updateMatchedItem } from "../state/localeSlice";
-import { useForm } from "react-hook-form";
-import { TextBox } from "../components/Field";
-import { debounce } from "lodash";
-import AddLocaleItem from "./AddLocaleItem";
+import React from "react";
+import { useAppSelector } from "../hooks/redux";
 import LocaleItemForm from "./LocaleItemForm";
+import { findItemByKey } from "../../lib/localeData";
 const MatchedItem = () => {
-  const matchedItem = useAppSelector((state) => state.locale.matchedItem);
+  const localeSelection = useAppSelector((state) => state.locale.localeSelection);
+  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const matchedItem = findItemByKey(localeSelection.key, localeItems);
   console.log('Matched item from MatchedItem', matchedItem);
   return (
     <div>

@@ -6,14 +6,14 @@ import { TextBox } from "../components/Field";
 import { removeVietnameseAccent } from "../../lib/helpers";
 import { snakeCase } from "lodash";
 import Button from "../components/Button";
-const AddLocaleItem = ({
+import { setNewDialogOpened } from "../state/localeAppSlice";
+import { runCommand } from "../uiHelper";
+const AddLocaleItemForm = ({
   showTitle = true,
-  onDone = null,
 }: {
   showTitle?: boolean;
-  onDone?: Function;
 }) => {
-  const matchedItem = useAppSelector((state) => state.locale.matchedItem);
+  const newDialogOnDone = useAppSelector((state) => state.localeApp.newDialogOnDone);
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
@@ -47,15 +47,18 @@ const AddLocaleItem = ({
   }, [localeSelection]);
   const addNewKey = useCallback(() => {
     const [new_key, en, vi] = getValues(["new_key", "en", "vi"]);
+    const localeItem = {
+      key: new_key,
+      en: en ? en : localeSelection.characters,
+      vi: vi ? vi : localeSelection.characters,
+    };
     dispatch(
-      addLocaleItem({
-        key: new_key,
-        en: en ? en : localeSelection.characters,
-        vi: vi ? vi : localeSelection.characters,
-      })
+      addLocaleItem(localeItem)
     );
     dispatch(updateLocaleSelection({ key: new_key }));
-    if(onDone) onDone();
+    if(newDialogOnDone) newDialogOnDone(localeItem);
+    dispatch(setNewDialogOpened(false));
+    runCommand("show_figma_notify", {message: "Item created"})
   }, [localeSelection]);
   return (
     <div>
@@ -110,4 +113,4 @@ const AddLocaleItem = ({
   );
 };
 
-export default AddLocaleItem;
+export default AddLocaleItemForm;

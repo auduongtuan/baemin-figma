@@ -12,9 +12,6 @@ import Dialog from "../components/Dialog";
 import LocaleItemForm from "./LocaleItemForm";
 const LocaleItems = () => {
   const editDialogOpened = useAppSelector((state) => state.localeApp.editDialogOpened);
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
   const localeItems = useAppSelector((state) => state.locale.localeItems);
 
   const dispatch = useAppDispatch();
@@ -46,11 +43,11 @@ const LocaleItems = () => {
     };
   }, [watch]);
 
-  return !localeSelection ? (
+  return (
     <div className="p-16">
       <header className="flex">
         {localeItems && (
-          <h4 className="mt-0 flex-grow-1">{localeItems.length} items</h4>
+          <h4 className="mt-0 flex-grow-1">{localeItems.length} locale items</h4>
         )}
         <div>
           <Tooltip content="Add new item">
@@ -144,7 +141,7 @@ const LocaleItems = () => {
           )}
       </div>
     </div>
-  ) : null;
+  );
 };
 
 export default LocaleItems;

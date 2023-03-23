@@ -60,7 +60,7 @@ const Locale = ({}) => {
           overflow: scroll;
         `}
       >
-        {localeSelection ? <HasSelection /> : <LocaleItems />}
+        {localeSelection && localeSelection.texts ? <HasSelection /> : <LocaleItems />}
       </section>
      
       <AppBar />

@@ -5,7 +5,7 @@ import { findItemByKey } from "../../lib/localeData";
 const MatchedItem = () => {
   const localeSelection = useAppSelector((state) => state.locale.localeSelection);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
-  const matchedItem = findItemByKey(localeSelection.key, localeItems);
+  const matchedItem = findItemByKey(localeSelection.texts[0].key, localeItems);
   console.log('Matched item from MatchedItem', matchedItem);
   return (
     <div>

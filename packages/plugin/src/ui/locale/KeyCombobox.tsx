@@ -28,7 +28,7 @@ function KeyCombobox({
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const dispatch = useAppDispatch();
   const localeItemOptions: ComboboxOption[] = [
-    ...(localeSelection && localeSelection.key === MIXED_VALUE && forSelection
+    ...(localeSelection && localeSelection.summary && localeSelection.summary.key === MIXED_VALUE && forSelection
       ? [
           {
             id: "mixed",
@@ -101,7 +101,7 @@ function KeyCombobox({
       options={localeItemOptions}
       onChange={updateSelectionOrText}
       disabled={
-        forSelection && localeSelection && localeSelection.key == MIXED_VALUE ? true : false
+        forSelection && localeSelection && localeSelection.summary.key == MIXED_VALUE ? true : false
       }
       className="w-half"
       {...rest}

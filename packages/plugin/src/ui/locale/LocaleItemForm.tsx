@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import {
   updateLocaleItem,
@@ -6,7 +6,7 @@ import {
 } from "../state/localeSlice";
 import { useForm } from "react-hook-form";
 import { TextBox } from "../components/Field";
-import { debounce, isString } from "lodash";
+import { debounce, isEmpty, isString } from "lodash";
 import AddLocaleItemForm from "./AddLocaleItemForm";
 import {
   LocaleItem,
@@ -18,37 +18,28 @@ import { runCommand } from "../uiHelper";
 import Button from "../components/Button";
 import { setEditDialogOpened } from "../state/localeAppSlice";
 import { store } from "../state/store";
+import Switch from "../components/Switch";
 function updateTextsOfItem(
   oldKey: string,
   data: LocaleItem,
   localeSelection: LocaleSelection
 ) {
   const key = oldKey ? oldKey : data.key;
-  console.log("Update", key, data);
   // update selected text also
-  if (localeSelection && !localeSelection.multiple) {
-    if (localeSelection.key == key) {
-      runCommand("update_text", {
-        id: localeSelection.id,
-        localeItem: data,
-      });
-    }
-  } else if (localeSelection && localeSelection.multiple) {
-    const texts = localeSelection.texts.filter((text) => text.key == key);
-    texts.forEach((text) => {
-      runCommand("update_text", {
-        id: text.id,
-        localeItem: data,
-      });
+  const texts = localeSelection.texts.filter((text) => text.key == key);
+  texts.forEach((text) => {
+    runCommand("update_text", {
+      id: text.id,
+      localeItem: data,
     });
-    store.dispatch(
-      updateTextsInLocaleSelection(
-        localeSelection.texts.map((text) =>
-          text.key == key ? { ...text, characters: data[text.lang] } : text
-        ),
+  });
+  store.dispatch(
+    updateTextsInLocaleSelection(
+      localeSelection.texts.map((text) =>
+        text.key == key ? { ...text, characters: data[text.lang] } : text
       )
-    );
-  }
+    )
+  );
 }
 function LocaleItemForm({
   item,
@@ -60,9 +51,11 @@ function LocaleItemForm({
   saveOnChange?: boolean;
 }) {
   const localeItems = useAppSelector((state) => state.locale.localeItems);
-  const matchedItem = isString(item) ? findItemByKey(item, localeItems) : item;
-  console.log("Matched item", matchedItem);
-  console.log("Key", matchedItem.key);
+  const localeItem = useMemo(() => isString(item) ? findItemByKey(item, localeItems) : item, [item, localeItems]);
+  const [hasPlurals, setHasPlurals] = useState<boolean>(true);
+  // useEffect(() => {
+  //   setHasPlurals('plurals' in localeItem && !isEmpty(localeItem.plurals));
+  // }, [localeItem]);
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
@@ -78,72 +71,84 @@ function LocaleItemForm({
   } = useForm();
   // reset when key is change
   useEffect(() => {
-    if (matchedItem && matchedItem.key) {
-      for (const inputName in matchedItem) {
-        setValue(inputName, matchedItem[inputName]);
+    if (localeItem && localeItem.key) {
+      for (const inputName in localeItem) {
+        setValue(inputName, localeItem[inputName]);
       }
-      setValue("new_key", matchedItem.key);
+      setValue("new_key", localeItem.key);
     } else {
-      reset({ key: "", en: "", vi: "" });
+      reset({ key: "", en: "", vi: "", plurals: null });
     }
-  }, [matchedItem?.key]);
+  }, [localeItem?.key]);
+
+  // save on submit
   const updateLocaleItemHandler = () => {
-    const [key, en, vi] = getValues(["key", "en", "vi"]);
-    const localeItem = {
+    const [key, en, vi, plurals] = getValues(["key", "en", "vi", "plurals"]);
+    const localeItemData = hasPlurals ? {
+      key: key,
+      plurals: plurals
+    } : {
       key: key,
       en: en,
       vi: vi,
     };
-    dispatch(updateLocaleItem(localeItem));
-    updateTextsOfItem(null, localeItem, localeSelection);
+    dispatch(updateLocaleItem(localeItemData));
+    if (localeSelection) updateTextsOfItem(null, localeItem, localeSelection);
     dispatch(setEditDialogOpened(""));
   };
 
-  const updateMatchedItemDebounce = useMemo(
+  const updateLocaleItemDebounce = useMemo(
     () =>
       debounce((data) => {
         console.log("Update", data);
         dispatch(updateLocaleItem(data));
         // update selected text also
-        updateTextsOfItem(null, data, localeSelection);
-        // if (.)
+        if (localeSelection) updateTextsOfItem(null, data, localeSelection);
       }, 300),
     []
   );
   useEffect(() => {
     return () => {
-      updateMatchedItemDebounce.cancel();
+      updateLocaleItemDebounce.cancel();
     };
   }, []);
+  // save on CHange
   useEffect(() => {
     if (saveOnChange) {
       const watcher = watch((data) => {
-        if (matchedItem && data.key) {
+        if (localeItem && data.key) {
           console.log("Update item using debounce!");
-          updateMatchedItemDebounce({
-            key: data.key,
-            en: data.en,
-            vi: data.vi,
-          });
+          console.log(data);
+          const {key, en, vi, plurals} = data;
+          const localeItemData = hasPlurals ? {
+            key: key,
+            plurals: plurals
+          } : {
+            key: key,
+            en: en,
+            vi: vi,
+          };
+          updateLocaleItemDebounce(localeItemData);
         }
       });
       return () => {
         watcher.unsubscribe();
       };
     }
-  }, [watch, matchedItem, saveOnChange]);
+  }, [watch, localeItem, saveOnChange]);
 
   return (
     <div>
-      {matchedItem && (
+      {localeItem && (
         <>
           {showTitle && (
             <h4 className="mt-0 mb-4 font-medium text-secondary">
-              Quick edit {matchedItem.key}
+              Quick edit {localeItem.key}
             </h4>
           )}
-          <div className="">
-            <input type="hidden" {...register("key")} />
+          <Switch label='Has plurals' checked={hasPlurals} onCheckedChange={setHasPlurals}></Switch>
+          <input type="hidden" {...register("key")} />
+          <div className="mt-16">
             {!saveOnChange && (
               <TextBox
                 label="Key"
@@ -153,18 +158,43 @@ function LocaleItemForm({
                 {...register("new_key")}
               />
             )}
+            {hasPlurals === false && <>
             <TextBox
               label="English"
               id="en"
               className="mt-12"
-              {...register("en")}
+              {...register("en", {required: true})}
             />
             <TextBox
               label="Vietnamese"
               id="vi"
               className="mt-12"
-              {...register("vi")}
+              {...register("vi", {required: true})}
             />
+            </>}
+            {hasPlurals === true && (
+              <div>
+                {["one", "other"].map((quantity) => {
+                  return (
+                    <div className="mt-16">
+                      <h4>{quantity}</h4>
+                      <TextBox
+                        label="English"
+                        id="en"
+                        className="mt-12"
+                        {...register(`plurals.${quantity}.en`, {required: true})}
+                      />
+                      <TextBox
+                        label="Vietnamese"
+                        id="vi"
+                        className="mt-12"
+                        {...register(`plurals.${quantity}.vi`, {required: true})}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             {!saveOnChange && (
               <Button
                 // variant="secondary"

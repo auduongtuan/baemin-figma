@@ -6,9 +6,11 @@ import React, {
   useEffect,
 } from "react";
 import styled from "styled-components";
+import { renderToString } from 'react-dom/server'
+
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
-  label?: string;
+  label?: React.ReactNode;
   helpText?: React.ReactNode;
 }
 export interface TextareaProps
@@ -116,7 +118,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
         )}
         <BaseInput
           id={id}
-          placeholder={label}
+          placeholder={typeof label == 'string' ? label : renderToString(<>label</>)}
           defaultValue={defaultValue}
           value={value}
           type={type}

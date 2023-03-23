@@ -7,6 +7,7 @@ import {
 } from "../../lib/localeData";
 import { runCommand } from "../uiHelper";
 import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
+import { cloneDeep } from "lodash";
 const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
@@ -29,29 +30,29 @@ export const localeSlice = createSlice({
     },
     setLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
       state.localeSelection = action.payload;
-      if (
-        state.localeSelection &&
-        state.localeItems &&
-        !state.localeSelection.multiple
-      ) {
-        let finder = findItemByKeyOrCharacters(
-          state.localeSelection.key,
-          state.localeSelection.characters,
-          state.localeItems
-        );
-        if (finder) {
-          state.matchedItem = finder;
-        } else {
-          state.matchedItem = null;
-        }
-      } else {
-        state.matchedItem = null;
-      }
+      // if (
+      //   state.localeSelection &&
+      //   state.localeItems &&
+      //   !state.localeSelection.multiple
+      // ) {
+      //   let finder = findItemByKeyOrCharacters(
+      //     state.localeSelection.key,
+      //     state.localeSelection.characters,
+      //     state.localeItems
+      //   );
+      //   if (finder) {
+      //     state.matchedItem = finder;
+      //   } else {
+      //     state.matchedItem = null;
+      //   }
+      // } else {
+      //   state.matchedItem = null;
+      // }
     },
     updateLocaleSelection: (state, action: PayloadAction<LocaleSelection>) => {
       if (state.localeSelection) {
-        if (action.payload.key) state.localeSelection.key = action.payload.key;
-        if (action.payload.lang) state.localeSelection.lang = action.payload.lang;
+        if (action.payload.key) state.localeSelection.summary.key = action.payload.key;
+        if (action.payload.lang) state.localeSelection.summary.lang = action.payload.lang;
       }
       // if (state.localeItems) {
       //   const finder = findItemByKey(state.localeSelection.key, state.localeItems);
@@ -64,13 +65,13 @@ export const localeSlice = createSlice({
     },
     updateTextInLocaleSelection: (state, action: PayloadAction<LocaleText>) => {
       // single case
-      if(!state.localeSelection.multiple && state.localeSelection.id == action.payload.id) {
-        state.localeSelection = {...action.payload};
-      }  
+      // if(!state.localeSelection.multiple && state.localeSelection.id == action.payload.id) {
+      //   state.localeSelection = {...action.payload};
+      // }  
       // multiple case
-      if(state.localeSelection.multiple && state.localeSelection.texts) {
+      // if(state.localeSelection.multiple && state.localeSelection.texts) {
         state.localeSelection.texts = state.localeSelection.texts.map(text => text.id != action.payload.id ? text : action.payload);
-      }
+      // }
     },
 
     updateTextsInLocaleSelection: (state, action: PayloadAction<LocaleText[]>) => {
@@ -84,8 +85,8 @@ export const localeSlice = createSlice({
       state.localeItems = [...action.payload];
     },
     updateLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.localeItems = [...state.localeItems].map((item) =>
-        item.key == action.payload.key ? action.payload : item
+      state.localeItems = cloneDeep(state.localeItems).map((item) =>
+        item.key == action.payload.key ? cloneDeep(action.payload) : item
       );
     },
     // setmatchedItem: (state, action) => {

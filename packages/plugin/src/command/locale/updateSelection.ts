@@ -1,7 +1,7 @@
 import * as h from "../commandHelper";
 import { MIXED_VALUE } from "../../constant/locale";
 import { LocaleText } from "../../lib/localeData";
-import { getLang, getKey, checkNodeVisible } from "./common";
+import { getLang, getKey, checkNodeVisible, getVariables } from "./common";
 /*
  * TODO: Optimize update selection 
  */
@@ -9,13 +9,23 @@ function updateSelection() {
   const selection = h.selection();
   const firstNode = h.selection(0);
   if (selection.length == 1 && h.isText(firstNode)) {
+    const key = getKey(firstNode);
+    const lang = getLang(firstNode);
     h.postData({
       type: "change_locale_selection",
       localeSelection: {
-        id: firstNode.id,
-        key: getKey(firstNode),
-        lang: getLang(firstNode),
-        characters: firstNode.characters,
+        multiple: false,
+        summary: {
+          key, 
+          lang
+        },
+        texts: [{
+          id: firstNode.id,
+          key,
+          lang,
+          variables: getVariables(firstNode),
+          characters: firstNode.characters,
+        }]
       },
     });
   } else if (
@@ -48,15 +58,17 @@ function updateSelection() {
           id: textNode.id,
           key: getKey(textNode),
           lang: getLang(textNode),
+          variables: getVariables(textNode),
           characters: textNode.characters,
         }));
       h.postData({
         type: "change_locale_selection",
         localeSelection: {
           multiple: true,
-          lang: isSameLang ? firstLang : MIXED_VALUE,
-          key: isSameKey ? firstKey : MIXED_VALUE,
-          characters: null,
+          summary: {
+            lang: isSameLang ? firstLang : MIXED_VALUE,
+            key: isSameKey ? firstKey : MIXED_VALUE,
+          },
           texts: texts,
         },
       });

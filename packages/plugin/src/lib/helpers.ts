@@ -1,3 +1,5 @@
+import { get } from "lodash";
+
 export function removeVietnameseAccent(str) {
   // remove accents
   var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
@@ -60,4 +62,47 @@ export function copyToClipboardAsync(value: string): Promise<void> {
     return navigator.clipboard.writeText(value);
   }
   return Promise.reject(`Clipboard API is NOT supported in the browser`);
+}
+
+/*!
+ * Replaces placeholders with real content
+ * Requires get() - https://vanillajstoolkit.com/helpers/get/
+ * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param {String} template The template string
+ * @param {String} local    A local placeholder to use, if any
+ */
+export const placeholders = function (template: (() => string) | string, data: Object): string {
+
+	'use strict';
+
+	// Check if the template is a string or a function
+	let _template: string = typeof (template) === 'function' ? template() : template;
+	if (['string', 'number'].indexOf(typeof template) === -1) throw 'PlaceholdersJS: please provide a valid template';
+
+	// If no data, return template as-is
+	if (!data) return _template;
+
+	// Replace our curly braces with data
+	_template = _template.replace(/\{\{([^}]+)\}\}/g, function (match) {
+
+		// Remove the wrapping curly braces
+		match = match.slice(2, -2);
+
+		// Get the value
+		var val = get(data, match.trim());
+
+		// Replace
+		if (!val) return '{{' + match + '}}';
+		return val;
+
+	});
+
+	return _template;
+
+};
+
+export function findMatches(regex: RegExp, str: string, matches = []) {
+	const res = regex.exec(str)
+	res && matches.push(res) && findMatches(regex, str, matches)
+	return matches
 }

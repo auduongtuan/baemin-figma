@@ -1,6 +1,6 @@
 import {postData} from "./commandHelper";
-import { switchLang } from "./locale/common";
-import updateText from "./locale/updateText";
+import switchLang from "./locale/switchLang";
+import {updateTextById} from "./locale/updateText";
 import autoSetKeyForSelection from "./locale/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./locale/localeData";
 import exportCode from "./locale/exportCode";
@@ -22,7 +22,8 @@ const locale = {
         autoSetKeyForSelection(msg.localeItems);
         break;
       case "update_text":
-        updateText(msg);
+        const {id, lang, key, variables} = msg;
+        updateTextById({id, lang, key, variables}, msg.localeItem);
         // figma.notify('updateText');
         break;
       case "switch_lang":

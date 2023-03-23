@@ -16,6 +16,7 @@ function autoSetKeyForSelection(localeItems: LocaleItem[]) {
       });
     }
   });
+  if(count > 0) updateSelection();
   figma.notify(`${count} ${pluralize('texts', count)} assigned`);
 }
 export default autoSetKeyForSelection;

@@ -14,14 +14,15 @@ function changeLang(
   localeItems: LocaleItem[]
 ) {
   const localeItem = findItemByKey(getKey(textNode), localeItems) || findItemByCharacters(textNode.characters, localeItems);
-  updateTextNode(textNode, {lang}, localeItem);
+  updateTextNode(textNode, {lang, item: localeItem});
 }
-function switchLang(lang: Lang, localeItems: LocaleItem[]) {
-  h.selection().forEach((selection) => {
+function switchLang(lang: Lang, localeItems: LocaleItem[], scope?: SceneNode | BaseNode) {
+  const updateNodes = scope ? [scope] : h.selection();
+  updateNodes.forEach((selection) => {
     if (h.isText(selection)) {
       changeLang(selection, lang, localeItems);
     } else if (h.isContainer(selection)) {
-      const texts = selection.findAll((node) => h.isText(node)) as TextNode[];
+      const texts = selection.findAllWithCriteria({types: ['TEXT']}) as TextNode[];
       texts.forEach((textNode) => {
         changeLang(textNode, lang, localeItems);
       });

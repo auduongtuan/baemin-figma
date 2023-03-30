@@ -89,6 +89,11 @@ ds.changeTheme = async () => {
   
     }
   }
+  function recursiveChangeTheme(node: BaseNode) {
+    // if (h.isInstance(node) && swapVariant(node, {"Dark": }))
+    if (h.isContainer(node)) {
+    }
+  }
   for (const selection of h.selection()) {
     replaceStyle(selection, "fillStyleId");
     replaceStyle(selection, "strokeStyleId");

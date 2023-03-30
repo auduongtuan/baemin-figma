@@ -1,16 +1,29 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import * as RSwitch from "@radix-ui/react-switch";
 import { uniqueId } from "lodash";
 
-const Switch = ({
+const Switch = forwardRef<HTMLButtonElement, RSwitch.SwitchProps & { label: React.ReactNode }>(({
   label,
   ...rest
-}: RSwitch.SwitchProps & { label: React.ReactNode }) => {
+}, forwardedRef) => {
   const id = uniqueId("Switch");
   return (
     <div
       className="flex gap-8 align-items-center"
     >
+       <label
+        htmlFor={id}
+        css={`
+          align-items: center;
+          color: var(--black8);
+          display: flex;
+          height: 100%;
+          line-height: var(--font-line-height);
+          user-select: none;
+        `}
+      >
+        {label}
+      </label>
       <RSwitch.Root
         id={id}
         css={`
@@ -27,6 +40,7 @@ const Switch = ({
             border: 1px solid var(--figma-color-bg-brand);
           }
         `}
+        ref={forwardedRef}
         {...rest}
       >
         <RSwitch.Thumb
@@ -47,21 +61,9 @@ const Switch = ({
           `}
         />
       </RSwitch.Root>
-      <label
-        htmlFor={id}
-        css={`
-          align-items: center;
-          color: var(--black8);
-          display: flex;
-          height: 100%;
-          line-height: var(--font-line-height);
-          user-select: none;
-        `}
-      >
-        {label}
-      </label>
+     
     </div>
   );
-};
+});
 
 export default Switch;

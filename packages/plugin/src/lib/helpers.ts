@@ -106,3 +106,12 @@ export function findMatches(regex: RegExp, str: string, matches = []) {
 	res && matches.push(res) && findMatches(regex, str, matches)
 	return matches
 }
+
+export function matchAll(re: RegExp, str: string) {
+  re = new RegExp(re, 'g');
+  let match: RegExpExecArray;
+  let matches: RegExpExecArray[] = [];
+  while (match = re.exec(str)) 
+    matches.push(match);
+  return matches;
+}

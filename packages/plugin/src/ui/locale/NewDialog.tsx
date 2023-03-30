@@ -1,17 +1,19 @@
 import React from "react";
-import AddLocaleItemForm from "./AddLocaleItemForm";
-import { setNewDialogOpened } from "../state/localeAppSlice";
+import { setCurrentDialog } from "../state/localeAppSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Dialog from "../components/Dialog";
+import LocaleItemForm from "./form/LocaleItemForm";
 const NewDialog = () => {
-  const newDialogOpened = useAppSelector(
-    (state) => state.localeApp.newDialogOpened
+  const currentDialog = useAppSelector(
+    (state) => state.localeApp.currentDialog
   );
   const dispatch = useAppDispatch();
   return (
-    <Dialog open={newDialogOpened} onOpenChange={(open) => dispatch(setNewDialogOpened(open))}>
+    <Dialog open={currentDialog.type == 'NEW' && currentDialog.opened} onOpenChange={(open) => dispatch(setCurrentDialog({type: 'NEW', opened: open}))}>
     <Dialog.Content title="Add new locale item">
-      <AddLocaleItemForm showTitle={false} />
+      <LocaleItemForm showTitle={false} onDone={(item) => {
+        dispatch(setCurrentDialog({opened: false}));
+      }} />
     </Dialog.Content>
   </Dialog>
   )

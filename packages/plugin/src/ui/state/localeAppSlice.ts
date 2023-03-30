@@ -1,28 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LocaleItem } from "../../lib/localeData";
+interface DialogState {
+  opened: boolean;
+  key?: string;
+  type?: 'EDIT' | 'NEW' | 'DELETE';
+  onDone?: (localeItem: LocaleItem) => void
+}
 const initialState: {
-  newDialogOpened: boolean,
-  editDialogOpened: string,
-  newDialogOnDone: (localeItem: LocaleItem) => void,
+  currentDialog: DialogState,
   isWorking: boolean
 } = {
-  newDialogOpened: false,
-  editDialogOpened: '',
-  newDialogOnDone: undefined,
+  currentDialog: {
+    opened: false,
+    key: null,
+    type: null,
+    onDone: undefined
+  },
   isWorking: false
 };
 export const localeAppSlice = createSlice({
   name: "localeApp",
   initialState: initialState,
   reducers: {
-    setNewDialogOpened: (state, action: PayloadAction<boolean>) => {
-      state.newDialogOpened = action.payload;
-    },
-    setEditDialogOpened: (state, action: PayloadAction<string>) => {
-      state.editDialogOpened = action.payload;
-    },
-    setNewDialogOnDone: (state, action: PayloadAction<(localeItem: LocaleItem) => void>) => {
-      state.newDialogOnDone = action.payload;
+    setCurrentDialog: (state, action: PayloadAction<DialogState>) => {
+      state.currentDialog = {...state.currentDialog, ...action.payload};
     },
     setIsWorking: (state, action: PayloadAction<boolean>) => {
       state.isWorking = action.payload;
@@ -31,9 +32,7 @@ export const localeAppSlice = createSlice({
 });
 
 export const {
-  setNewDialogOpened,
-  setEditDialogOpened,
-  setNewDialogOnDone,
+  setCurrentDialog,
   setIsWorking
 } = localeAppSlice.actions;
 

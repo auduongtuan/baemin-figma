@@ -1,90 +1,95 @@
 import { isContainer, isText, selection } from "../commandHelper";
 import { placeholders } from "../../lib/helpers";
-import { PREFIX, DEFAULT_LANG } from "../../constant/locale";
-import updateSelection from "./updateSelection";
+import { DEFAULT_LANG } from "../../constant/locale";
 import {
   Lang,
   LocaleItem,
   LocaleText,
   LocaleTextVariables,
+  findItemByKey,
+  isPlurals,
+  getTextCharacters
 } from "../../lib/localeData";
-import { setKey, setLang, getLang, setVariables, getVariables } from "./common";
+import { setKey, setLang, getLang, getKey, setVariables, getVariables, setVariable } from "./common";
+import { isString } from "lodash";
 // find text node
-export function updateTextNode(textNode: TextNode, updatedText: LocaleText, localeItem?: LocaleItem) {
-  if (updatedText.key && !localeItem.key) setKey(textNode, updatedText.key);
-  if (updatedText.lang) setLang(textNode, updatedText.lang || DEFAULT_LANG);
-  if (updatedText.variables) setVariables(textNode, updatedText.variables);
-  // update text content
-  if (localeItem) {
-    const currentLang = getLang(textNode) || DEFAULT_LANG;
-    const variables = getVariables(textNode);
-    setKey(textNode, localeItem.key);
-    // NON PLURAL
-    if (!localeItem.plurals) {
-      if (variables && localeItem[currentLang]) {
-        textNode.characters = placeholders(
-          localeItem[currentLang],
-          variables
-        );
-      } else {
-        textNode.characters = localeItem[currentLang];
-      }
-    } 
-    // PLURAL FORM
-    else {
-      if (variables && 'count' in variables) {
-        const count = typeof variables.count == 'string' ? parseInt(variables.count) : variables.count;
-        if(count == 1 && 'one' in localeItem.plurals) {
-          textNode.characters = placeholders(
-            localeItem.plurals.one[currentLang],
-            variables
-          );
-        }
-        if(count != 1 && 'other' in localeItem.plurals) {
-          textNode.characters = placeholders(
-            localeItem.plurals.other[currentLang],
-            variables
-          );
-        }
-      }
+export function updateTextNode(textNode: TextNode, textProps: Omit<LocaleText, "id">) {
+  if(textProps) {
+    if (textProps.key && (!textProps.item && !textProps.item.key)) {
+      setKey(textNode, textProps.key);
     }
+    if (textProps.key === '') setKey(textNode, textProps.key);
+    if (textProps.lang) setLang(textNode, textProps.lang || DEFAULT_LANG);
+    if (textProps.variables) setVariables(textNode, textProps.variables);
+  }
+  // update text content
+  if (textProps.item) {
+    const currentLang = getLang(textNode) || DEFAULT_LANG;
+    const localeItemContent = textProps.item[currentLang];
+    const variables = getVariables(textNode);
+    if(isPlurals(localeItemContent) && !variables.count) {
+      setVariable(textNode, 'count', 1);
+      variables.count = 1;
+    }
+    setKey(textNode, textProps.item.key); 
+    // NON PLURAL
+    textNode.characters = getTextCharacters(localeItemContent, variables);
   }
 }
+// update texts to use Locale item
 export function updateText(
   filterFunction: (node: TextNode) => boolean,
-  updatedText: LocaleText,
-  localeItem: LocaleItem,
+  textProps: Omit<LocaleText, "id">,
   scope: SceneNode | BaseNode
 ) {
   const updateNodes = scope ? [scope] : selection();
+  const textNodes: TextNode[] = [];
   updateNodes.forEach((parentNode) => {
-    let textNode: TextNode;
     if (isContainer(parentNode) || parentNode.type == "PAGE") {
-      textNode = parentNode.findOne(
-        (node) => isText(node) && filterFunction(node)
-      ) as TextNode;
-    } else if (isText(parentNode)) {
-      textNode = parentNode;
-    } else {
-      return;
-    }
-    if (textNode) {
-      updateTextNode(textNode, updatedText, localeItem);
+      textNodes.push(...parentNode.findAllWithCriteria({types: ['TEXT']}) as TextNode[]);
+    } 
+    if (parentNode.type == 'TEXT') {
+      textNodes.push(parentNode);
     }
   });
+  textNodes.filter(filterFunction).forEach(textNode => {
+    updateTextNode(textNode, textProps);
+    console.log('UpdateText - Locale item', textProps.item);
+  })
 }
-export function updateTextById(
-  text: {
-    id: string;
-    key: string;
-    lang: Lang;
-    variables: LocaleTextVariables;
-  },
-  localeItem: LocaleItem,
+// update Texts to lastest content
+export function updateTexts(
+  localeItems: LocaleItem[],
   scope?: SceneNode | BaseNode
 ) {
-  const filterFunction = (node: TextNode) => node.id == text.id;
-  updateText(filterFunction, text, localeItem, scope);
+  const updateNodes = scope ? [scope] : selection();
+  const textNodes: TextNode[] = [];
+  updateNodes.forEach((parentNode) => {
+    if (isContainer(parentNode) || parentNode.type == "PAGE") {
+      textNodes.push(...parentNode.findAllWithCriteria({types: ['TEXT']}) as TextNode[]);
+    } 
+    if (parentNode.type == 'TEXT') {
+      textNodes.push(parentNode);
+    }
+   
+  });
+  textNodes.forEach(textNode => {
+    const key = getKey(textNode);
+    if(!key) return;
+    // update text content
+    const localeItem = findItemByKey(getKey(textNode), localeItems);
+    if (localeItem) {
+      updateTextNode(textNode, {item: localeItem});
+    }
+  })
+}
+export function updateTextByIds(
+  ids: string[],
+  textProps: Omit<LocaleText, "id">,
+  scope?: SceneNode | BaseNode
+) {
+  const filterFunction = (node: TextNode) => (isString(ids) && node.id == ids) || ids.includes(node.id);
+  updateText(filterFunction, textProps, scope);
   // updateSelection();
   // update that text in state
 }

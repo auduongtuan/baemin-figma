@@ -2,11 +2,12 @@ import React from "react";
 import { useEffect } from "react";
 import { runCommand } from "../uiHelper";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { setLocaleSelection, setLocaleData } from "../state/localeSlice";
+import { setTextsInLocaleSelection, setLocaleData } from "../state/localeSlice";
 import AppBar from "./AppBar";
 import LocaleItems from "./LocaleItems";
 import HasSelection from "./pages/HasSelection";
 import NewDialog from "./NewDialog";
+import { isArray } from "lodash";
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -26,16 +27,25 @@ const Locale = ({}) => {
                 localeData["localeItems"] = localeData.items;
                 delete localeData["items"];
               }
+              if("localeItems" in localeData && isArray(localeData["localeItems"])) {
+                localeData.localeItems.forEach(localeItem => {
+                  if('plurals' in localeItem) {
+                    localeItem.en = {};
+                    localeItem.en["one"] = localeItem.plurals.one.en;
+                    localeItem.en["other"] = localeItem.plurals.other.en;
+                    localeItem.vi = {};
+                    localeItem.vi["one"] = localeItem.plurals.one.vi;
+                    localeItem.vi["other"] = localeItem.plurals.other.vi;
+                    delete localeItem["plurals"];
+                  }
+                });
+              }
+              console.log(localeData);
               dispatch(setLocaleData(localeData));
             }
             break;
           case "change_locale_selection":
-            if (data.localeSelection) {
-              dispatch(setLocaleSelection(data.localeSelection));
-            }
-            if (data.localeSelection == null) {
-              dispatch(setLocaleSelection(null));
-            }
+            dispatch(setTextsInLocaleSelection(data.texts));
             break;
         }
       }
@@ -60,7 +70,7 @@ const Locale = ({}) => {
           overflow: scroll;
         `}
       >
-        {localeSelection && localeSelection.texts ? <HasSelection /> : <LocaleItems />}
+        {localeSelection && localeSelection.texts.length > 0 ? <HasSelection /> : <LocaleItems />}
       </section>
      
       <AppBar />

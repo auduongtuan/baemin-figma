@@ -1,9 +1,15 @@
-import React, { useEffect, useState, ComponentType } from "react";
-import { useCombobox } from "downshift";
+import React, { useEffect, useState, ComponentType, useCallback } from "react";
+import {
+  UseComboboxState,
+  UseComboboxStateChangeOptions,
+  UseComboboxStateChangeTypes,
+  useCombobox,
+} from "downshift";
 import classnames from "classnames";
 import Menu from "./Menu";
-import * as Popper from '@radix-ui/react-popper';
-import {Portal} from '@radix-ui/react-portal';
+import * as Popper from "@radix-ui/react-popper";
+import { Portal } from "@radix-ui/react-portal";
+import { removeVietnameseAccent } from "../../lib/helpers";
 export interface ComboboxOption {
   id?: string;
   value?: string;
@@ -12,6 +18,7 @@ export interface ComboboxOption {
   altContent?: string;
   disabled?: boolean;
   onSelect?: Function;
+  icon?: React.ReactNode;
 }
 
 export interface ComboboxProps {
@@ -26,6 +33,12 @@ export interface ComboboxProps {
   onChange?: Function;
   menuWidth?: string | number;
 }
+
+function smartIncludes(stringA: string, stringB: string) {
+  return stringA && stringB && removeVietnameseAccent(stringA)
+    .toLowerCase()
+    .includes(removeVietnameseAccent(stringB).toLowerCase());
+}
 const Combobox = ({
   label,
   id,
@@ -36,11 +49,11 @@ const Combobox = ({
   placeholder = null,
   disabled = false,
   onChange,
-  menuWidth = '100%',
+  menuWidth = "100%",
   ...rest
 }: ComboboxProps) => {
   // return <div></div>;
-  const itemToString = (item) => (item ? item.name : "");
+  const itemToString = (item: ComboboxOption) => (item ? item.name : "");
   const [items, setItems] = useState<ComboboxOption[]>(options);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -53,6 +66,39 @@ const Combobox = ({
       setSelectedItem(null);
     }
   }, [value]);
+  const stateReducer = useCallback(
+    (
+      state: UseComboboxState<ComboboxOption>,
+      actionAndChanges: UseComboboxStateChangeOptions<ComboboxOption>
+    ): UseComboboxState<ComboboxOption> => {
+      const { type, changes } = actionAndChanges;
+      switch (type) {
+        case useCombobox.stateChangeTypes.InputBlur:
+          return {
+            ...changes,
+            isOpen: !state.isOpen, // but keep menu open.
+            highlightedIndex: state.highlightedIndex, // with the item highlighted.
+            selectedItem: changes.selectedItem ?? null,
+            inputValue: changes.inputValue ?? "",
+            // if we had an item selected.
+            ...(changes.selectedItem && {
+              // we will show it uppercased.
+              inputValue: itemToString(changes.selectedItem),
+            }),
+          };
+        default:
+          return {
+            ...changes,
+            highlightedIndex: changes.highlightedIndex ?? -1,
+            selectedItem: changes.selectedItem ?? null,
+            inputValue: changes.inputValue ?? "",
+            isOpen: changes.isOpen ?? false,
+          };
+      }
+      // return changes;
+    },
+    []
+  );
   const {
     isOpen,
     getToggleButtonProps,
@@ -61,118 +107,135 @@ const Combobox = ({
     getInputProps,
     highlightedIndex,
     getItemProps,
-    inputValue
+    inputValue,
   } = useCombobox({
     items: items,
     itemToString: itemToString,
     selectedItem,
+    stateReducer,
     onInputValueChange({ inputValue }) {
+      console.log(inputValue);
       const filteredOptions = options.filter(
         (option) =>
-          !option.onSelect && (
-            !inputValue ||
-            option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-            'value' in option && option.value.toLowerCase().includes(inputValue.toLowerCase()) ||
-            option.content && option.content.toLowerCase().includes(inputValue.toLowerCase()) ||
-            option.altContent && option.altContent.toLowerCase().includes(inputValue.toLowerCase())
-          )
+          !option.onSelect &&
+          (!inputValue ||
+            smartIncludes(option.name, inputValue) ||
+            ("value" in option && smartIncludes(option.value, inputValue)) ||
+            (option.content && smartIncludes(option.content, inputValue)) ||
+            (option.altContent && smartIncludes(option.altContent, inputValue)))
       );
-      const suggestions = options.filter(option => option.onSelect);
-      if(filteredOptions && filteredOptions.length > 0) {
+      const suggestions = options.filter((option) => option.onSelect);
+      if (filteredOptions && filteredOptions.length > 0) {
         setItems(filteredOptions);
       } else {
         setItems(suggestions);
       }
     },
     onSelectedItemChange: ({ selectedItem: newSelectedItem }) => {
-      if(newSelectedItem) {
-        if('value' in newSelectedItem) {
+      if (newSelectedItem) {
+        if ("value" in newSelectedItem) {
           setSelectedItem(newSelectedItem);
           if (onChange) onChange(newSelectedItem.value);
         } else {
-          if('onSelect' in newSelectedItem) {
+          if ("onSelect" in newSelectedItem) {
             newSelectedItem.onSelect();
           }
         }
-      } 
-
+      } else {
+        if (onChange) onChange(null);
+      }
     },
     onStateChange: (changes) => {
+      console.log("Combobox changes", changes);
     },
   });
   return (
     <div className={`show-border ${className && className}`}>
-      {label && <label htmlFor={id} className="mb-8" {...getLabelProps()}>
-        {label}
-      </label>}
+      {label && (
+        <label htmlFor={id} className="mb-8 text-xsmall" {...getLabelProps()}>
+          {label}
+        </label>
+      )}
       <Popper.Root>
-      <div
-      // className={`select-menu`}
-      >
-        <Popper.Anchor asChild>
         <div
-          className={classnames("select-menu__button", {
-            "select-menu__button--focus": isFocus,
-            "select-menu__button--disabled": disabled,
-          })}
+        // className={`select-menu`}
         >
-          <input
-            className={classnames("select-menu__label flex-grow-1", {
-              // "select-menu__label--placeholder": !inputValue ? true : false,
-            })}
-            placeholder={placeholder}
-            css={`
-              border: none;
-              background: none;
-              padding: 0;
-              &:focus {
-                border: none;
-                outline: none;
-              }
-            `}
-            {...getInputProps({
-              disabled,
-              onFocus: () => {
-                setIsFocus(true);
-              },
-              onBlur: () => {
-                setIsFocus(false);
-              },
-            })}
-          />
-          <span
-            className="select-menu__caret"
-            {...getToggleButtonProps({ disabled })}
-          ></span>
-        </div>
-        </Popper.Anchor>
+          <Popper.Anchor asChild>
+            <div
+              className={classnames("select-menu__button", {
+                "select-menu__button--focus": isFocus,
+                "select-menu__button--disabled": disabled,
+              })}
+            >
+              <input
+                className={classnames("select-menu__label flex-grow-1", {
+                  // "select-menu__label--placeholder": !inputValue ? true : false,
+                })}
+                placeholder={placeholder}
+                css={`
+                  border: none;
+                  background: none;
+                  padding: 0;
+                  &:focus {
+                    border: none;
+                    outline: none;
+                  }
+                `}
+                {...getInputProps({
+                  disabled,
+                  onFocus: (e) => {
+                    setIsFocus(true);
+                    e.target.select();
+                  },
+                  onBlur: () => {
+                    setIsFocus(false);
+                  },
+                })}
+              />
+              <span
+                className="select-menu__caret"
+                {...getToggleButtonProps({ disabled })}
+              ></span>
+            </div>
+          </Popper.Anchor>
 
-        {isOpen && <Portal asChild>
-        <Popper.Content sideOffset={2} align="start" collisionPadding={4} avoidCollisions={false}>
-          <Menu
-            style={{
-              maxWidth: 'var(--radix-popper-available-width)',
-              maxHeight: 'var(--radix-popper-available-height)'
-            }}
-            {...getMenuProps()}
-          >
-            {items && items.map((item, index) => (
-              <Menu.Item
-                selected={selectedItem == item}
-                highlighted={highlightedIndex == index}
-                key={`${item.value}${index}`}
-                name={item.name}
-                content={item.content}
-                {...getItemProps({ item, index, disabled: item.disabled })}
+          {isOpen && (
+            <Portal asChild>
+              <Popper.Content
+                sideOffset={2}
+                align="start"
+                collisionPadding={4}
+                avoidCollisions={false}
               >
-              </Menu.Item>
-            ))}
-          </Menu>
-        
-      </Popper.Content>
-      </Portal>}
-      </div>
-
+                <Menu
+                  style={{
+                    minWidth: "var(--radix-popper-anchor-width)",
+                    maxWidth: "var(--radix-popper-available-width)",
+                    maxHeight: "var(--radix-popper-available-height)",
+                  }}
+                  {...getMenuProps()}
+                >
+                  {items &&
+                    items.map((item, index) => (
+                      <Menu.Item
+                        selected={selectedItem == item}
+                        highlighted={highlightedIndex == index}
+                        key={`${item.value}${index}`}
+                        name={item.name}
+                        content={item.content}
+                        icon={item.icon}
+                        {...getItemProps({
+                          item,
+                          index,
+                          disabled: item.disabled,
+                        })}
+                      ></Menu.Item>
+                    ))}
+                </Menu>
+              </Popper.Content>
+            </Portal>
+          )}
+        </div>
       </Popper.Root>
     </div>
   );

@@ -10,6 +10,7 @@ import { runCommand } from "../uiHelper";
 import Dialog from "../components/Dialog";
 import SheetManagement from "./SheetManagement";
 import WorkingIcon from "../components/WorkingIcon";
+import Popover from "../components/Popover";
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
@@ -74,16 +75,16 @@ const AppBar = () => {
           <Dialog.Content title="Google sheet"><SheetManagement /></Dialog.Content>
           </Dialog>
         ) : 
-        <Dialog>
+        <Popover>
           <Tooltip content="Link Google sheet">
-            <Dialog.Trigger asChild>
+            <Popover.Trigger asChild>
               <IconButton>
                 <TableIcon />
               </IconButton>
-            </Dialog.Trigger>
+            </Popover.Trigger>
           </Tooltip>
 
-          <Dialog.Content title="Link Google sheet">
+          <Popover.Content title="Link Google sheet">
             <form onSubmit={handleSubmit(addSheetId)}>
               <TextBox
                 label="Add a google sheet to continue"
@@ -95,8 +96,8 @@ const AppBar = () => {
                 Add sheet
               </Button>
             </form>
-          </Dialog.Content>
-        </Dialog>
+          </Popover.Content>
+        </Popover>
         }
       </div>
     </footer>

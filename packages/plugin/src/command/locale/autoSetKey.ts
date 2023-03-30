@@ -10,7 +10,7 @@ function autoSetKeyForSelection(localeItems: LocaleItem[]) {
     if (h.isText(selection)) {
       autoSetKey(selection, localeItems, () => count++);
     } else if (h.isContainer(selection)) {
-      const texts = selection.findAll((node) => h.isText(node)) as TextNode[];
+      const texts = selection.findAllWithCriteria({types: ['TEXT']}) as TextNode[];
       texts.forEach((textNode) => {
         autoSetKey(textNode, localeItems, () => count++);
       });

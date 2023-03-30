@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppSelector } from "../hooks/redux";
-import LocaleItemForm from "./LocaleItemForm";
+import LocaleItemForm from "./form/LocaleItemForm";
 import { findItemByKey } from "../../lib/localeData";
 const MatchedItem = () => {
   const localeSelection = useAppSelector((state) => state.locale.localeSelection);

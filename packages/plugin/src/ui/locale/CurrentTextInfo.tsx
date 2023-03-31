@@ -1,18 +1,14 @@
 import React from "react";
 import { LANGUAGES, MIXED_VALUE } from "../../constant/locale";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { useAppSelector } from "../hooks/redux";
 import { runCommand } from "../uiHelper";
 import Select from "../components/Select";
 
-import KeyCombobox from "./KeyCombobox";
-import { findItemByCharacters, findItemByKey } from "../../lib/localeData";
-import Button from "../components/Button";
-import { updateTextInLocaleSelection } from "../state/localeSlice";
+import KeyCombobox from "./atoms/KeyCombobox";
 
 const CurrentTextInfo = () => {
   const localeSelection = useAppSelector((state) => state.locale.localeSelection);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
-
 
   return (
     localeSelection && (

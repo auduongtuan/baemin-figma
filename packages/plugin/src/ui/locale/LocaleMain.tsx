@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import { runCommand } from "../uiHelper";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setTextsInLocaleSelection, setLocaleData } from "../state/localeSlice";
-import AppBar from "./AppBar";
-import LocaleItems from "./LocaleItems";
-import HasSelection from "./pages/HasSelection";
-import NewDialog from "./NewDialog";
+import AppBar from "./atoms/AppBar";
+import LocaleItemList from "./items/LocaleItemList";
+import SelectionEditor from "./pages/SelectionEditor";
+import NewDialog from "./dialogs/NewDialog";
 import { isArray } from "lodash";
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
@@ -21,28 +21,34 @@ const Locale = ({}) => {
         switch (type) {
           case "load_locale_data":
             if (data.localeData) {
-              let localeData = JSON.parse(data.localeData);
-              // migrate to new typed system
-              if ("items" in localeData) {
-                localeData["localeItems"] = localeData.items;
-                delete localeData["items"];
+              try {
+                let localeData = JSON.parse(data.localeData);
+                // migrate to new typed system
+                if ("items" in localeData) {
+                  localeData["localeItems"] = localeData.items;
+                  delete localeData["items"];
+                }
+                if("localeItems" in localeData && isArray(localeData["localeItems"])) {
+                  localeData.localeItems.forEach(localeItem => {
+                    if('plurals' in localeItem) {
+                      localeItem.en = {};
+                      localeItem.en["one"] = localeItem.plurals.one.en;
+                      localeItem.en["other"] = localeItem.plurals.other.en;
+                      localeItem.vi = {};
+                      localeItem.vi["one"] = localeItem.plurals.one.vi;
+                      localeItem.vi["other"] = localeItem.plurals.other.vi;
+                      delete localeItem["plurals"];
+                    }
+                  });
+                }
+                console.log(localeData);
+                dispatch(setLocaleData(localeData));
               }
-              if("localeItems" in localeData && isArray(localeData["localeItems"])) {
-                localeData.localeItems.forEach(localeItem => {
-                  if('plurals' in localeItem) {
-                    localeItem.en = {};
-                    localeItem.en["one"] = localeItem.plurals.one.en;
-                    localeItem.en["other"] = localeItem.plurals.other.en;
-                    localeItem.vi = {};
-                    localeItem.vi["one"] = localeItem.plurals.one.vi;
-                    localeItem.vi["other"] = localeItem.plurals.other.vi;
-                    delete localeItem["plurals"];
-                  }
-                });
+              catch(e) {
+                console.error(e);
               }
-              console.log(localeData);
-              dispatch(setLocaleData(localeData));
             }
+           
             break;
           case "change_locale_selection":
             dispatch(setTextsInLocaleSelection(data.texts));
@@ -70,7 +76,7 @@ const Locale = ({}) => {
           overflow: scroll;
         `}
       >
-        {localeSelection && localeSelection.texts.length > 0 ? <HasSelection /> : <LocaleItems />}
+        {localeSelection && localeSelection.texts.length > 0 ? <SelectionEditor /> : <LocaleItemList />}
       </section>
      
       <AppBar />

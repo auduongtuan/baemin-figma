@@ -1,16 +1,16 @@
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { setLocaleData } from "../state/localeSlice";
-import Button, { IconButton } from "../components/Button";
-import { TextBox } from "../components/Field";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { setLocaleData } from "../../state/localeSlice";
+import Button, { IconButton } from "../../components/Button";
+import { TextBox } from "../../components/Field";
 import { useForm } from "react-hook-form";
 import { CubeIcon, TableIcon } from "@radix-ui/react-icons";
-import Tooltip from "../components/Tooltip";
-import { runCommand } from "../uiHelper";
-import Dialog from "../components/Dialog";
-import SheetManagement from "./SheetManagement";
-import WorkingIcon from "../components/WorkingIcon";
-import Popover from "../components/Popover";
+import Tooltip from "../../components/Tooltip";
+import { runCommand } from "../../uiHelper";
+import Dialog from "../../components/Dialog";
+import SheetManagement from "../SheetManagement";
+import WorkingIcon from "../../components/WorkingIcon";
+import Popover from "../../components/Popover";
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
@@ -63,7 +63,7 @@ const AppBar = () => {
             <CubeIcon />
           </IconButton>
         </Tooltip>
-        {sheetId ? (
+        {/* {sheetId ? (
           <Dialog>
           <Tooltip content="Google sheet info">
           <Dialog.Trigger asChild>
@@ -98,7 +98,7 @@ const AppBar = () => {
             </form>
           </Popover.Content>
         </Popover>
-        }
+        } */}
       </div>
     </footer>
   );

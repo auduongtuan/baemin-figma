@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Tooltip from "../components/Tooltip";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import Tooltip from "../../components/Tooltip";
 import { useForm } from "react-hook-form";
-import { TextBox } from "../components/Field";
-import { IconButton } from "../components/Button";
+import { TextBox } from "../../components/Field";
+import { IconButton } from "../../components/Button";
 import { MinusCircledIcon, Pencil2Icon, TextIcon } from "@radix-ui/react-icons";
-import LocaleItemForm from "./form/LocaleItemForm";
+import LocaleItemForm from "../form/LocaleItemForm";
 import KeyCombobox from "./KeyCombobox";
-import Dialog from "../components/Dialog";
-import { setCurrentDialog } from "../state/localeAppSlice";
-import { Lang, LocaleText, LocaleTextVariables, getVariableNames } from "../../lib/localeData";
-import { findItemByKey } from "../../lib/localeData";
+import Dialog from "../../components/Dialog";
+import { setCurrentDialog } from "../../state/localeAppSlice";
+import { Lang, LocaleText, LocaleTextVariables, getVariableNames } from "../../../lib/localeData";
+import { findItemByKey } from "../../../lib/localeData";
 import { get, isObject } from "lodash";
-import { runCommand } from "../uiHelper";
-import { updateTextInLocaleSelection } from "../state/localeSlice";
-import DropdownMenu from "../components/DropdownMenu";
+import { runCommand } from "../../uiHelper";
+import { updateTextInLocaleSelection } from "../../state/localeSlice";
+import DropdownMenu from "../../components/DropdownMenu";
 import { GlobeIcon } from "@radix-ui/react-icons";
-import { LANGUAGES } from "../../constant/locale";
+import { LANGUAGES } from "../../../constant/locale";
 const TextEditor = ({ text }: { text: LocaleText }) => {
   console.log(text);
   const localeSelection = useAppSelector(

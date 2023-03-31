@@ -1,15 +1,15 @@
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import Combobox, {
   ComboboxOption,
   ComboboxProps,
-} from "../components/Combobox";
-import { MIXED_VALUE } from "../../constant/locale";
-import { updateTextInLocaleSelection, updateTextsInLocaleSelection } from "../state/localeSlice";
-import { runCommand } from "../uiHelper";
-import { LocaleItemContent, LocaleText, findItemByKey, isPlurals } from "../../lib/localeData";
-import { setCurrentDialog, setIsWorking } from "../state/localeAppSlice";
-import { LocaleItem } from "../../lib/localeData";
+} from "../../components/Combobox";
+import { MIXED_VALUE } from "../../../constant/locale";
+import { updateTextInLocaleSelection, updateTextsInLocaleSelection } from "../../state/localeSlice";
+import { runCommand } from "../../uiHelper";
+import { LocaleItemContent, LocaleText, findItemByKey, isPlurals } from "../../../lib/localeData";
+import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
+import { LocaleItem } from "../../../lib/localeData";
 import { isArray, isString } from "lodash";
 import { PlusIcon } from "@radix-ui/react-icons";
 export interface KeyComboboxProps extends ComboboxProps {

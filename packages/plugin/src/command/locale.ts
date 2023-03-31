@@ -14,6 +14,7 @@ const locale = {
     figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
     postData({ page: "locale" });
     updateSelection();
+
   },
   onMessage: async (msg) => {
     switch (msg.type) {

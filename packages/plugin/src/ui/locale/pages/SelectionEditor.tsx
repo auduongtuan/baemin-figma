@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppSelector } from "../../hooks/redux";
 import CurrentTextInfo from "../CurrentTextInfo";
-import MultipleTextEditor from "../MultipleTextEditor";
+import MultipleTextEditor from "../atoms/MultipleTextEditor";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { findItemByKey, getTextByCharacter, getTextCharacters, LocaleItem, LocaleText } from "../../../lib/localeData";
 import Divider from "../../components/Divider";
@@ -11,7 +11,7 @@ import { findItemByCharacters } from "../../../lib/localeData";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
 import Button from "../../components/Button";
 import { DEFAULT_LANG } from "../../../constant/locale";
-const HasSelection = () => {
+const SelectionEditor = () => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
@@ -88,4 +88,4 @@ const HasSelection = () => {
   );
 };
 
-export default HasSelection;
+export default SelectionEditor;

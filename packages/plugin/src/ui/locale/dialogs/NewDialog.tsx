@@ -1,8 +1,8 @@
 import React from "react";
-import { setCurrentDialog } from "../state/localeAppSlice";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Dialog from "../components/Dialog";
-import LocaleItemForm from "./form/LocaleItemForm";
+import { setCurrentDialog } from "../../state/localeAppSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import Dialog from "../../components/Dialog";
+import LocaleItemForm from "../form/LocaleItemForm";
 const NewDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog

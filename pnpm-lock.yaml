@@ -3,7 +3,10 @@ lockfileVersion: 5.4
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      '@figma/plugin-typings': ^1.62.0
+    devDependencies:
+      '@figma/plugin-typings': 1.62.0
 
   packages/api:
     specifiers:

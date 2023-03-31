@@ -2,11 +2,12 @@ import React from "react";
 import { useEffect } from "react";
 import { runCommand } from "../uiHelper";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { setLocaleSelection, setLocaleData } from "../state/localeSlice";
-import AppBar from "./AppBar";
-import LocaleItems from "./LocaleItems";
-import HasSelection from "./pages/HasSelection";
-import NewDialog from "./NewDialog";
+import { setTextsInLocaleSelection, setLocaleData } from "../state/localeSlice";
+import AppBar from "./atoms/AppBar";
+import LocaleItemList from "./items/LocaleItemList";
+import SelectionEditor from "./pages/SelectionEditor";
+import NewDialog from "./dialogs/NewDialog";
+import { isArray } from "lodash";
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -20,22 +21,37 @@ const Locale = ({}) => {
         switch (type) {
           case "load_locale_data":
             if (data.localeData) {
-              let localeData = JSON.parse(data.localeData);
-              // migrate to new typed system
-              if ("items" in localeData) {
-                localeData["localeItems"] = localeData.items;
-                delete localeData["items"];
+              try {
+                let localeData = JSON.parse(data.localeData);
+                // migrate to new typed system
+                if ("items" in localeData) {
+                  localeData["localeItems"] = localeData.items;
+                  delete localeData["items"];
+                }
+                if("localeItems" in localeData && isArray(localeData["localeItems"])) {
+                  localeData.localeItems.forEach(localeItem => {
+                    if('plurals' in localeItem) {
+                      localeItem.en = {};
+                      localeItem.en["one"] = localeItem.plurals.one.en;
+                      localeItem.en["other"] = localeItem.plurals.other.en;
+                      localeItem.vi = {};
+                      localeItem.vi["one"] = localeItem.plurals.one.vi;
+                      localeItem.vi["other"] = localeItem.plurals.other.vi;
+                      delete localeItem["plurals"];
+                    }
+                  });
+                }
+                console.log(localeData);
+                dispatch(setLocaleData(localeData));
               }
-              dispatch(setLocaleData(localeData));
+              catch(e) {
+                console.error(e);
+              }
             }
+           
             break;
           case "change_locale_selection":
-            if (data.localeSelection) {
-              dispatch(setLocaleSelection(data.localeSelection));
-            }
-            if (data.localeSelection == null) {
-              dispatch(setLocaleSelection(null));
-            }
+            dispatch(setTextsInLocaleSelection(data.texts));
             break;
         }
       }
@@ -60,7 +76,7 @@ const Locale = ({}) => {
           overflow: scroll;
         `}
       >
-        {localeSelection ? <HasSelection /> : <LocaleItems />}
+        {localeSelection && localeSelection.texts.length > 0 ? <SelectionEditor /> : <LocaleItemList />}
       </section>
      
       <AppBar />

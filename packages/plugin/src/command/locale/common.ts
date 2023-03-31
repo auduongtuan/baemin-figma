@@ -1,16 +1,49 @@
 import * as h from "../commandHelper";
+import { PREFIX, DEFAULT_LANG, LANGUAGES } from "../../constant/locale";
 import {
-  PREFIX, DEFAULT_LANG, LANGUAGES
-} from "../../constant/locale";
-import { findItemByKey, findItemByCharacters, findItemByKeyOrCharacters, LocaleItem, Lang } from "../../lib/localeData";
+  LocaleTextVariables,
+  findItemByKey,
+  findItemByCharacters,
+  findItemByKeyOrCharacters,
+  LocaleItem,
+  Lang,
+  findVariablesInCharacters,
+  getTextByCharacter,
+} from "../../lib/localeData";
 import updateSelection from "./updateSelection";
-export function getLang(node: TextNode) {
+import { isArray } from "lodash";
+export function getLang(node: TextNode): Lang {
   const lang = h.getNodeData(node, `${PREFIX}lang`);
-  if(lang == 'en' || lang == 'vi') {
+  if (lang == "en" || lang == "vi") {
     return lang;
   } else {
     return DEFAULT_LANG;
   }
+}
+export function getVariables(node: TextNode): LocaleTextVariables {
+  const string = h.getNodeData(node, `${PREFIX}variables`);
+  return string ? JSON.parse(string) : {};
+}
+export function getVariable(node: TextNode, variableName?: string) {
+  const variables = getVariables(node);
+  if (variableName && variableName in variables) {
+    return variables[variableName];
+  } else {
+    return null;
+  }
+}
+export function setVariables(node: TextNode, variables: LocaleTextVariables) {
+  h.setNodeData(node, `${PREFIX}variables`, JSON.stringify(variables));
+}
+export function setVariable(
+  node: TextNode,
+  variableName: string,
+  variableValue: number | string
+) {
+  setVariables(node, {
+    ...getVariables(node),
+    [variableName]: variableValue 
+  });
 }
 
 export function setLang(node: TextNode, lang: string) {
@@ -23,46 +56,50 @@ export function setKey(node: TextNode, key: string) {
   h.setNodeData(node, `${PREFIX}key`, key);
 }
 
-export function changeLang(textNode: TextNode, lang, localeItems: LocaleItem[]) {
-  const key = getKey(textNode);
-  const item =
-    findItemByKey(key, localeItems) ||
-    findItemByCharacters(textNode.characters, localeItems);
-  if (item && item[lang]) {
-    textNode.characters = item[lang];
-    setLang(textNode, lang);
-  }
-}
-export function autoSetKey(textNode: TextNode, localeItems: LocaleItem[], callback?: Function) {
-  const item = findItemByCharacters(textNode.characters, localeItems);
-  if(item) {
-    if(getKey(textNode) != item.key) {
+
+export function autoSetKey(
+  textNode: TextNode,
+  localeItems: LocaleItem[],
+  callback?: Function
+) {
+  const {item, lang, variables} = getTextByCharacter(textNode.characters, localeItems);
+  if (item) {
+    if (getKey(textNode) != item.key) {
       setKey(textNode, item.key);
-      if(callback) callback();
+      setLang(textNode, lang);
+      setVariables(textNode, variables);
+      if (callback) callback();
     }
   }
 }
-export function switchLang(lang: Lang, localeItems: LocaleItem[]) {
-  h.selection().forEach((selection) => {
-    if (h.isText(selection)) {
-      changeLang(selection, lang, localeItems);
-    } else if (h.isContainer(selection)) {
-      const texts = selection.findAll((node) => h.isText(node)) as TextNode[];
-      texts.forEach((textNode) => {
-        changeLang(textNode, lang, localeItems);
-      });
+
+// export function checkNodeVisible(node: SceneNode) {
+//   return (
+//     node.visible &&
+//     (!node.parent ||
+//       !h.isContainer(node.parent) ||
+//       (h.isContainer(node.parent) && node.parent.visible)) &&
+//     (!node.parent.parent ||
+//       !h.isContainer(node.parent.parent) ||
+//       (h.isContainer(node.parent.parent) && node.parent.parent.visible)) &&
+//     (!node.parent.parent.parent ||
+//       !h.isContainer(node.parent.parent.parent) ||
+//       (h.isContainer(node.parent.parent.parent) &&
+//         node.parent.parent.parent.visible))
+//   );
+// }
+
+
+export function getTextNodes(scope?: BaseNode | BaseNode[]): TextNode[] {
+  const updateNodes = scope ? (isArray(scope) ? [...scope] : [scope]) : h.selection();
+  const textNodes: TextNode[] = [];
+  updateNodes.forEach((parentNode) => {
+    if (h.isContainer(parentNode) || parentNode.type == "PAGE") {
+      textNodes.push(...parentNode.findAllWithCriteria({types: ['TEXT']}) as TextNode[]);
+    } 
+    if (parentNode.type == 'TEXT') {
+      textNodes.push(parentNode);
     }
   });
-  figma.notify(`Switched selection to ${LANGUAGES[lang]}`);
-  updateSelection();
-};
-
-export function checkNodeVisible(node: SceneNode) {
-  return node.visible &&
-              (!node.parent || !h.isContainer(node.parent) ||
-                (h.isContainer(node.parent) && node.parent.visible)) &&
-              (!node.parent.parent || !h.isContainer(node.parent.parent) ||
-                (h.isContainer(node.parent.parent) && node.parent.parent.visible)) &&
-              (!node.parent.parent.parent || !h.isContainer(node.parent.parent.parent) ||
-                (h.isContainer(node.parent.parent.parent) && node.parent.parent.parent.visible))
+  return textNodes;
 }

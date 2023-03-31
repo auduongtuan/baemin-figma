@@ -6,14 +6,18 @@ import React, {
   useEffect,
 } from "react";
 import styled from "styled-components";
+import { renderToString } from 'react-dom/server'
+
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
-  label?: string;
+  label?: React.ReactNode;
+  errorText?: React.ReactNode
   helpText?: React.ReactNode;
 }
 export interface TextareaProps
   extends React.ComponentPropsWithoutRef<"textarea"> {
   label?: string;
+  errorText?: React.ReactNode
   helpText?: React.ReactNode;
 }
 
@@ -37,6 +41,7 @@ const BaseInput = styled.input<TextBoxProps>`
   border-radius: var(--border-radius-small);
   outline: none;
   background-color: var(--white);
+  --ring-color: var(--blue);
   &:hover,
   &:placeholder-shown:hover {
     color: var(--black8);
@@ -55,8 +60,8 @@ const BaseInput = styled.input<TextBoxProps>`
     border: 1px solid var(--black1);
   }
   &:focus:placeholder-shown {
-    border: 1px solid var(--blue);
-    outline: 1px solid var(--blue);
+    border: 1px solid var(--ring-color);
+    outline: 1px solid var(--ring-color);
     outline-offset: -2px;
   }
   &:disabled:hover {
@@ -65,8 +70,8 @@ const BaseInput = styled.input<TextBoxProps>`
   &:active,
   &:focus {
     color: var(--black);
-    border: 1px solid var(--blue);
-    outline: 1px solid var(--blue);
+    border: 1px solid var(--ring-color);
+    outline: 1px solid var(--ring-color);
     outline-offset: -2px;
   }
   &:disabled {
@@ -76,6 +81,9 @@ const BaseInput = styled.input<TextBoxProps>`
   }
   &:disabled:active {
     outline: none;
+  }
+  &[aria-invalid="true"] {
+    --ring-color: var(--figma-color-border-danger);
   }
   .icon {
     position: absolute;
@@ -96,6 +104,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
       value,
       type = "text",
       className = "",
+      errorText,
       helpText,
       ...rest
     },
@@ -116,13 +125,25 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
         )}
         <BaseInput
           id={id}
-          placeholder={label}
+          placeholder={typeof label == 'string' ? label : renderToString(<>label</>)}
           defaultValue={defaultValue}
           value={value}
           type={type}
           {...rest}
           ref={ref}
+          aria-invalid={errorText ? true : false}
         />
+        {errorText && (
+          <p
+            css={`
+              color: var(--figma-color-text-danger);
+              font-size: var(--font-size-xsmall);
+              margin-top: 8px;
+            `}
+          >
+            {errorText}
+          </p>
+        )}
         {helpText && (
           <p
             css={`

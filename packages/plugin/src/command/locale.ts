@@ -1,19 +1,22 @@
-import {postData} from "./commandHelper";
-import { switchLang } from "./locale/common";
-import updateText from "./locale/updateText";
+import {postData, selection} from "./commandHelper";
+import switchLang from "./locale/switchLang";
+import {updateTextByIds} from "./locale/updateText";
 import autoSetKeyForSelection from "./locale/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./locale/localeData";
 import exportCode from "./locale/exportCode";
 import updateSelection from "./locale/updateSelection";
 import selectTexts from "./locale/selectTexts";
 import { LocaleItem } from "../lib/localeData";
+import createAnnotation from "./locale/createAnnotation";
+figma.skipInvisibleInstanceChildren = true;
 const locale = {
   run: () => {
     figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
     postData({ page: "locale" });
     updateSelection();
+
   },
-  onMessage: (msg) => {
+  onMessage: async (msg) => {
     switch (msg.type) {
       case "select_texts":
         selectTexts(msg.key);
@@ -22,7 +25,8 @@ const locale = {
         autoSetKeyForSelection(msg.localeItems);
         break;
       case "update_text":
-        updateText(msg);
+        const {ids, lang, key, variables, item} = msg;
+        updateTextByIds(ids, {lang, key, variables, item});
         // figma.notify('updateText');
         break;
       case "switch_lang":
@@ -34,9 +38,12 @@ const locale = {
       case "save_locale_data":
         saveLocaleData(msg.localeDataString);
         break;
-      // case "export_code":
-      //   await exportCode(msg.localeItems as LocaleItem[]);
-      //   break;
+      case "export_code":
+        await exportCode(msg.localeItems as LocaleItem[]);
+        break;
+      case "create_annotation":
+        await createAnnotation();
+        break;
       case "show_figma_notify":
         figma.notify(msg.message);
         break;

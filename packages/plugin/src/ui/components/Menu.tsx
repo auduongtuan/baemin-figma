@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { ReactElement, forwardRef } from "react";
 
 interface MenuProps extends React.HTMLAttributes<HTMLDivElement> {}
 const MenuContainer = ({ children, ...rest }) => {
@@ -47,88 +47,109 @@ interface MenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
   highlighted?: boolean;
   name: React.ReactNode;
   content?: React.ReactNode;
+  icon?: React.ReactNode;
 }
-const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(({
-  selected,
-  highlighted = false,
-  name,
-  content,
-  ...rest
-}, ref) => {
-  return (
-    <div
-      css={`
-        align-items: center;
-        color: var(--white);
-        cursor: default;
-        display: flex;
-        font-family: var(--font-stack);
-        font-size: var(--font-size-small);
-        font-weight: var(--font-weight-normal);
-        letter-spacing: var(--font-letter-spacing-neg-xsmall);
-        line-height: var(--font-line-height);
-        // height: var(--size-small);
-        padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
-        user-select: none;
-        outline: none;
-
-        &[disabled] {
-          color: var(--figma-color-text-oncomponent-tertiary);
-        }
-        /* &:hover, */
-        /* &:focus, */
-        &[data-highlighted] {
-          background-color: var(--blue);
-        }
-        
-      `}
-      // className={`${selected ? "select-menu__item--selected" : ""} ${
-      //   highlighted ? "select-menu__item--highlighted" : ""
-      // }`}
-      data-selected={selected ? selected : undefined}
-      data-highlighted={highlighted ? highlighted : undefined}
-      // {...getItemProps({ item, index, disabled: item.disabled })}
-      {...rest}
-      ref={ref}
-    >
-      <span
+const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
+  ({ selected, highlighted = false, name, content, icon, ...rest }, ref) => {
+    return (
+      <div
         css={`
-          width: var(--size-xsmall);
-          height: var(--size-xsmall);
-          margin-right: var(--size-xxsmall);
-          opacity: ${selected ? '1' : '0'};
-          pointer-events: none;
-          background-image: url("data:image/svg+xml;utf8,%3Csvg%20fill%3D%22none%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20clip-rule%3D%22evenodd%22%20d%3D%22m13.2069%205.20724-5.50002%205.49996-.70711.7072-.70711-.7072-3-2.99996%201.41422-1.41421%202.29289%202.29289%204.79293-4.79289z%22%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
-          background-repeat: no-repeat;
-          background-position: center center;
-          flex-shrink: 0;
-          flex-grow: 0;
-        `}
-      ></span>
-      <span
-        css={`
+          align-items: center;
+          color: var(--white);
+          cursor: default;
           display: flex;
-          flex-direction: column;
-          padding: var(--size-xxxsmall) 0;
-          width: calc(100% - 16px);
-          .name,
-          .content {
-            width: 100%;
-            overflow-x: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            pointer-events: none;
+          font-family: var(--font-stack);
+          font-size: var(--font-size-small);
+          font-weight: var(--font-weight-normal);
+          letter-spacing: var(--font-letter-spacing-neg-xsmall);
+          line-height: var(--font-line-height);
+          // height: var(--size-small);
+          padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
+          user-select: none;
+          outline: none;
+
+          &[disabled] {
+            color: var(--figma-color-text-oncomponent-tertiary);
           }
-          .content {
-            font-size: var(--font-size-xsmall);
-            color: var(--figma-color-text-onbrand-secondary);
+          /* &:hover, */
+          /* &:focus, */
+          &[data-highlighted] {
+            background-color: var(--blue);
           }
         `}
+        // className={`${selected ? "select-menu__item--selected" : ""} ${
+        //   highlighted ? "select-menu__item--highlighted" : ""
+        // }`}
+        data-selected={selected ? selected : undefined}
+        data-highlighted={highlighted ? highlighted : undefined}
+        // {...getItemProps({ item, index, disabled: item.disabled })}
+        {...rest}
+        ref={ref}
       >
-        <span className="name">{name}</span>
-        {content && <span className="content">{content}</span>}
-      </span>
-    </div>
-  );
+        {!icon ? (
+          <span
+            css={`
+              width: var(--size-xsmall);
+              height: var(--size-xsmall);
+              margin-right: var(--size-xxsmall);
+              opacity: ${selected ? "1" : "0"};
+              pointer-events: none;
+              background-image: url("data:image/svg+xml;utf8,%3Csvg%20fill%3D%22none%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20clip-rule%3D%22evenodd%22%20d%3D%22m13.2069%205.20724-5.50002%205.49996-.70711.7072-.70711-.7072-3-2.99996%201.41422-1.41421%202.29289%202.29289%204.79293-4.79289z%22%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
+              background-repeat: no-repeat;
+              background-position: center center;
+              flex-shrink: 0;
+              flex-grow: 0;
+            `}
+          ></span>
+        ) : (
+          <span
+            css={`
+              width: var(--size-xsmall);
+              height: var(--size-xsmall);
+              margin-right: var(--size-xxsmall);
+              pointer-events: none;
+              flex-shrink: 0;
+              flex-grow: 0;
+              svg {
+                width: var(--size-xsmall);
+                height: var(--size-xsmall);
+              }
+            `}
+          >
+            {icon}
+          </span>
+        )}
+        <span
+          css={`
+            display: flex;
+            flex-direction: column;
+            padding: var(--size-xxxsmall) 0;
+            width: calc(100% - 16px);
+            .name,
+            .content {
+              width: 100%;
+              overflow-x: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              pointer-events: none;
+            }
+            .content {
+              font-size: var(--font-size-xsmall);
+              color: var(--figma-color-text-onbrand-secondary);
+            }
+          `}
+        >
+          <span className="name">{name}</span>
+          {content && <span className="content">{content}</span>}
+        </span>
+      </div>
+    );
+  }
+);
+const MenuTrigger = forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<"button">
+>(({ className, ...rest }, forwardedRef) => {
+  return <button ref={forwardedRef} {...rest}></button>;
 });
 export default Object.assign(MenuContainer, { Item: MenuItem });

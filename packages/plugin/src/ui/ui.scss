@@ -650,6 +650,14 @@ label {
   display: block;
 }
 
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: relative;
+}
+
 .menu-item {
   background: var(--white);
   border: none;

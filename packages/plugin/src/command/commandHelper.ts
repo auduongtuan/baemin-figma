@@ -16,9 +16,12 @@ export const swapVariant = (instance: InstanceNode, changedVariantProperties: { 
 		});
 		if (!swapedComponent) {
 			console.log("component not found");
+			return false;
 		}
-		if (swapedComponent && swapedComponent.type == "COMPONENT" && instance.mainComponent.id != swapedComponent.id) {
-			instance.swapComponent(swapedComponent)
+		if (swapedComponent && swapedComponent.type == "COMPONENT") {
+			// && instance.mainComponent.id != swapedComponent.id
+			instance.swapComponent(swapedComponent);
+			return true;
 		}
 	}
 }
@@ -75,7 +78,7 @@ export const isFrame = (node: BaseNode): node is FrameNode => {
 	return node && node.type == "FRAME"
 }
 
-export const isComponent = (node: BaseNode): node is FrameNode => {
+export const isComponent = (node: BaseNode): node is ComponentNode => {
 	return node && node.type == "COMPONENT"
 }
 

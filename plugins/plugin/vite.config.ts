@@ -5,7 +5,7 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: './',
+  root: './src/ui/',
   plugins: [
     react({
       // jsxImportSource: "@emotion/react",
@@ -26,15 +26,15 @@ export default defineConfig({
     chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,
     reportCompressedSize: false,
-    outDir: "dist",
+    outDir: "../../dist",
     rollupOptions: {
       inlineDynamicImports: true,
-      input: {
-        "index": './src/ui/index.html'
-      }, // default      },
-      output: {
-        dir: "./dist",
-      }
+      // input: {
+      //   "index": './src/ui/index.html'
+      // }, // default      },
+      // output: {
+      //   dir: "./dist",
+      // }
       // output: {
       //   manualChunks: () => "everything.js",
       // },

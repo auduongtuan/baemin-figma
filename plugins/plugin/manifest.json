@@ -6,7 +6,7 @@
     "figma"
   ],
   "main": "dist/code.js",
-  "ui": "dist/src/ui/index.html",
+  "ui": "dist/index.html",
   "menu": [
     {"name": "Open locale editor", "command": "locale"},
     {"name": "Change theme", "command": "changeTheme"}

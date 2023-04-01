@@ -1,0 +1,35 @@
+{
+  "name": "ds",
+  "type": "module",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.umd.js",
+  "types": "./dist/index.d.ts",
+  "author": "Tuan Au Duong",
+  "license": "",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite build --watch",
+    "preview": "vite preview"       
+  },
+  "dependencies": {
+    "tsconfig": "workspace:*"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist/**",
+    "dist/*.scss"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.js"
+    },
+    "./ui.scss": {
+      "import": "./dist/ui.scss"
+    }
+  }
+}

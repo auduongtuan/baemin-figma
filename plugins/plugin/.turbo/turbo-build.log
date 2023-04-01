@@ -1,0 +1,21 @@
+
+> baemin-figma-plugin@0.1.1 build /Users/tuan.au/Coding/baemin-figma/plugins/plugin
+> npm run build:ui && npm run build:main -- --minify
+
+
+> baemin-figma-plugin@0.1.1 build:ui
+> npx vite build --minify esbuild --emptyOutDir=false
+
+vite v3.2.5 building for production...
+transforming...
+✓ 127 modules transformed.
+rendering chunks...
+dist/src/ui/index.html   615.03 KiB
+
+> baemin-figma-plugin@0.1.1 build:main
+> node ./esbuild.js --minify
+
+
+  dist/code.js  303.2kb
+
+⚡ Done in 60ms

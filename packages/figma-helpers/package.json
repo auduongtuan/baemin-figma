@@ -1,0 +1,9 @@
+{
+  "name": "figma-helpers",
+  "version": "0.0.1",
+  "author": "Tuan Au Duong",
+  "license": "",
+  "dependencies": {
+    "tsconfig": "workspace:*"
+  }
+}

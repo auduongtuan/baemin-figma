@@ -1,0 +1,14 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "devold": "vite",
+    "buildold": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "ds": "workspace:*"
+  }
+}

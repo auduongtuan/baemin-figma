@@ -5,9 +5,9 @@ import { placeholders } from "./helpers";
 export interface LocaleData {
   sheetName?: string;
   sheetId?: string;
-  localeSelection?: LocaleSelection;
+  // localeSelection?: LocaleSelection;
   localeItems?: LocaleItem[];
-  matchedItem?: LocaleItem;
+  // matchedItem?: LocaleItem;
   modifiedTime?: string;
 }
 
@@ -22,7 +22,7 @@ export type LocaleItemPluralContent = {
 export type LocaleItemContent = string | LocaleItemPluralContent;
 export type Lang = keyof typeof LANGUAGES;
 
-export type LocaleItem = { key: string } & {
+export type LocaleItem = { key: string, fromLibrary?: boolean, } & {
   [key in Lang]: LocaleItemContent;
 };
 

@@ -523,6 +523,12 @@ $sm: "screen and (max-width: 576px)";
   display: flex;
   gap: var(--gap);
 }
+.inline-flex {
+  --gap: 0;
+  display: inline-flex;
+  gap: var(--gap);
+}
+
 
 
 @each $col in (2, 3, 4, 6) {
@@ -535,8 +541,24 @@ $sm: "screen and (max-width: 576px)";
   .m-#{$increment} {
     margin: #{$increment}px !important;
   }
+  .mx-#{$increment} {
+    margin-left: #{$increment}px !important;
+    margin-right: #{$increment}px !important;
+  }
+  .my-#{$increment} {
+    margin-top: #{$increment}px !important;
+    margin-bottom: #{$increment}px !important;
+  }
   .p-#{$increment} {
     padding: #{$increment}px !important;
+  }
+  .px-#{$increment} {
+    padding-left: #{$increment}px !important;
+    padding-right: #{$increment}px !important;
+  }
+  .py-#{$increment} {
+    padding-top: #{$increment}px !important;
+    padding-bottom: #{$increment}px !important;
   }
   .gap-#{$increment} {
     --gap: #{$increment}px !important;
@@ -564,8 +586,24 @@ $breakpoint_values: (
       .#{$breakpoint}\:m-#{$increment} {
         margin: #{$increment}px !important;
       }
+      .#{$breakpoint}\:mx-#{$increment} {
+        margin-left: #{$increment}px !important;
+        margin-right: #{$increment}px !important;
+      }
+      .#{$breakpoint}\:my-#{$increment} {
+        margin-top: #{$increment}px !important;
+        margin-bottom: #{$increment}px !important;
+      }
       .#{$breakpoint}\:p-#{$increment} {
         padding: #{$increment}px !important;
+      }
+      .#{$breakpoint}\:px-#{$increment} {
+        padding-left: #{$increment}px !important;
+        padding-right: #{$increment}px !important;
+      }
+      .#{$breakpoint}\:py-#{$increment} {
+        padding-top: #{$increment}px !important;
+        padding-bottom: #{$increment}px !important;
       }
       .#{$breakpoint}\:w-#{$increment} {
         width: #{$increment}px !important;

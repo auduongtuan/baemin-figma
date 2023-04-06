@@ -23,6 +23,7 @@ importers:
       '@reduxjs/toolkit': ^1.9.1
       '@types/js-beautify': ^1.13.3
       '@types/lodash': ^4.14.191
+      '@types/prismjs': ^1.26.0
       '@types/react': ^17.0.52
       '@types/react-dom': ^17.0.18
       '@types/styled-components': ^5.1.26
@@ -91,6 +92,7 @@ importers:
       '@figma/plugin-typings': 1.62.0
       '@types/js-beautify': 1.13.3
       '@types/lodash': 4.14.191
+      '@types/prismjs': 1.26.0
       '@types/react': 17.0.52
       '@types/react-dom': 17.0.18
       '@types/styled-components': 5.1.26
@@ -1421,6 +1423,10 @@ packages:
 
   /@types/node/18.11.16:
     resolution: {integrity: sha512-6T7P5bDkRhqRxrQtwj7vru+bWTpelgtcETAZEUSdq0YISKz8WKdoBukQLYQQ6DFHvU9JRsbFq0JH5C51X2ZdnA==}
+
+  /@types/prismjs/1.26.0:
+    resolution: {integrity: sha512-ZTaqn/qSqUuAq1YwvOFQfVW1AR/oQJlLSZVustdjwI+GZ8kr0MSHBj0tsXPW1EqHubx50gtBEjbPGsdZwQwCjQ==}
+    dev: true
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}

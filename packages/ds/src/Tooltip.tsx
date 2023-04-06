@@ -14,11 +14,11 @@ const Tooltip = ({ children, content, contentProps }: {
           <RadixTooltip.Content
             css={`
               border-radius: 2px;
-              padding: 4px 8px;
+              padding: 6px 8px;
               font-size var(----font-size-xsmall);
               line-height: 1;
               color: var(--figma-color-text-onbrand);
-              background-color: var(--figma-color-bg-brand);
+              background-color: var(--black8);
               user-select: none;
               /* animation-duration: 400ms;
               animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);

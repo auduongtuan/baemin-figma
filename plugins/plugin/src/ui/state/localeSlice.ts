@@ -9,7 +9,8 @@ import { MIXED_VALUE } from "../../constant/locale";
 import { runCommand } from "../uiHelper";
 import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
 import { cloneDeep } from "lodash";
-const initialState: LocaleData = {
+type LocaleState = LocaleData & {localeSelection: LocaleSelection};
+const initialState: LocaleState = {
   sheetName: null,
   sheetId: null,
   localeSelection: {
@@ -24,7 +25,7 @@ const initialState: LocaleData = {
   // matchedItem: null,
   modifiedTime: null,
 };
-function updateSummaryInLocaleSelection(state: LocaleData) {
+function updateSummaryInLocaleSelection(state: LocaleState) {
   const isSameLang = state.localeSelection.texts.every(
     (text) => text && text.lang == state.localeSelection.texts[0].lang
   );

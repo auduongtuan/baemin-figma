@@ -42,7 +42,7 @@ const MultipleTextEditor = () => {
           <Tooltip content="Create annotation for selection">
             <IconButton
               onClick={() => {
-               runCommand("create_annotation");
+               runCommand("create_annotation", {localeTexts: localeSelection.texts});
               }}
             >
               <ChatBubbleIcon />

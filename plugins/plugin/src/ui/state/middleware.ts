@@ -29,8 +29,9 @@ listenerMiddleware.startListening({
       modifiedTime: modifiedTime,
       localeItems: state.locale.localeItems,
     };
+    console.log('LOCALE DATA IN MIDDLEWARE', localeData);
     runCommand("save_locale_data", {
-      localeDataString: JSON.stringify(localeData),
+      localeData: localeData
     });
   },
 });

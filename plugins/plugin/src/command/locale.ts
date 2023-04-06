@@ -36,13 +36,13 @@ const locale = {
         getLocaleData();
         break;
       case "save_locale_data":
-        saveLocaleData(msg.localeDataString);
+        saveLocaleData(msg.localeData);
         break;
       case "export_code":
-        await exportCode(msg.localeItems as LocaleItem[]);
+        await exportCode(msg.langJSONs);
         break;
       case "create_annotation":
-        await createAnnotation();
+        await createAnnotation(msg.localeTexts);
         break;
       case "show_figma_notify":
         figma.notify(msg.message);

@@ -95,7 +95,7 @@ export const isInstance = (node: BaseNode, componentName: string | null = null):
 	}
 }
 
-type ContainerNode = InstanceNode | FrameNode | GroupNode | ComponentNode;
+export type ContainerNode = InstanceNode | FrameNode | GroupNode | ComponentNode;
 export const isContainer = (node:BaseNode): node is ContainerNode  => {
 	return node.type == "INSTANCE" || node.type == "FRAME" || node.type == "GROUP" || node.type == "COMPONENT";
 }
@@ -104,15 +104,21 @@ export const findContainer = (parentContainer: ContainerNode, containerName: str
 	return <ContainerNode | null>parentContainer.findOne(node => isContainer(node) && node.name == containerName);
 }
 
-export const loadRobotoFontsAsync = async () => {
-  await figma.loadFontAsync({ family: "Roboto", style: "Regular" });
-  await figma.loadFontAsync({ family: "Roboto", style: "Medium" });
-  await figma.loadFontAsync({ family: "Roboto", style: "SemiBold" });
-  await figma.loadFontAsync({ family: "Roboto", style: "Bold" });
-	await figma.loadFontAsync({ family: "Roboto Mono", style: "Regular" });
-  await figma.loadFontAsync({ family: "Roboto Mono", style: "Medium" });
-  await figma.loadFontAsync({ family: "Roboto Mono", style: "SemiBold" });
-  await figma.loadFontAsync({ family: "Roboto Mono", style: "Bold" });
+export const loadRobotoFontsAsync = async (family: 'Sans' | 'Mono' = null, weight: 'Regular' | 'Medium' | 'SemiBold' | 'Bold' = null) => {
+	if(family == 'Sans' || !family) {
+		if(weight == 'Regular' || !weight) await figma.loadFontAsync({ family: "Roboto", style: "Regular" });
+		if(weight == 'Medium' || !weight) await figma.loadFontAsync({ family: "Roboto", style: "Medium" });
+		if(weight == 'SemiBold' || !weight) await figma.loadFontAsync({ family: "Roboto", style: "SemiBold" });
+		if(weight == 'Bold' || !weight) await figma.loadFontAsync({ family: "Roboto", style: "Bold" });
+	}
+	if(family == 'Mono' || !family) {
+		if(weight == 'Regular' || !weight) await figma.loadFontAsync({ family: "Roboto Mono", style: "Regular" });
+		if(weight == 'Medium' || !weight) await figma.loadFontAsync({ family: "Roboto Mono", style: "Medium" });
+		if(weight == 'SemiBold' || !weight) await figma.loadFontAsync({ family: "Roboto Mono", style: "SemiBold" });
+		if(weight == 'Bold' || !weight) await figma.loadFontAsync({ family: "Roboto Mono", style: "Bold" });
+	}
+
+
 }
 export const loadFontsAsync = async (node: TextNode) => {
 	if(node && node.characters) {

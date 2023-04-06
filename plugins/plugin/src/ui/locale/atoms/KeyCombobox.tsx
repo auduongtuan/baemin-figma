@@ -28,7 +28,6 @@ function KeyCombobox({
   value,
   text,
   forSelection = false,
-  className = "",
   ...rest
 }: KeyComboboxProps) {
   const localeSelection = useAppSelector(
@@ -124,7 +123,6 @@ function KeyCombobox({
       // disabled={
       //   forSelection && localeSelection && localeSelection.summary.key == MIXED_VALUE ? true : false
       // }
-      className={`w-half ${className}`}
       {...rest}
     ></Combobox>
     </>

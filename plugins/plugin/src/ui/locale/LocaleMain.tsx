@@ -22,33 +22,35 @@ const Locale = ({}) => {
         const { type, ...data } = event.data.pluginMessage;
         switch (type) {
           case "load_locale_data":
+            console.log('Load Locale Data', data);
             if (data.localeData) {
-              try {
-                let localeData = JSON.parse(data.localeData);
-                // migrate to new typed system
-                if ("items" in localeData) {
-                  localeData["localeItems"] = localeData.items;
-                  delete localeData["items"];
-                }
-                if("localeItems" in localeData && isArray(localeData["localeItems"])) {
-                  localeData.localeItems.forEach(localeItem => {
-                    if('plurals' in localeItem) {
-                      localeItem.en = {};
-                      localeItem.en["one"] = localeItem.plurals.one.en;
-                      localeItem.en["other"] = localeItem.plurals.other.en;
-                      localeItem.vi = {};
-                      localeItem.vi["one"] = localeItem.plurals.one.vi;
-                      localeItem.vi["other"] = localeItem.plurals.other.vi;
-                      delete localeItem["plurals"];
-                    }
-                  });
-                }
-                console.log(localeData);
-                dispatch(setLocaleData(localeData));
-              }
-              catch(e) {
-                console.error(e);
-              }
+              // try {
+              //   let localeData = JSON.parse(data.localeData);
+              //   // migrate to new typed system
+              //   if ("items" in localeData) {
+              //     localeData["localeItems"] = localeData.items;
+              //     delete localeData["items"];
+              //   }
+              //   if("localeItems" in localeData && isArray(localeData["localeItems"])) {
+              //     localeData.localeItems.forEach(localeItem => {
+              //       if('plurals' in localeItem) {
+              //         localeItem.en = {};
+              //         localeItem.en["one"] = localeItem.plurals.one.en;
+              //         localeItem.en["other"] = localeItem.plurals.other.en;
+              //         localeItem.vi = {};
+              //         localeItem.vi["one"] = localeItem.plurals.one.vi;
+              //         localeItem.vi["other"] = localeItem.plurals.other.vi;
+              //         delete localeItem["plurals"];
+              //       }
+              //     });
+              //   }
+              //   console.log(localeData);
+              //   dispatch(setLocaleData(localeData));
+              // }
+              // catch(e) {
+              //   console.error(e);
+              // }
+              dispatch(setLocaleData(data.localeData));
             }
            
             break;
@@ -58,7 +60,7 @@ const Locale = ({}) => {
         }
       }
     };
-  }, []);
+  }, []); 
   return (
     <div
       css={`

@@ -27,11 +27,13 @@ export interface ComboboxProps {
   defaultValue?: string;
   value?: string;
   className?: string;
+  comboboxClassName?: string;
   placeholder?: string;
   options?: ComboboxOption[];
   disabled?: boolean;
   onChange?: Function;
   menuWidth?: string | number;
+  inline?: boolean;
 }
 
 function smartIncludes(stringA: string, stringB: string) {
@@ -53,6 +55,7 @@ const Combobox = ({
   disabled = false,
   onChange,
   menuWidth = "100%",
+  inline = false,
   ...rest
 }: ComboboxProps) => {
   // return <div></div>;
@@ -153,21 +156,29 @@ const Combobox = ({
     },
   });
   return (
-    <div className={`show-border ${className && className}`}>
+    <div
+      css={`
+        display: ${inline ? 'inline-flex' : 'flex'};
+        flex-direction: ${inline ? 'row' : 'column'};
+        align-items: ${inline ? 'center' : 'flex-start'};
+        gap: 8px;
+
+      `}
+      className={`show-border ${className && className}`}
+    >
       {label && (
-        <label htmlFor={id} className="mb-8 text-xsmall" {...getLabelProps()}>
-          Test ne {label}
+        <label htmlFor={id} className="text-xsmall" {...getLabelProps()}>
+          {label}
         </label>
       )}
       <Popper.Root>
-        <div
-        // className={`select-menu`}
-        >
+       
           <Popper.Anchor asChild>
             <div
               className={classnames("select-menu__button", {
                 "select-menu__button--focus": isFocus,
                 "select-menu__button--disabled": disabled,
+                "flex-shrink-1": inline
               })}
             >
               <input
@@ -238,7 +249,6 @@ const Combobox = ({
               </Popper.Content>
             </Portal>
           )}
-        </div>
       </Popper.Root>
     </div>
   );

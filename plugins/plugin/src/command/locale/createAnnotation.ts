@@ -2,83 +2,119 @@ import * as h from "figma-helpers";
 import { MIXED_VALUE } from "../../constant/locale";
 import { LocaleText } from "../../lib/localeData";
 import { getLang, getKey, getVariables } from "./common";
-import { loadRobotoFontsAsync } from "figma-helpers";
+import { loadRobotoFontsAsync, isFrame, ContainerNode } from "figma-helpers";
 import { truncate } from "lodash";
-async function createAnnotation() {
+import { hexToFigmaRGB } from "figma-helpers/colors";
+type Annotation = LocaleText & { node: TextNode };
+function sortByAbsolutePosition(a: SceneNode, b: SceneNode) {
+  return (
+    a.absoluteTransform[1][2] - b.absoluteTransform[1][2] ||
+    a.absoluteTransform[0][2] - b.absoluteTransform[0][2]
+  );
+}
+async function createAnnotation(texts: LocaleText[]) {
   const selection = h.selection();
-  console.log("Test annotation");
-  await loadRobotoFontsAsync();
-  // const stickyNoteComponent = await figma.importComponentByKeyAsync(
-  //   "06f45208cc6f1b3749329a96de4c6e019c8809ca"
-  // );
-  const noteComponent = await figma.importComponentByKeyAsync("83180b94863f974cd3ab9420adbd14e3a6b7f714");
-  figma.skipInvisibleInstanceChildren = false;
-
+  await loadRobotoFontsAsync("Mono", "Regular");
+  figma.skipInvisibleInstanceChildren = true;
   selection.forEach((selectionItem) => {
-    const allTexts: TextNode[] = [];
-
+    const allTextNodes: TextNode[] = [];
+    let textContainer: ContainerNode;
     if (h.isText(selectionItem)) {
-      allTexts.push(selectionItem);
+      allTextNodes.push(selectionItem);
+      if (isFrame(selectionItem.parent)) textContainer = selectionItem.parent;
+    } else if (h.isContainer(selectionItem)) {
+      allTextNodes.push(
+        ...(selectionItem.findAllWithCriteria({
+          types: ["TEXT"],
+        }) as TextNode[])
+      );
+      textContainer = selectionItem;
     }
-    else if (
-        h.isContainer(selectionItem)
-    ) {
-      allTexts.push(...(selectionItem.findAllWithCriteria({types: ['TEXT']}) as TextNode[]));
-    }
-
-  
-  
-
-    const stickyNode = noteComponent.createInstance();
-    const title = stickyNode.findChild(
-      (node) => h.isText(node) && node.name == "Title"
-    ) as TextNode;
-    const items = stickyNode.findChild(
-      (node) => h.isFrame(node) && node.name == "Items"
-    ) as FrameNode;
-    if (title && items) {
-      // title.characters = "i18n";
-      // title.visible = false;
-      let currentIndex = -1;
-      allTexts.forEach((text) => {
-        // id: textNode.id,
-        const key = getKey(text);
-        // const lang = getLang(textNode),
-        // variables: getVariables(textNode),
-        // characters: textNode.characters,
-        if(key) {
-          currentIndex++;
-          const item = items.children[currentIndex];
-          if(item && h.isInstance(item)) {
-            item.visible = true;
-            const indexTextNode = ((item.children[0] as FrameNode).children[0] as InstanceNode).children[0] as TextNode;
-            const textTextNode = (item.children[1] as FrameNode).children[0] as TextNode;
-            const keyTextNode = (item.children[1] as FrameNode).children[1] as TextNode;
-            if(indexTextNode && textTextNode && keyTextNode) {
-              indexTextNode.characters = (currentIndex+1).toString();
-              textTextNode.characters = truncate(text.characters, { length: 80 });
-              keyTextNode.characters = key;
-            }
-          }
+    if (!textContainer) return;
+    console.log(allTextNodes);
+    const paint: SolidPaint = {
+      type: "SOLID",
+      color: hexToFigmaRGB("#A966FF"),
+    };
+    // title.characters = "i18n";
+    // title.visible = false;
+    const annotateTextData: Annotation[] = texts
+      .filter((text) => text.key)
+      .reduce((acc, text) => {
+        const node = allTextNodes.find((node) => node.id == text.id);
+        if (node) {
+          acc.push({
+            ...text,
+            node: allTextNodes.find((node) => node.id == text.id),
+          });
         }
-      })
-      // note.characters = texts.reduce((acc, text, i) => {
-      //   if (text.key) {
-      //     acc +=
-      //       truncate(text.characters, { length: 20 }) + ": " + text.key;
-      //     if(i < texts.length - 1) acc += "\n";
-      //   }
-      //   return acc;
-      // }, "");
-      // note.setRangeListOptions(0, note.characters.length, {
-      //   type: "UNORDERED",
-      // });
-      selectionItem.parent.appendChild(stickyNode);
-      stickyNode.x = selectionItem.x - stickyNode.width - 24;
-      stickyNode.y = selectionItem.y;
+        return acc;
+      }, []);
+    function sortAnnotationByTextAbsolutePosition(
+      a: Annotation,
+      b: Annotation
+    ) {
+      return sortByAbsolutePosition(a.node, b.node);
     }
-    figma.skipInvisibleInstanceChildren = true;
-
+    const containerX = textContainer.absoluteTransform[0][2];
+    const containerY = textContainer.absoluteTransform[1][2];
+    console.log({ containerX, containerY });
+    const annotateX = containerX - 240 - 24;
+    let currentY = 0;
+    const groupNodes = [];
+    annotateTextData
+      .sort(sortAnnotationByTextAbsolutePosition)
+      .forEach((annotation) => {
+        if (!annotation.node) return;
+        // id: textNode.id,
+        const annotateTextNode = figma.createText();
+        annotateTextNode.fills = [paint];
+        annotateTextNode.fontName = { family: "Roboto Mono", style: "Regular" };
+        annotateTextNode.textAutoResize = "HEIGHT";
+        annotateTextNode.fontSize = 12;
+        annotateTextNode.resizeWithoutConstraints(240, 16);
+        annotateTextNode.textAlignHorizontal = "RIGHT";
+        annotateTextNode.characters = annotation.key;
+        annotateTextNode.x = annotateX;
+        const annotateLine = figma.createVector();
+        annotateLine.strokeWeight = 1;
+        annotateLine.strokes = [paint];
+        const textX = annotation.node.absoluteTransform[0][2];
+        const textY = annotation.node.absoluteTransform[1][2];
+        const calY =
+          textY + (annotation.node.height - annotateTextNode.height) / 2;
+        if (calY > currentY - 16 && calY < currentY + 16) {
+          annotateTextNode.y = calY + annotation.node.height / 2 + 16;
+          const textCenterX = textX + 4;
+          const bottomTextY = textY + annotation.node.height + 2;
+          annotateLine.vectorPaths = [
+            {
+              windingRule: "NONE",
+              data: `M ${containerX - 16} ${
+                annotateTextNode.y + 8
+              } L ${textCenterX} ${
+                annotateTextNode.y + 8
+              } L ${textCenterX} ${bottomTextY}`,
+            },
+          ];
+        } else {
+          annotateTextNode.y = calY;
+          annotateLine.vectorPaths = [
+            {
+              windingRule: "NONE",
+              data: `M ${containerX - 16} ${calY + 8} L ${textX - 6} ${
+                calY + 8
+              }`,
+            },
+          ];
+        }
+        currentY = annotateTextNode.y;
+        groupNodes.push(annotateTextNode, annotateLine);
+        // figma.currentPage.appendChild(annotateTextNode);
+      });
+    const group = figma.group(groupNodes, figma.currentPage);
+    group.name = `${textContainer.name} - i18n annotation`;
   });
 }
+
 export default createAnnotation;

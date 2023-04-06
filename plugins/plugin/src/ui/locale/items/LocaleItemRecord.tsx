@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import {Button, IconButton, Dialog, Tooltip} from "ds";
+import {Button, IconButton, Dialog, Tooltip, Tag} from "ds";
 import { removeLocaleItem } from "../../state/localeSlice";
 import { Crosshair2Icon, Pencil2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
@@ -45,8 +45,9 @@ title={ */}
           }
         `}
       >
-        <div className="flex-grow-1 flex-shrink-1 truncate">{item.key}</div>
+        <div className="flex-grow-1 flex-shrink-1 truncate">{item.key}{item.fromLibrary && <Tooltip content="This item is from a library. To edit it, open the original file."><Tag className="ml-4">LIB</Tag></Tooltip>}</div>
         <div className="actions flex gap-12 flex-grow-0 flex-shrink-0">
+          {!item.fromLibrary && <>
           <Dialog
             open={currentDialog.opened && currentDialog.type == 'EDIT' && currentDialog.key == item.key}
             onOpenChange={(open) => {
@@ -61,15 +62,14 @@ title={ */}
               </Dialog.Trigger>
             </Tooltip>
             <Dialog.Content title="Edit locale item">
-              <p>Test</p>
-              {/* <LocaleItemForm
+              <LocaleItemForm
                 item={item}
                 showTitle={false}
                 saveOnChange={false}
-              /> */}
+              />
           </Dialog.Content>
           </Dialog>
-          {/* <Dialog
+          <Dialog
             open={currentDialog.opened && currentDialog.type == 'DELETE' && currentDialog.key == item.key}
             onOpenChange={(open) => {
               dispatch(setCurrentDialog({type: 'DELETE', key: item.key, opened: open}));
@@ -94,6 +94,7 @@ title={ */}
               </Button>
             </Dialog.Content>
           </Dialog>
+          </>}
           <Tooltip content="Select texts with this key">
             <IconButton
               onClick={(e: React.MouseEvent<HTMLElement>) => {
@@ -103,7 +104,7 @@ title={ */}
             >
               <Crosshair2Icon></Crosshair2Icon>
             </IconButton>
-          </Tooltip> */}
+          </Tooltip>
         </div>
       </div>
 

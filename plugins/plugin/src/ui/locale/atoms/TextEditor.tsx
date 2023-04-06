@@ -13,6 +13,7 @@ import { runCommand } from "../../uiHelper";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
 import { GlobeIcon } from "@radix-ui/react-icons";
 import { LANGUAGES } from "../../../constant/locale";
+import {Tag} from 'ds';
 const TextEditor = ({ text }: { text: LocaleText }) => {
   console.log(text);
   const localeSelection = useAppSelector(
@@ -129,6 +130,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
                   <MinusCircledIcon />
                 </IconButton>
               </Tooltip>
+              {!localeItem.fromLibrary &&
               <Dialog
                 open={currentDialog.type == 'EDIT' && currentDialog.opened && currentDialog.key === text.id}
                 onOpenChange={(open) => {
@@ -153,7 +155,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
                     saveOnChange={false}
                   />
                 </Dialog.Content>
-              </Dialog>
+              </Dialog>}
               <DropdownMenu onOpenChange={(open) => {
                 setIconGroupActivated(open);
               }}>
@@ -194,14 +196,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
                 label={
                   <>
                     <span>{name}</span>{" "}
-                    <span
-                      className="text-xsmall"
-                      css={`
-                        color: var(--figma-color-bg-component);
-                      `}
-                    >
-                      VAR
-                    </span>
+                    <Tag>VAR</Tag>
                   </>
                 }
                 defaultValue={text.variables ? get(text.variables, name) : ""}

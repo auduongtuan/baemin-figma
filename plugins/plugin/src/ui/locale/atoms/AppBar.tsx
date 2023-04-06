@@ -6,6 +6,14 @@ import { useForm } from "react-hook-form";
 import { CubeIcon, TableIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
 import SheetManagement from "../SheetManagement";
+import { isPlurals } from "../../../lib/localeData";
+// import Prism from "prismjs";
+// import "prismjs/components/prism-json";
+import { LANGUAGES } from "../../../constant/locale";
+// import { Token } from "prismjs";
+import {set} from "lodash";
+import { js_beautify } from "js-beautify";
+
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
   const localeItems = useAppSelector((state) => state.locale.localeItems);
@@ -52,7 +60,30 @@ const AppBar = () => {
         <Tooltip content="Generate Code">
           <IconButton
             onClick={() => {
-              runCommand("export_code", { localeItems: localeItems });
+              const tokensObject: {[key:string]: Array<string | Token>} = {};
+              const langJSONs: {[key:string]: string} = {};
+              Object.keys(LANGUAGES).forEach(lang => {
+                const langJSON = js_beautify(JSON.stringify(
+                  localeItems.reduce((acc, item) => {
+                    if(isPlurals(item[lang])) {
+                      Object.keys(item[lang]).forEach(quantity => {
+                        set(acc, `${item.key}_${quantity}`, item[lang][quantity]);
+                      });
+                    } else {
+                      set(acc, item.key, item[lang]);
+                    }
+                    return acc;
+                  }, {})
+                ));
+                langJSONs[lang] = langJSON;
+                // tokensObject[lang] = Prism.tokenize(
+                //   js_beautify(langJSON),
+                //   Prism.languages["json"]
+                // );
+              });
+           
+              // runCommand("export_code", { tokensObject: tokensObject });
+              runCommand("export_code", { langJSONs });
             }}
           >
             <CubeIcon />

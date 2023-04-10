@@ -1,0 +1,54 @@
+{
+  "information_sent_successfully": "Gửi thông tin thành công",
+  "thank_you_partner_registeration_process": "Cảm ơn bạn đã hoàn thành Quy trình đăng ký đối tác của BAEMIN.Bộ phận Kinh Doanh sẽ tiến hành xét duyệt thông tin Anh/ Chị đã cung cấp và thông báo kết quả trong vòng 3–5 ngày làm việc tiếp theo.",
+  "sale_contact_notify": "Bộ phận Kinh Doanh sẽ tiến hành.",
+  "review_intro": "Anh/ Chị có thể theo dõi trạng thái xét duyệt tại trang web này.",
+  "review_register_info": "Xem lại thông tin đã đăng ký be",
+  "create_new_store": "Thử nghiệm một chút nè",
+  "woowa_brother_vietnam_co_ltd": "Công ty TNHH Woowa Brothers Việt Nam",
+  "support_merchant_info": "hotronhahang@baemin.vn | 19003090",
+  "fill_detail_information": "Điền thông tin chi tiết 2",
+  "wait_for_review": "Chờ xét duyệt",
+  "dang_xuat": "Đăng xuất",
+  "contact": "Liên hệ",
+  "new_random_item": "Một item ngẫu nhiên",
+  "declined_message": "Trường hợp bạn đã đăng ký Đối tác Nhà hàng BAEMIN, chúng tôi xin từ chối đăng ký mới. Để được hướng dẫn thêm, bạn vui lòng liên hệ Trung tâm Hỗ trợ Nhà hàng: 19003090.Lưu ý: Kể từ ngày 01/09/2022, BAEMIN sẽ thu Phí Kích Hoạt Cửa Hàng dành cho Đối tác Nhà hàng mới 1 triệu đồng tại khu vực TP.HCM và Hà Nội.",
+  "hello_lets_create": "Xin chào, hãy tạo tài khoản Nhà hàng trước nhé!",
+  "enter_password": "Nhập mật khẩu",
+  "eg_nguyen_nam_son": "E.g: NGUYEN NAM SON",
+  "phone_number": "Số điện thoại",
+  "create_account": "Tạo tài khoản",
+  "password": "Mật khẩu",
+  "enter_phone_number": "Nhập số điên thoại",
+  "number_2": "So 2",
+  "common": {
+    "back": "Quay lại",
+    "item": "{{count}} món",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "log_in": "Đăng nhập",
+    "dish_with_count": "{{count}} món",
+    "send": "Gửi",
+    "dish_option": "Tùy chọn",
+    "common": {
+      "back": "Ko bik no o dau"
+    }
+  },
+  "welcome": "Hi {{name}}",
+  "dish_quantity": "{{count}} món",
+  "ten_cua_hang_thuong_hieu": "Tên cửa hàng/ thương hiệu",
+  "ten_chu_tai_khoan_ngan_hang": "Tên chủ tài khoản ngân hàng",
+  "login": {
+    "enter_email": "Nhập email",
+    "enter_password": "Nhập mật khẩu",
+    "forgot_password": "Quên mật khẩu",
+    "do_not_have_account": "Bạn chưa có tài khoản?",
+    "register_now": "Đăng ký ngay"
+  },
+  "translation": {
+    "common": {
+      "back": "Test thu ne"
+    },
+    "dish_with_count": "{{count}} món"
+  }
+}

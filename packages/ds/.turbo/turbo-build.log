@@ -1,15 +1,15 @@
 
-> ds@0.0.1 build /Users/tuan.au/Coding/baemin-figma/packages/ds
+> ds@0.0.1 build /Users/tuan.au/Work/baemin-figma/packages/ds
 > tsc --noEmit && vite build
 
 vite v3.2.5 building for production...
 transforming...
-✓ 135 modules transformed.
+✓ 136 modules transformed.
 rendering chunks...
-dist/index.js   506.87 KiB / gzip: 129.27 KiB
-dist/index.cjs   348.83 KiB / gzip: 112.29 KiB
-dist/index.umd.cjs   348.90 KiB / gzip: 112.30 KiB
+dist/index.js   507.69 KiB / gzip: 129.56 KiB
+dist/index.cjs   349.71 KiB / gzip: 112.59 KiB
+dist/index.umd.cjs   349.77 KiB / gzip: 112.61 KiB
 
 [vite:dts] Start generate declaration files...
-[vite:dts] Declaration files built in 7414ms.
+[vite:dts] Declaration files built in 7279ms.
 

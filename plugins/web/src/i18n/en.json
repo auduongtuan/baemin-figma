@@ -1,0 +1,59 @@
+{
+  "information_sent_successfully": "Information sent successfully 2",
+  "thank_you_partner_registeration_process": "Thank you for completing BAEMIN's Partner Registration Process.The Sales Department will review the information you have provided and notify the results within the next 3-5 working days.",
+  "sale_contact_notify": "The Sales Department will review the information you have provided and notify the results within the next 3-5 working days.",
+  "review_intro": "You can track the review status at this website.",
+  "review_register_info": "Review register info",
+  "create_new_store": "Create new store",
+  "woowa_brother_vietnam_co_ltd": "Woowa Brothers Vietnam Co., Ltd",
+  "support_merchant_info": "hotronhahang@baemin.vn | 19003090",
+  "fill_detail_information": "Fill detail information",
+  "wait_for_review": "Wait for review",
+  "dang_xuat": "Log out",
+  "contact": "Contact",
+  "new_random_item": "New random item",
+  "declined_message": "Trường hợp bạn đã đăng ký Đối tác Nhà hàng BAEMIN, chúng tôi xin từ chối đăng ký mới. Để được hướng dẫn thêm, bạn vui lòng liên hệ Trung tâm Hỗ trợ Nhà hàng: 19003090.Lưu ý: Kể từ ngày 01/09/2022, BAEMIN sẽ thu Phí Kích Hoạt Cửa Hàng dành cho Đối tác Nhà hàng mới 1 triệu đồng tại khu vực TP.HCM và Hà Nội.",
+  "hello_lets_create": "Xin chào, hãy tạo tài khoản Nhà hàng trước nhé!",
+  "enter_password": "Enter your password",
+  "eg_nguyen_nam_son": "E.g: NGUYEN NAM SON",
+  "phone_number": "Phone Number",
+  "create_account": "Create account",
+  "password": "Password",
+  "enter_phone_number": "Enter phone number",
+  "number_2": "Number 2",
+  "common": {
+    "back": "Back",
+    "item_one": "{{count}} item",
+    "item_other": "{{count}} items",
+    "email": "Email",
+    "password": "Password",
+    "log_in": "Log in",
+    "dish_with_count_one": "{{count}} dish",
+    "dish_with_count_other": "{{count}} dishes",
+    "send": "Send",
+    "dish_option_one": "Option",
+    "dish_option_other": "Options",
+    "common": {
+      "back": "Tesst"
+    }
+  },
+  "welcome": "Hi {{name}}",
+  "dish_quantity_one": "{{count}} dish",
+  "dish_quantity_other": "{{count}} dishes",
+  "ten_cua_hang_thuong_hieu": "Tên cửa hàng/ thương hiệu",
+  "ten_chu_tai_khoan_ngan_hang": "Tên chủ tài khoản ngân hàng",
+  "login": {
+    "enter_email": "Enter email",
+    "enter_password": "Enter password",
+    "forgot_password": "Forgot password",
+    "do_not_have_account": "Do not have an account?",
+    "register_now": "Register now"
+  },
+  "translation": {
+    "common": {
+      "back": "test"
+    },
+    "dish_with_count_one": "{{count}} dish",
+    "dish_with_count_other": "{{count}} dishes"
+  }
+}

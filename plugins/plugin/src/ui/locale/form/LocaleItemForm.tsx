@@ -11,6 +11,7 @@ import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "./formCommon";
 import { addLocaleItem } from "../../state/localeSlice";
+import TimeAgo from "javascript-time-ago";
 function LocaleItemForm({
   item,
   showTitle = false,
@@ -22,6 +23,7 @@ function LocaleItemForm({
   item?: LocaleItem | string;
   onDone?: (item: LocaleItem) => void;
 }) {
+  
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -97,11 +99,13 @@ function LocaleItemForm({
       const watcher = watch((data) => {
         if (localeItem && data.key) {
           console.log("Update item using debounce!", data);
+          const currentDate = new Date();
           const { key, en, vi, hasPlurals } = data;
           const localeItemData = {
             key: key,
             en: hasPlurals.en ? en : en.one,
             vi: hasPlurals.vi ? vi : vi.one,
+            updatedAt: currentDate.toJSON()
           };
           updateLocaleItemDebounce(localeItemData);
         }
@@ -120,10 +124,12 @@ function LocaleItemForm({
       "vi",
       "hasPlurals",
     ]);
+    const currentDate = new Date();
     const localeItemData = {
       key: key,
       en: hasPlurals.en ? en : en.one,
       vi: hasPlurals.vi ? vi : vi.one,
+      createdAt: currentDate.toJSON()
     };
     dispatch(addLocaleItem(localeItemData));
     // may be comment
@@ -131,6 +137,7 @@ function LocaleItemForm({
     if (onDone && typeof onDone == "function") onDone(localeItemData);
     runCommand("show_figma_notify", { message: "Item created" });
   }, [localeSelection]);
+  const timeAgo = new TimeAgo('en-US');
 
   return (
     <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
@@ -159,12 +166,12 @@ function LocaleItemForm({
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
-      <div className="mt-16">
+      <div>
         {!saveOnChange && (
           <TextBox
             label="Key"
             id="key"
-            className="mt-12"
+            className="mt-0"
             {...register("key", {
               required: true,
               validate: {

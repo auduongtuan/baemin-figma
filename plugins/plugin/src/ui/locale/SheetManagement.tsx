@@ -3,17 +3,14 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setLocaleData } from "../state/localeSlice";
 // English.
-import TimeAgo from "javascript-time-ago";
-// English.
-import en from "javascript-time-ago/locale/en";
+
 import { Button, IconButton, Tooltip } from "ds";
 import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
 import {
   clipWithSelection
 } from "../../lib/helpers";
 import { runCommand } from "../uiHelper";
-TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo("en-US");
+
 // const API_URL = "http://localhost:8001/api/";
 const API_URL = "https://baemin-figma.onrender.com/api";
 const CopyButton = ({ url }) => {

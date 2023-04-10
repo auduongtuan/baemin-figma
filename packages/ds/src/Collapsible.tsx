@@ -38,7 +38,7 @@ const CollapsibleTrigger = ({ title, children, ...rest }: RCollapsible.Collapsib
           <ChevronRightIcon
             width="12"
             height="12"
-            className="flex-grow-0 flex-shrink-0 chevron-icon"
+            className="flex-grow-0 flex-shrink-0 chevron-icon mt-2"
             css={`
               color: var(--figma-color-icon-secondary);
             `}

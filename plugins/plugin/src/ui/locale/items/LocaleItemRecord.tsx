@@ -9,7 +9,7 @@ import {
 } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib/localeData";
-const LocaleItemRecord = ({ item }: { item: LocaleItem }) => {
+const LocaleItemRecord = ({ item, action=true }: { item: LocaleItem, action?: boolean }) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -45,8 +45,13 @@ title={ */}
           }
         `}
       >
-        <div className="flex-grow-1 flex-shrink-1 truncate">{item.key}{item.fromLibrary && <Tooltip content="This item is from a library. To edit it, open the original file."><Tag className="ml-4">LIB</Tag></Tooltip>}</div>
-        <div className="actions flex gap-12 flex-grow-0 flex-shrink-0">
+        <div className="w-full flex-shrink-1 basis-auto flex min-w-0">
+          <div className="truncate">{item.key}</div>
+          <div className="flex-grow-0 flex-shrink-0">
+            {item.fromLibrary && <Tooltip content="This item is from a library. To edit it, open the original file."><Tag className="ml-4">LIB</Tag></Tooltip>}
+          </div>
+        </div>
+        {action && <div className="actions flex gap-12 flex-grow-0 flex-shrink-0">
           {!item.fromLibrary && <>
           <Dialog
             open={currentDialog.opened && currentDialog.type == 'EDIT' && currentDialog.key == item.key}
@@ -61,13 +66,15 @@ title={ */}
                 </IconButton>
               </Dialog.Trigger>
             </Tooltip>
-            <Dialog.Content title="Edit locale item">
+            <Dialog.Panel title="Edit locale item">
+              <Dialog.Content>
               <LocaleItemForm
                 item={item}
                 showTitle={false}
                 saveOnChange={false}
               />
-          </Dialog.Content>
+              </Dialog.Content>
+          </Dialog.Panel>
           </Dialog>
           <Dialog
             open={currentDialog.opened && currentDialog.type == 'DELETE' && currentDialog.key == item.key}
@@ -82,7 +89,8 @@ title={ */}
                 </IconButton>
               </Dialog.Trigger>
             </Tooltip>
-            <Dialog.Content title="Delete locale item">
+            <Dialog.Panel title="Delete locale item">
+            <Dialog.Content>
              Are you sure you want to delete this locale item?
              <Button
                 // variant="secondary"
@@ -92,7 +100,8 @@ title={ */}
               >
                 Delete item
               </Button>
-            </Dialog.Content>
+              </Dialog.Content>
+            </Dialog.Panel>
           </Dialog>
           </>}
           <Tooltip content="Select texts with this key">
@@ -105,7 +114,7 @@ title={ */}
               <Crosshair2Icon></Crosshair2Icon>
             </IconButton>
           </Tooltip>
-        </div>
+        </div>}
       </div>
 
     </div>

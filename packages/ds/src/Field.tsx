@@ -5,23 +5,22 @@ import React, {
   forwardRef,
   useEffect,
 } from "react";
-import styled from "styled-components";
-import { renderToString } from 'react-dom/server'
-
+import styled, {css} from "styled-components";
+import { renderToString } from "react-dom/server";
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
-  errorText?: React.ReactNode
+  errorText?: React.ReactNode;
   helpText?: React.ReactNode;
 }
 export interface TextareaProps
   extends React.ComponentPropsWithoutRef<"textarea"> {
-  label?: string;
-  errorText?: React.ReactNode
+  label?: React.ReactNode;
+  errorText?: React.ReactNode;
   helpText?: React.ReactNode;
 }
 
-const BaseInput = styled.input<TextBoxProps>`
+const BaseInputStyle = css`
   font-size: var(--font-size-xsmall);
   font-weight: var(--font-weight-normal);
   letter-spacing: var(--font-letter-spacing-neg-xsmall);
@@ -31,7 +30,6 @@ const BaseInput = styled.input<TextBoxProps>`
   overflow: visible;
   align-items: center;
   width: 100%;
-  height: 30px;
   margin: 1px 0 1px 0;
   padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall)
     var(--size-xxsmall);
@@ -95,6 +93,10 @@ const BaseInput = styled.input<TextBoxProps>`
     opacity: 0.3;
   }
 `;
+const StyledTextBox = styled.input<TextBoxProps>`
+  ${BaseInputStyle};
+  height: 30px;
+`;
 export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
     {
@@ -123,9 +125,11 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
             {label}
           </label>
         )}
-        <BaseInput
+        <StyledTextBox
           id={id}
-          placeholder={typeof label == 'string' ? label : renderToString(<>label</>)}
+          placeholder={
+            typeof label == "string" ? label : renderToString(<>label</>)
+          }
           defaultValue={defaultValue}
           value={value}
           type={type}
@@ -160,6 +164,9 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   }
 );
 
+const StyledTextarea = styled.textarea<TextareaProps>`
+  ${BaseInputStyle}
+`;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     { label, id, defaultValue = "", className = "", helpText, ...rest },
@@ -172,14 +179,16 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             {label}
           </label>
         )}
-        <textarea
+        <StyledTextarea
           id={id}
-          placeholder={label}
+          placeholder={
+            typeof label == "string" ? label : renderToString(<>label</>)
+          }
           defaultValue={defaultValue}
           className="textarea"
-          ref={ref}
           {...rest}
-        ></textarea>
+          ref={ref}
+        ></StyledTextarea>
         {helpText && (
           <p
             css={`

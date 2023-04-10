@@ -25,7 +25,7 @@ import { setCurrentDialog } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib/localeData";
 import LocaleItemRecord from "./LocaleItemRecord";
-const LocaleItemList = () => {
+const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleItem[], action?: boolean, filter?: boolean}) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -41,7 +41,7 @@ const LocaleItemList = () => {
     },
     [source]
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = items ? items : useAppSelector((state) => state.locale.localeItems);
   const filteredLocaleItems = localeItems.filter(filterFn);
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -95,6 +95,7 @@ const LocaleItemList = () => {
               {localeItems.length} locale {pluralize('item', localeItems.length)} 
             </h4>
           )}
+          {filter &&
           <div className="flex gap-8">
             <div className="align-items-center">
               <Select
@@ -122,7 +123,7 @@ const LocaleItemList = () => {
                 </IconButton>
               </Tooltip>
             </div>
-          </div>
+          </div>}
         </div>
         <Divider />
       </header>
@@ -144,7 +145,7 @@ const LocaleItemList = () => {
                 `}
               >
                 {items.map((item) => (
-                  <LocaleItemRecord item={item} />
+                  <LocaleItemRecord item={item} action={action} />
                 ))}
               </Collapsible.Content>
             </Collapsible>

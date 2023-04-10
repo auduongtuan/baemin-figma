@@ -115,3 +115,20 @@ export function matchAll(re: RegExp, str: string) {
     matches.push(match);
   return matches;
 }
+
+export const flat = (object: Object) => {
+  let res = {};
+  const recurse = (obj: Object, current) => {
+    for (const key in obj) {
+      let value = obj[key];
+      let newKey = current ? current + "." + key : key;
+      if (value && typeof value === "object") {
+        recurse(value, newKey);
+      } else {
+        res[newKey] = value;
+      }
+    }
+  };
+  recurse(object, "");
+  return res;
+};

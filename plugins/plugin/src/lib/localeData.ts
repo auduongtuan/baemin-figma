@@ -1,4 +1,4 @@
-import { escapeRegExp } from "lodash";
+import { escapeRegExp, isObject } from "lodash";
 import { DEFAULT_LANG, MIXED_VALUE, LANGUAGES } from "../constant/locale";
 import { matchAll } from "./helpers";
 import { placeholders } from "./helpers";
@@ -22,8 +22,14 @@ export type LocaleItemPluralContent = {
 export type LocaleItemContent = string | LocaleItemPluralContent;
 export type Lang = keyof typeof LANGUAGES;
 
-export type LocaleItem = { key: string, fromLibrary?: boolean, } & {
-  [key in Lang]: LocaleItemContent;
+export type LocaleItem = {
+  key: string;
+  fromLibrary?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  imported?: boolean;
+} & {
+  [key in Lang]?: LocaleItemContent;
 };
 
 export type LocaleTextVariables = { [key: string]: number | string };
@@ -46,20 +52,21 @@ export interface LocaleSelection {
 export function isPlurals(
   content: LocaleItemContent
 ): content is LocaleItemPluralContent {
-  return typeof content != "string" && "one" in content;
+  return typeof content != "string" && isObject(content) && "one" in content;
 }
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems ? localeItems.find((item) => item.key == key) : null;
 }
-function isCharactersMatch(characters: string, itemContentString: string) {
+function isCharactersMatch(characters: string, itemContentString: string, caseSensitive = false) {
   if (itemContentString == characters) {
     return true;
   } else {
-    const escaped = escapeRegExp(itemContentString.replace(/\{\{([^}]+)\}\}/g, "(.*)"));
-    const readded = escaped.replace('\\(\\.\\*\\)', '(.*)');
-    const regexp = new RegExp(
-      `^${readded}$`
+    if(!itemContentString) return false;
+    const escaped = escapeRegExp(
+      itemContentString.replace(/\{\{([^}]+)\}\}/g, "(.*)")
     );
+    const readded = escaped.replace("\\(\\.\\*\\)", "(.*)");
+    const regexp = caseSensitive ? new RegExp(`^${readded}$`) : new RegExp(`^${readded}$`, 'i');
     if (characters && characters.match(regexp)) {
       return true;
     }
@@ -78,20 +85,28 @@ export function getTextByCharacter(
       return Object.keys(LANGUAGES).some((lang: Lang) => {
         const itemContent = item[lang];
         if (!isPlurals(itemContent)) {
-          if(isCharactersMatch(characters, itemContent)) {
+          if (isCharactersMatch(characters, itemContent)) {
             foundLang = lang;
             foundVariables = findVariablesInCharacters(characters, itemContent);
             return true;
           }
         } else {
-          return Object.keys(itemContent).some(quantity => {
-            console.log({characters, itemContent, quantity, matched: isCharactersMatch(characters, itemContent[quantity])});
-            if(isCharactersMatch(characters, itemContent[quantity])) {
+          return Object.keys(itemContent).some((quantity) => {
+            console.log({
+              characters,
+              itemContent,
+              quantity,
+              matched: isCharactersMatch(characters, itemContent[quantity]),
+            });
+            if (isCharactersMatch(characters, itemContent[quantity])) {
               foundLang = lang;
-              foundVariables = findVariablesInCharacters(characters, itemContent[quantity]);
+              foundVariables = findVariablesInCharacters(
+                characters,
+                itemContent[quantity]
+              );
               return true;
             }
-          })
+          });
         }
       });
     });
@@ -100,21 +115,19 @@ export function getTextByCharacter(
         item,
         key: item.key,
         lang: foundLang as Lang,
-        variables: foundVariables
+        variables: foundVariables,
       };
     }
     // console.log(item.vi.replace(/\{\{([^}]+)\}\}/g, '(.*)'));
     // return false;
   }
-  return {item: null, lang: null, key: null, variables: {}}
+  return { item: null, lang: null, key: null, variables: {} };
 }
 export function findItemByCharacters(
   characters: string,
   localeItems: LocaleItem[]
 ) {
-  return localeItems
-    ? getTextByCharacter(characters, localeItems).item
-    : null;
+  return localeItems ? getTextByCharacter(characters, localeItems).item : null;
 }
 export function findVariablesInCharacters(
   characters: string,
@@ -183,35 +196,32 @@ export function getVariableNames(localeItem: LocaleItem, text: LocaleText) {
   return variableNames;
 }
 
-export function getTextCharacters(localeItemContent: LocaleItemContent, variables: LocaleTextVariables): string {
+export function getTextCharacters(
+  localeItemContent: LocaleItemContent,
+  variables: LocaleTextVariables
+): string {
   if (!isPlurals(localeItemContent)) {
     if (variables && localeItemContent) {
-      console.log('localeItemContent', localeItemContent);
-      return placeholders(
-        localeItemContent,
-        variables
-      );
+      console.log("localeItemContent", localeItemContent);
+      return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
     }
-  } 
+  }
   // PLURAL FORM
   else {
-    if(!('count' in variables)) {
+    if (!("count" in variables)) {
       variables.count = 1;
     }
-    const count = typeof variables.count == 'string' ? parseInt(variables.count) : variables.count;
-    if(count == 1 && 'one' in localeItemContent) {
-      return placeholders(
-        localeItemContent.one,
-        variables
-      );
+    const count =
+      typeof variables.count == "string"
+        ? parseInt(variables.count)
+        : variables.count;
+    if (count == 1 && isObject(localeItemContent) && "one" in localeItemContent) {
+      return placeholders(localeItemContent.one, variables);
     }
-    if(count != 1 && 'other' in localeItemContent) {
-      return placeholders(
-        localeItemContent.other,
-        variables
-      );
+    if (count != 1 && isObject(localeItemContent) && "other" in localeItemContent) {
+      return placeholders(localeItemContent.other, variables);
     }
   }
 }

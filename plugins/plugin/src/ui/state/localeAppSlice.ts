@@ -3,7 +3,7 @@ import { LocaleItem } from "../../lib/localeData";
 interface DialogState {
   opened: boolean;
   key?: string;
-  type?: 'EDIT' | 'NEW' | 'DELETE';
+  type?: 'EDIT' | 'NEW' | 'DELETE' | 'IMPORT';
   onDone?: (localeItem: LocaleItem) => void
 }
 const initialState: {

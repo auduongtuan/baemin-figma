@@ -148,13 +148,15 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
                     </IconButton>
                   </Dialog.Trigger>
                 </Tooltip>
-                <Dialog.Content title="Edit locale item">
+                <Dialog.Panel title="Edit locale item">
+                  <Dialog.Content>
                   <LocaleItemForm
                     item={localeItem}
                     showTitle={false}
                     saveOnChange={false}
                   />
-                </Dialog.Content>
+                  </Dialog.Content>
+                </Dialog.Panel>
               </Dialog>}
               <DropdownMenu onOpenChange={(open) => {
                 setIconGroupActivated(open);

@@ -9,7 +9,7 @@ const Switch = forwardRef<HTMLButtonElement, RSwitch.SwitchProps & { label: Reac
   const id = uniqueId("Switch");
   return (
     <div
-      className="flex gap-8 align-items-center"
+      className="flex gap-8 items-center"
     >
        <label
         htmlFor={id}

@@ -27,6 +27,7 @@ const CollapsibleTrigger = ({ title, children, ...rest }: RCollapsible.Collapsib
               background: var(--figma-color-bg-hover);
             }
             .chevron-icon {
+              transform-style: preserve-3d;
               transition: transform 100ms;
             }
             &[data-state="open"] .chevron-icon {

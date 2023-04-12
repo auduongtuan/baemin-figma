@@ -2,7 +2,8 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { updateLocaleItem } from "../../state/localeSlice";
 import { Controller } from "react-hook-form";
-import { TextBox, Button, Switch } from "ds";
+import { TextBox, Button, Switch, Checkbox, IconButton, Tooltip } from "ds";
+import { dateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, isString } from "lodash";
 import { LANGUAGES } from "../../../constant/locale";
 import { LocaleItem, findItemByKey } from "../../../lib/localeData";
@@ -12,6 +13,36 @@ import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "./formCommon";
 import { addLocaleItem } from "../../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
+import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
+const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
+  return (
+    localeItem &&
+    ("createdAt" in localeItem || "updatedAt" in localeItem) && (
+      <Tooltip
+        content={
+          <div className="flex flex-column gap-4">
+            {localeItem.createdAt && (
+              <div>
+                <p className="font-medium">Created at:</p>
+                <p className="mt-2">{dateTimeFormat(localeItem.createdAt)}</p>
+              </div>
+            )}
+            {localeItem.updatedAt && (
+              <div>
+                <p className="font-medium">Updated at:</p>
+                <p className="mt-2">{dateTimeFormat(localeItem.updatedAt)}</p>
+              </div>
+            )}
+          </div>
+        }
+      >
+        <IconButton>
+          <CounterClockwiseClockIcon />
+        </IconButton>
+      </Tooltip>
+    )
+  );
+};
 function LocaleItemForm({
   item,
   showTitle = false,
@@ -23,7 +54,6 @@ function LocaleItemForm({
   item?: LocaleItem | string;
   onDone?: (item: LocaleItem) => void;
 }) {
-  
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -47,7 +77,11 @@ function LocaleItemForm({
   // reset when key is change
   const isKeyAvailable = useCallback(
     (key) => {
-      if (!findItemByKey(key, localeItems)) {
+      const foundItem = localeItems.find(
+        (item) =>
+          item.key === key && (!("fromLibrary" in item) || !item.fromLibrary)
+      );
+      if (!foundItem) {
         return true;
       } else {
         return false;
@@ -58,25 +92,27 @@ function LocaleItemForm({
 
   // save on submit
   const updateLocaleItemHandler = useCallback(() => {
-    const [key, oldKey, en, vi, hasPlurals] = getValues([
+    const [key, oldKey, en, vi, hasPlurals, prioritized] = getValues([
       "key",
       "oldKey",
       "en",
       "vi",
       "hasPlurals",
+      "prioritized",
     ]);
-    const localeItemData = {
+    const currentDate = new Date();
+    const localeItemData: LocaleItem = {
       key: key,
       en: hasPlurals.en ? en : en.one,
       vi: hasPlurals.vi ? vi : vi.one,
+      updatedAt: currentDate.toJSON(),
     };
-    console.log(localeItemData);
+    if (prioritized) localeItemData.prioritized = true;
     dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
     if (localeSelection)
       updateTextsOfItem(oldKey, localeItemData, localeSelection);
     dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
     runCommand("show_figma_notify", { message: "Item updated" });
-
   }, []);
 
   const updateLocaleItemDebounce = useMemo(
@@ -93,19 +129,19 @@ function LocaleItemForm({
       updateLocaleItemDebounce.cancel();
     };
   }, []);
-  // save on CHange
+  // save on Change
   useEffect(() => {
     if (saveOnChange) {
       const watcher = watch((data) => {
         if (localeItem && data.key) {
-          console.log("Update item using debounce!", data);
+          // console.log("Update item using debounce!", data);
           const currentDate = new Date();
           const { key, en, vi, hasPlurals } = data;
           const localeItemData = {
             key: key,
             en: hasPlurals.en ? en : en.one,
             vi: hasPlurals.vi ? vi : vi.one,
-            updatedAt: currentDate.toJSON()
+            updatedAt: currentDate.toJSON(),
           };
           updateLocaleItemDebounce(localeItemData);
         }
@@ -118,33 +154,39 @@ function LocaleItemForm({
 
   // add new key
   const addNewKey = useCallback(() => {
-    const [key, en, vi, hasPlurals] = getValues([
+    const [key, en, vi, hasPlurals, prioritized] = getValues([
       "key",
       "en",
       "vi",
       "hasPlurals",
+      "prioritized",
     ]);
     const currentDate = new Date();
-    const localeItemData = {
+    const localeItemData: LocaleItem = {
       key: key,
       en: hasPlurals.en ? en : en.one,
       vi: hasPlurals.vi ? vi : vi.one,
-      createdAt: currentDate.toJSON()
+      createdAt: currentDate.toJSON(),
+      updatedAt: currentDate.toJSON(),
     };
+    if (prioritized) localeItemData.prioritized = true;
     dispatch(addLocaleItem(localeItemData));
     // may be comment
     // dispatch(updateLocaleSelection({ key: new_key }));
     if (onDone && typeof onDone == "function") onDone(localeItemData);
     runCommand("show_figma_notify", { message: "Item created" });
   }, [localeSelection]);
-  const timeAgo = new TimeAgo('en-US');
+  const timeAgo = new TimeAgo("en-US");
 
   return (
     <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
       {showTitle && item && saveOnChange && (
-        <h4 className="mt-0 mb-4 font-medium text-secondary">
-          Quick edit {localeItem.key}
-        </h4>
+        <header className="flex justify-between items-center mb-8">
+          <h4 className="mt-0 font-medium text-secondary truncate">
+            Quick edit {localeItem.key}
+          </h4>
+          <EditInfo localeItem={localeItem} />
+        </header>
       )}
       {showTitle && !item && (
         <header className="mb-16">
@@ -243,11 +285,27 @@ function LocaleItemForm({
             )}
           </>
         ))}
-
         {!saveOnChange && (
-          <Button className="mt-16" type="submit">
-            {item ? "Update item" : "Add item"}
-          </Button>
+          <Controller
+            name={`prioritized`}
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                {...field}
+                label="Prioritize this when text duplication occurs"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className="mt-16"
+              ></Checkbox>
+            )}
+          ></Controller>
+        )}
+        {!saveOnChange && (
+          <footer className="flex justify-between items-center mt-16">
+            <Button type="submit">{item ? "Update item" : "Add item"}</Button>
+
+            {localeItem && <EditInfo localeItem={localeItem} />}
+          </footer>
         )}
       </div>
     </form>

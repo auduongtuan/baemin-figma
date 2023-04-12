@@ -14,7 +14,6 @@ function getData(node: BaseNode) {
   return getNodeData(node, `${PREFIX}data`);
 }
 function isMain(node: BaseNode) {
-  console.log(figma.root.id);
   return getNodeData(node, `${PREFIX}main_document_id`) === figma.root.id;
 }
 const localeDataNodes = firstPage
@@ -38,8 +37,8 @@ export function getLocaleData() {
     localeItems: [],
   };
 
-  localeDataNodes.reverse().forEach((node, i) => {
-    const nodeLocaleData = getData(node);
+  localeDataNodes.reverse().forEach((localeDataNode, i) => {
+    const nodeLocaleData = getData(localeDataNode);
     try {
       let localeData = JSON.parse(nodeLocaleData);
 
@@ -75,7 +74,7 @@ export function getLocaleData() {
         combinedLocaleData.localeItems = unionWith(
           localeData.localeItems.map((item: LocaleItem) => ({
             ...item,
-            fromLibrary: true,
+            fromLibrary: localeDataNode.id,
           })),
           combinedLocaleData.localeItems,
           (a, b) => a.key == b.key

@@ -1,4 +1,10 @@
-import React, { useEffect, useState, ComponentType, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  ComponentType,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   UseComboboxState,
   UseComboboxStateChangeOptions,
@@ -9,6 +15,7 @@ import classnames from "classnames";
 import Menu from "./Menu";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
+import { debounce } from "lodash";
 // import { removeVietnameseAccent } from "../../lib/helpers";
 export interface ComboboxOption {
   id?: string;
@@ -37,9 +44,9 @@ export interface ComboboxProps {
 }
 
 function smartIncludes(stringA: string, stringB: string) {
-  return stringA && stringB && stringA
-    .toLowerCase()
-    .includes(stringB.toLowerCase());
+  return (
+    stringA && stringB && stringA.toLowerCase().includes(stringB.toLowerCase())
+  );
   // return stringA && stringB && removeVietnameseAccent(stringA)
   //   .toLowerCase()
   //   .includes(removeVietnameseAccent(stringB).toLowerCase());
@@ -105,6 +112,34 @@ const Combobox = ({
     },
     []
   );
+  // const onInputValueChange = debounce
+  const onInputValueChangeDebounce = useMemo(
+    () =>
+      debounce((inputValue) => {
+        const filteredOptions = options.filter(
+          (option) =>
+            !option.onSelect &&
+            (!inputValue ||
+              smartIncludes(option.name, inputValue) ||
+              ("value" in option && smartIncludes(option.value, inputValue)) ||
+              (option.content && smartIncludes(option.content, inputValue)) ||
+              (option.altContent &&
+                smartIncludes(option.altContent, inputValue)))
+        );
+        const suggestions = options.filter((option) => option.onSelect);
+        if (filteredOptions && filteredOptions.length > 0) {
+          setItems(filteredOptions);
+        } else {
+          setItems(suggestions);
+        }
+      }, 150),
+    []
+  );
+  useEffect(() => {
+    return () => {
+      onInputValueChangeDebounce.cancel();
+    };
+  }, []);
   const {
     isOpen,
     getToggleButtonProps,
@@ -120,22 +155,7 @@ const Combobox = ({
     selectedItem,
     stateReducer,
     onInputValueChange({ inputValue }) {
-      console.log(inputValue);
-      const filteredOptions = options.filter(
-        (option) =>
-          !option.onSelect &&
-          (!inputValue ||
-            smartIncludes(option.name, inputValue) ||
-            ("value" in option && smartIncludes(option.value, inputValue)) ||
-            (option.content && smartIncludes(option.content, inputValue)) ||
-            (option.altContent && smartIncludes(option.altContent, inputValue)))
-      );
-      const suggestions = options.filter((option) => option.onSelect);
-      if (filteredOptions && filteredOptions.length > 0) {
-        setItems(filteredOptions);
-      } else {
-        setItems(suggestions);
-      }
+      onInputValueChangeDebounce(inputValue);
     },
     onSelectedItemChange: ({ selectedItem: newSelectedItem }) => {
       if (newSelectedItem) {
@@ -151,18 +171,17 @@ const Combobox = ({
         if (onChange) onChange(null);
       }
     },
-    onStateChange: (changes) => {
-      console.log("Combobox changes", changes);
-    },
+    // onStateChange: (changes) => {
+    //   console.log("Combobox changes", changes);
+    // },
   });
   return (
     <div
       css={`
-        display: ${inline ? 'inline-flex' : 'flex'};
-        flex-direction: ${inline ? 'row' : 'column'};
-        align-items: ${inline ? 'center' : 'flex-start'};
+        display: ${inline ? "inline-flex" : "flex"};
+        flex-direction: ${inline ? "row" : "column"};
+        align-items: ${inline ? "center" : "flex-start"};
         gap: 8px;
-
       `}
       className={`show-border ${className && className}`}
     >
@@ -172,83 +191,82 @@ const Combobox = ({
         </label>
       )}
       <Popper.Root>
-       
-          <Popper.Anchor asChild>
-            <div
-              className={classnames("select-menu__button", {
-                "select-menu__button--focus": isFocus,
-                "select-menu__button--disabled": disabled,
-                "flex-shrink-1": inline
+        <Popper.Anchor asChild>
+          <div
+            className={classnames("select-menu__button", {
+              "select-menu__button--focus": isFocus,
+              "select-menu__button--disabled": disabled,
+              "flex-shrink-1": inline,
+            })}
+          >
+            <input
+              className={classnames("select-menu__label flex-grow-1", {
+                // "select-menu__label--placeholder": !inputValue ? true : false,
               })}
-            >
-              <input
-                className={classnames("select-menu__label flex-grow-1", {
-                  // "select-menu__label--placeholder": !inputValue ? true : false,
-                })}
-                placeholder={placeholder}
-                css={`
+              placeholder={placeholder}
+              css={`
+                border: none;
+                background: none;
+                padding: 0;
+                &:focus {
                   border: none;
-                  background: none;
-                  padding: 0;
-                  &:focus {
-                    border: none;
-                    outline: none;
-                  }
-                `}
-                {...getInputProps({
-                  disabled,
-                  onFocus: (e) => {
-                    setIsFocus(true);
-                    e.target.select();
-                  },
-                  onBlur: () => {
-                    setIsFocus(false);
-                  },
-                })}
-              />
-              <span
-                className="select-menu__caret"
-                {...getToggleButtonProps({ disabled })}
-              ></span>
-            </div>
-          </Popper.Anchor>
+                  outline: none;
+                }
+              `}
+              {...getInputProps({
+                disabled,
+                onFocus: (e) => {
+                  setIsFocus(true);
+                  e.target.select();
+                },
+                onBlur: () => {
+                  setIsFocus(false);
+                },
+              })}
+            />
+            <span
+              className="select-menu__caret"
+              {...getToggleButtonProps({ disabled })}
+            ></span>
+          </div>
+        </Popper.Anchor>
 
-          {isOpen && (
-            <Portal asChild>
-              <Popper.Content
-                sideOffset={2}
-                align="start"
-                collisionPadding={4}
-                avoidCollisions={false}
+        {isOpen && (
+          <Portal asChild>
+            <Popper.Content
+              sideOffset={2}
+              align="start"
+              collisionPadding={4}
+              avoidCollisions={false}
+            >
+              <Menu
+                style={{
+                  minWidth: "var(--radix-popper-anchor-width)",
+                  maxWidth: "var(--radix-popper-available-width)",
+                  maxHeight: "var(--radix-popper-available-height)",
+                }}
+                {...getMenuProps()}
               >
-                <Menu
-                  style={{
-                    minWidth: "var(--radix-popper-anchor-width)",
-                    maxWidth: "var(--radix-popper-available-width)",
-                    maxHeight: "var(--radix-popper-available-height)",
-                  }}
-                  {...getMenuProps()}
-                >
-                  {items &&
-                    items.map((item, index) => (
-                      <Menu.Item
-                        selected={selectedItem == item}
-                        highlighted={highlightedIndex == index}
-                        key={`${item.value}${index}`}
-                        name={item.name}
-                        content={item.content}
-                        icon={item.icon}
-                        {...getItemProps({
-                          item,
-                          index,
-                          disabled: item.disabled,
-                        })}
-                      ></Menu.Item>
-                    ))}
-                </Menu>
-              </Popper.Content>
-            </Portal>
-          )}
+                {items &&
+                  items.map((item, index) => (
+                    <Menu.Item
+                      selected={selectedItem == item}
+                      highlighted={highlightedIndex == index}
+                      key={`${item.value}${index}`}
+                      name={item.name}
+                      content={item.content}
+                      icon={item.icon}
+                      {...getItemProps({
+                        item,
+                        index,
+                        disabled: item.disabled,
+                      })}
+                    ></Menu.Item>
+                  ))}
+              </Menu>
+            </Popper.Content>
+          </Portal>
+        )}
       </Popper.Root>
     </div>
   );

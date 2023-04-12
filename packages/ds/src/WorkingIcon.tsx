@@ -10,7 +10,7 @@ const rotate = keyframes`
 
 const WorkingIcon = ({showText = false}) => {
   return (
-    <div className="flex gap-4 align-items-center">
+    <div className="flex gap-4 items-center">
     <UpdateIcon
       width="14"
       height="14"

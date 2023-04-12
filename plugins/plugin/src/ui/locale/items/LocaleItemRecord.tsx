@@ -9,7 +9,7 @@ import {
 } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib/localeData";
-const LocaleItemRecord = ({ item, action=true }: { item: LocaleItem, action?: boolean }) => {
+const LocaleItemRecord = ({ item, action=true, group }: { item: LocaleItem, action?: boolean, group?: string }) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -46,7 +46,7 @@ title={ */}
         `}
       >
         <div className="w-full flex-shrink-1 basis-auto flex min-w-0">
-          <div className="truncate">{item.key}</div>
+          <div className="truncate">{group ? item.key.replace(new RegExp(`^${group}\.`), '') : item.key}</div>
           <div className="flex-grow-0 flex-shrink-0">
             {item.fromLibrary && <Tooltip content="This item is from a library. To edit it, open the original file."><Tag className="ml-4">LIB</Tag></Tooltip>}
           </div>

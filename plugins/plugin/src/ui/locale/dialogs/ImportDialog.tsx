@@ -7,6 +7,8 @@ import LocaleItemList from "../items/LocaleItemList";
 import { groupBy, orderBy, unionWith } from "lodash";
 import { LocaleItem } from "../../../lib/localeData";
 import { setLocaleData } from "../../state/localeSlice";
+import { runCommand } from "../../uiHelper";
+import { pluralize } from "@capaj/pluralize";
 interface ImportFile {
   name: string;
   items: Object;
@@ -52,7 +54,6 @@ const ImportDialog = () => {
     })
   ).sort((a, b) => a[0].localeCompare(b[0]));
 
-  console.log("Import Dialog");
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
 
@@ -98,7 +99,11 @@ const ImportDialog = () => {
     }
     dispatch(setLocaleData({
       localeItems: newLocaleItems
-    }))
+    }));
+    dispatch(setCurrentDialog({
+      opened: false
+    }));
+    runCommand("show_figma_notify", {message: `${importState.items.length} ${pluralize("item", importState.items.length)} imported`});
   }, [importState]);
   useEffect(() => {
     let parsedLangItems = {};
@@ -106,23 +111,28 @@ const ImportDialog = () => {
       let parsedItems = {};
       const flattenItems = flat(fileObject.items);
       Object.keys(flattenItems).forEach((key) => {
-        let newKey = key;
         // const content = flattenItems[key].replaceAll(/\{\{\s*(length|quantity)\s*\}\}/g, '{{content}}');
-        const content = flattenItems[key];
         // parse key into plural group
         if (
           key.endsWith(".one") &&
-          key.replace(".one", ".other") in flattenItems
+          key.replace(/\.one$/, ".other") in flattenItems
         ) {
-          newKey = key.replace(".one", "_one");
+          const newKey = key.replace(/\.one$/, "");
+          const newContent = {
+            one: flattenItems[key],
+            other: flattenItems[newKey+'.other']
+          };
+          parsedItems[newKey] = newContent;
         }
-        if (
+        else if (
           key.endsWith(".other") &&
           key.replace(".other", ".one") in flattenItems
         ) {
-          newKey = key.replace(".other", "_other");
+          // newKey = key.replace(".other", "_other");
         }
-        parsedItems[newKey] = content;
+        else {
+          parsedItems[key] = flattenItems[key];
+        }
       });
       parsedLangItems[fileObject.name.replace(".json", "")] = parsedItems;
     });

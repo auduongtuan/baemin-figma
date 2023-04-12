@@ -50,9 +50,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
       // );
       const { variables } = data;
       if (variables) {
-        console.log(variables);
         if (isObject(variables)) {
-          console.log(text.id, variables, localeItem);
           runCommand("update_text", {
             ids: text.id,
             variables: variables as LocaleTextVariables,
@@ -75,7 +73,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
   return (
     <div>
       <div
-        className="text-left font-normal text-small flex w-full align-items-center"
+        className="text-left font-normal text-small flex w-full items-center"
         css={`
           & .actions {
             opacity: 0;
@@ -98,7 +96,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
       </div>
       <div className="pl-24 mt-8">
         <div
-          className="flex align-items-center gap-8"
+          className="flex items-center gap-8"
           css={`
             & > .icon-group {
               transition: opacity 0.1s;

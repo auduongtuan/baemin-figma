@@ -1,7 +1,7 @@
 import { escapeRegExp, isObject } from "lodash";
 import { DEFAULT_LANG, MIXED_VALUE, LANGUAGES } from "../constant/locale";
 import { matchAll } from "./helpers";
-import { placeholders } from "./helpers";
+import { placeholders, compareTime } from "./helpers";
 export interface LocaleData {
   sheetName?: string;
   sheetId?: string;
@@ -24,9 +24,10 @@ export type Lang = keyof typeof LANGUAGES;
 
 export type LocaleItem = {
   key: string;
-  fromLibrary?: boolean;
+  fromLibrary?: boolean | string;
   createdAt?: string;
   updatedAt?: string;
+  prioritized?: boolean;
   imported?: boolean;
 } & {
   [key in Lang]?: LocaleItemContent;
@@ -57,16 +58,24 @@ export function isPlurals(
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems ? localeItems.find((item) => item.key == key) : null;
 }
-function isCharactersMatch(characters: string, itemContentString: string, caseSensitive = false) {
+function isCharactersMatch(
+  characters: string,
+  itemContentString: string,
+  caseSensitive = false
+) {
   if (itemContentString == characters) {
     return true;
   } else {
-    if(!itemContentString) return false;
+    if (!itemContentString) return false;
     const escaped = escapeRegExp(
       itemContentString.replace(/\{\{([^}]+)\}\}/g, "(.*)")
     );
     const readded = escaped.replace("\\(\\.\\*\\)", "(.*)");
-    const regexp = caseSensitive ? new RegExp(`^${readded}$`) : new RegExp(`^${readded}$`, 'i');
+    // except for only variable case. e.g: {{url}}
+    if (readded == "(.*)") return false;
+    const regexp = caseSensitive
+      ? new RegExp(`^${readded}$`)
+      : new RegExp(`^${readded}$`, "i");
     if (characters && characters.match(regexp)) {
       return true;
     }
@@ -81,35 +90,44 @@ export function getTextByCharacter(
   if (localeItems) {
     let foundLang: string;
     let foundVariables: LocaleTextVariables;
-    const item = localeItems.find((item) => {
-      return Object.keys(LANGUAGES).some((lang: Lang) => {
-        const itemContent = item[lang];
-        if (!isPlurals(itemContent)) {
-          if (isCharactersMatch(characters, itemContent)) {
-            foundLang = lang;
-            foundVariables = findVariablesInCharacters(characters, itemContent);
-            return true;
-          }
-        } else {
-          return Object.keys(itemContent).some((quantity) => {
-            console.log({
-              characters,
-              itemContent,
-              quantity,
-              matched: isCharactersMatch(characters, itemContent[quantity]),
-            });
-            if (isCharactersMatch(characters, itemContent[quantity])) {
+    const item = [...localeItems]
+      .sort((a, b) => 
+        Number(b.prioritized) - Number(a.prioritized) ||
+        compareTime(b.updatedAt, a.updatedAt) ||
+        compareTime(b.createdAt, a.createdAt)
+      )
+      .find((item) => {
+        return Object.keys(LANGUAGES).some((lang: Lang) => {
+          const itemContent = item[lang];
+          if (!isPlurals(itemContent)) {
+            if (isCharactersMatch(characters, itemContent)) {
               foundLang = lang;
               foundVariables = findVariablesInCharacters(
                 characters,
-                itemContent[quantity]
+                itemContent
               );
               return true;
             }
-          });
-        }
+          } else {
+            return Object.keys(itemContent).some((quantity) => {
+              // console.log({
+              //   characters,
+              //   itemContent,
+              //   quantity,
+              //   matched: isCharactersMatch(characters, itemContent[quantity]),
+              // });
+              if (isCharactersMatch(characters, itemContent[quantity])) {
+                foundLang = lang;
+                foundVariables = findVariablesInCharacters(
+                  characters,
+                  itemContent[quantity]
+                );
+                return true;
+              }
+            });
+          }
+        });
       });
-    });
     if (item) {
       return {
         item,
@@ -127,7 +145,13 @@ export function findItemByCharacters(
   characters: string,
   localeItems: LocaleItem[]
 ) {
-  return localeItems ? getTextByCharacter(characters, localeItems).item : null;
+  if(localeItems) {
+    const text = getTextByCharacter(characters, localeItems);
+    if(text && text.item) {
+      return text.item;
+    }
+  }
+  return null;
 }
 export function findVariablesInCharacters(
   characters: string,
@@ -147,12 +171,12 @@ export function findVariablesInCharacters(
     (match) => match[1]
   );
 
-  console.log({
-    variableNames,
-    variableValues,
-    valueReg,
-    matchTest: matchAll(valueReg, characters),
-  });
+  // console.log({
+  //   variableNames,
+  //   variableValues,
+  //   valueReg,
+  //   matchTest: matchAll(valueReg, characters),
+  // });
   return variableNames.reduce((acc, name, i) => {
     acc[name] = variableValues[i];
     return acc;
@@ -202,7 +226,6 @@ export function getTextCharacters(
 ): string {
   if (!isPlurals(localeItemContent)) {
     if (variables && localeItemContent) {
-      console.log("localeItemContent", localeItemContent);
       return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
@@ -217,10 +240,18 @@ export function getTextCharacters(
       typeof variables.count == "string"
         ? parseInt(variables.count)
         : variables.count;
-    if (count == 1 && isObject(localeItemContent) && "one" in localeItemContent) {
+    if (
+      count == 1 &&
+      isObject(localeItemContent) &&
+      "one" in localeItemContent
+    ) {
       return placeholders(localeItemContent.one, variables);
     }
-    if (count != 1 && isObject(localeItemContent) && "other" in localeItemContent) {
+    if (
+      count != 1 &&
+      isObject(localeItemContent) &&
+      "other" in localeItemContent
+    ) {
       return placeholders(localeItemContent.other, variables);
     }
   }

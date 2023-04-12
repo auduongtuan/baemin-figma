@@ -59,7 +59,7 @@ function updateCodeHighlighter(textNode: TextNode, tokens: Array<string | Token>
     let characterCount = 0;
     const themedTokenColors: {[key:string]:SolidPaint} = Object.keys(tokenColors).reduce((acc, name) => {
       // const paintStyle = figma.createPaintStyle();
-      console.log(name, tokenColors[name]);
+      // console.log(name, tokenColors[name]);
       const paint: SolidPaint = {
         type: "SOLID",
         color: hexToFigmaRGB(name in tokenColors && tokenColors[name] ? tokenColors[name] : tokenColors.default)

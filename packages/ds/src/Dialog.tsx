@@ -59,6 +59,7 @@ const DialogPanel = ({ title, children, ...rest }: DialogProps) => {
           position: fixed;
           inset: 0;
           animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 40;
         `}
       />
       <RDialog.Content
@@ -77,6 +78,7 @@ const DialogPanel = ({ title, children, ...rest }: DialogProps) => {
           max-height: calc(100vh - 48px);
           display: flex;
           flex-direction: column;
+          z-index: 50;
           animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
           &:focus {
             outline: none;

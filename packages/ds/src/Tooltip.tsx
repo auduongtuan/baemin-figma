@@ -2,7 +2,7 @@ import React, { ComponentType } from "react";
 import * as RadixTooltip from "@radix-ui/react-tooltip";
 const Tooltip = ({ children, content, contentProps }: {
   children: React.ReactNode,
-  content: string,
+  content: React.ReactNode,
   contentProps?: RadixTooltip.TooltipContentProps
 }) => {
   return (
@@ -20,6 +20,7 @@ const Tooltip = ({ children, content, contentProps }: {
               color: var(--figma-color-text-onbrand);
               background-color: var(--black8);
               user-select: none;
+              z-index: 60;
               /* animation-duration: 400ms;
               animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
               will-change: transform, opacity; */

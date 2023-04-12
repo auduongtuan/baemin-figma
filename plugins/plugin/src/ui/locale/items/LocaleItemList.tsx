@@ -25,13 +25,12 @@ import { setCurrentDialog } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib/localeData";
 import LocaleItemRecord from "./LocaleItemRecord";
-const LocaleItemList = () => {
+const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleItem[], action?: boolean, filter?: boolean}) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
 
   const [source, setSource] = useState("all");
-  console.log(source);
   const filterFn = useCallback(
     (item: LocaleItem) => {
       if (source == "all") return true;
@@ -41,7 +40,7 @@ const LocaleItemList = () => {
     },
     [source]
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = items ? items : useAppSelector((state) => state.locale.localeItems);
   const filteredLocaleItems = localeItems.filter(filterFn);
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -50,7 +49,6 @@ const LocaleItemList = () => {
       return "";
     })
   ).sort((a, b) => a[0].localeCompare(b[0]));
-  console.log(groupedLocaleItems);
   const dispatch = useAppDispatch();
   const {
     register,
@@ -87,16 +85,18 @@ const LocaleItemList = () => {
       <header css={`
         position: sticky;
         background: var(--figma-color-bg);
+        z-index: 20;
         top: 0;
       `}>
-        <div className="flex align-items-center px-16 py-4">
+        <div className="flex items-center px-16 py-4">
           {localeItems && (
             <h4 className="mt-0 flex-grow-1 font-medium text-secondary">
               {localeItems.length} locale {pluralize('item', localeItems.length)} 
             </h4>
           )}
+          {filter &&
           <div className="flex gap-8">
-            <div className="align-items-center">
+            <div className="items-center">
               <Select
                 inline
                 label="Source"
@@ -111,7 +111,7 @@ const LocaleItemList = () => {
                 }}
               />
             </div>
-            <div className="inline-flex justify-content-center align-items-center">
+            <div className="inline-flex justify-center items-center">
               <Tooltip content="Add new item">
                 <IconButton
                   onClick={() =>
@@ -122,7 +122,7 @@ const LocaleItemList = () => {
                 </IconButton>
               </Tooltip>
             </div>
-          </div>
+          </div>}
         </div>
         <Divider />
       </header>
@@ -144,7 +144,7 @@ const LocaleItemList = () => {
                 `}
               >
                 {items.map((item) => (
-                  <LocaleItemRecord item={item} />
+                  <LocaleItemRecord item={item} action={action} group={name} />
                 ))}
               </Collapsible.Content>
             </Collapsible>

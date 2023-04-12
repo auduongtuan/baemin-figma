@@ -9,13 +9,15 @@ function updateSelection() {
   const allTextNodes: TextNode[] = getTextNodes();
   if (allTextNodes && allTextNodes.length > 0) {
     const texts: LocaleText[] = allTextNodes.reduce((acc, textNode) => {
-      acc.push({
-        id: textNode.id,
-        key: getKey(textNode),
-        lang: getLang(textNode),
-        variables: getVariables(textNode),
-        characters: textNode.characters
-      });
+      if(textNode.characters) {
+        acc.push({
+          id: textNode.id,
+          key: getKey(textNode),
+          lang: getLang(textNode),
+          variables: getVariables(textNode),
+          characters: textNode.characters
+        });
+      }
       return acc;
       }, []);
     h.postData({

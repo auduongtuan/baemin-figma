@@ -12,7 +12,7 @@ const MultipleTextEditor = () => {
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   return localeSelection && localeSelection.texts ? (
     <div className="p-16">
-      <header className="flex align-items-center">
+      <header className="flex items-center">
         <h4 className="mt-0 flex-grow-1 font-medium text-secondary">
           {localeSelection.texts.length}{" "}
           {pluralize("text", localeSelection.texts.length)} in selection

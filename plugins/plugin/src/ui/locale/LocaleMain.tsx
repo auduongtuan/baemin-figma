@@ -9,6 +9,10 @@ import SelectionEditor from "./pages/SelectionEditor";
 import NewDialog from "./dialogs/NewDialog";
 import { isArray } from "lodash";
 import { Divider } from "ds";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
+TimeAgo.addDefaultLocale(en);
+const timeAgo = new TimeAgo("en-US");
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection

@@ -8,14 +8,15 @@ const NewDialog = () => {
     (state) => state.localeApp.currentDialog
   );
   const dispatch = useAppDispatch();
-  console.log(Dialog.Content);
   return (
     <Dialog open={currentDialog.type == 'NEW' && currentDialog.opened} onOpenChange={(open) => dispatch(setCurrentDialog({type: 'NEW', opened: open}))}>
-    <Dialog.Content title="Add new locale item">
+    <Dialog.Panel title="Add new locale item">
+      <Dialog.Content>
       <LocaleItemForm showTitle={false} onDone={(item) => {
         dispatch(setCurrentDialog({opened: false}));
       }} />
-    </Dialog.Content>
+      </Dialog.Content>
+    </Dialog.Panel>
   </Dialog>
   )
 }

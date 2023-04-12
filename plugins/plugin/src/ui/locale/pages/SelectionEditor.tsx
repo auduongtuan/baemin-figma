@@ -26,7 +26,6 @@ const SelectionEditor = () => {
       ? getTextByCharacter(localeSelection.texts[0].characters, localeItems)
       : null;
 
-  console.log({suggestedText});
   const assignKey = (textOrItem: LocaleText) => {
     runCommand("update_text", {
       ids: localeSelection.texts[0].id,

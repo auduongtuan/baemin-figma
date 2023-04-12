@@ -25,8 +25,32 @@ const contentShow = keyframes`
     transform: translate(-50%, -50%) scale(1);
   }
 `;
-
-const DialogContent = ({ title, children, ...rest }: DialogProps) => {
+const DialogContent = ({children}: React.ComponentPropsWithRef<"div">) => {
+  return <div
+    css={`
+      overflow: auto;
+      flex-grow: 1;
+      position: relative;
+      padding: 16px;
+    `}
+  >
+    {children}
+  </div>
+}
+const DialogFooter = ({children}: React.ComponentPropsWithRef<"footer">) => {
+  return (
+    <footer css={`
+      padding: 8px 16px;
+      background: var(--figma-color-bg);
+      border-top: 1px solid #eee;
+      flex-shrink: 0;
+      flex-grow: 0;
+    `}>
+    {children}
+    </footer>
+  )
+}
+const DialogPanel = ({ title, children, ...rest }: DialogProps) => {
   return (
     <RDialog.Portal>
       <RDialog.Overlay
@@ -35,12 +59,14 @@ const DialogContent = ({ title, children, ...rest }: DialogProps) => {
           position: fixed;
           inset: 0;
           animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 40;
         `}
       />
       <RDialog.Content
         css={`
-          background-color: white;
+          background-color: var(--figma-color-bg);
           border-radius: 6px;
+          overflow: hidden;
           box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
             hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
           position: fixed;
@@ -48,9 +74,11 @@ const DialogContent = ({ title, children, ...rest }: DialogProps) => {
           left: 50%;
           transform: translate(-50%, -50%);
           width: 90vw;
-          max-width: 450px;
-          max-height: 85vh;
-          padding: 16px;
+          max-width: calc(100vw - 48px);
+          max-height: calc(100vh - 48px);
+          display: flex;
+          flex-direction: column;
+          z-index: 50;
           animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
           &:focus {
             outline: none;
@@ -60,9 +88,13 @@ const DialogContent = ({ title, children, ...rest }: DialogProps) => {
         {title && (
           <header
             css={`
+              flex-grow: 0;
+              flex-shrink: 0;
               display: flex;
-              margin-bottom: 16px;
+              padding: 12px 16px;
               align-items: center;
+              border-bottom: 1px solid #eee;
+              background: var(--figma-color-bg);
             `}
           >
             <RDialog.Title
@@ -84,14 +116,15 @@ const DialogContent = ({ title, children, ...rest }: DialogProps) => {
         {/* <RDialog.Description className="DialogDescription">
           Make changes to your profile here. Click save when you're done.
         </RDialog.Description> */}
-        {children}
-       
+          {children}
       </RDialog.Content>
     </RDialog.Portal>
   );
 };
 
 export default Object.assign(RDialog.Root, {
-  Content: DialogContent,
+  Panel: DialogPanel,
   Trigger: RDialog.Trigger,
+  Content: DialogContent,
+  Footer: DialogFooter
 });

@@ -330,6 +330,8 @@ body {
   font-family: 'Inter', Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .font-normal {
@@ -440,35 +442,38 @@ $sm: "screen and (max-width: 576px)";
   flex-shrink: 1 !important;
 }
 
-.justify-content-start {
+.basis-auto	{
+  flex-basis: auto;
+}
+.justify-start {
   justify-content: flex-start !important;
 }
-.justify-content-end {
+.justify-end {
   justify-content: flex-end !important;
 }
-.justify-content-center {
+.justify-center {
   justify-content: center !important;
 }
-.justify-content-between {
+.justify-between {
   justify-content: space-between !important;
 }
-.justify-content-around {
+.justify-around {
   justify-content: space-around !important;
 }
 
-.align-items-start {
+.items-start {
   align-items: flex-start !important;
 }
-.align-items-end {
+.items-end {
   align-items: flex-end !important;
 }
-.align-items-center {
+.items-center {
   align-items: center !important;
 }
-.align-items-baseline {
+.items-baseline {
   align-items: baseline !important;
 }
-.align-items-stretch {
+.items-stretch {
   align-items: stretch !important;
 }
 
@@ -722,7 +727,12 @@ label {
 .w-full {
   width: 100%;
 }
-
+.max-w-full {
+  max-width: 100%;
+}
+.min-w-0 {
+  min-width: 0;
+}
 .label {
   font-size: var(--font-size-xsmall);
   font-weight: var(--font-weight-normal);

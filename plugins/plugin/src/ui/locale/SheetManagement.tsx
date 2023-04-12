@@ -3,19 +3,15 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setLocaleData } from "../state/localeSlice";
 // English.
-import TimeAgo from "javascript-time-ago";
-// English.
-import en from "javascript-time-ago/locale/en";
+
 import { Button, IconButton, Tooltip } from "ds";
 import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
-import {
-  clipWithSelection
-} from "../../lib/helpers";
+import { clipWithSelection } from "../../lib/helpers";
 import { runCommand } from "../uiHelper";
-TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo("en-US");
+import TimeAgo from "javascript-time-ago";
 // const API_URL = "http://localhost:8001/api/";
 const API_URL = "https://baemin-figma.onrender.com/api";
+const timeAgo = new TimeAgo("en-US");
 const CopyButton = ({ url }) => {
   const [copied, setCopied] = useState(false);
   return (
@@ -71,10 +67,10 @@ const SheetManagement = () => {
       });
   };
   const sync = () => {
-    console.log(sheetId);
+    // console.log(sheetId);
     setIsSyncing(true);
     axios.get(`${API_URL}/${sheetId}`).then((res) => {
-      console.log({ remote: res.data.modifiedTime, local: modifiedTime });
+      // console.log({ remote: res.data.modifiedTime, local: modifiedTime });
       if (
         new Date(res.data.modifiedTime).getTime() >
         new Date(modifiedTime).getTime()
@@ -90,52 +86,46 @@ const SheetManagement = () => {
     });
   };
   return (
-  <div className="flex w-full">
-          <div className="flex-grow-1">
-            <div
-              className="flex gap-8"
+    <div className="flex w-full">
+      <div className="flex-grow-1">
+        <div className="flex gap-8">
+          <p
+            css={`
+              margin: 0;
+            `}
+          >
+            {sheetName}
+          </p>
+          <Tooltip content="Unlink sheet">
+            <IconButton
+              onClick={() => dispatch(setLocaleData({ sheetId: null }))}
             >
-              <p
-                css={`
-                  margin: 0;
-                `}
-              >
-                {sheetName}
-              </p>
-              <Tooltip content="Unlink sheet">
-                <IconButton
-                  onClick={() => dispatch(setLocaleData({ sheetId: null }))}
-                >
-                  <LinkBreak1Icon />
-                </IconButton>
-              </Tooltip>
-              <CopyButton
-                url={`https://docs.google.com/spreadsheets/d/${sheetId}/edit`}
-              />
-            </div>
-
-            <p
-              css={`
-                margin: 0;
-                color: var(--figma-color-text-secondary);
-              `}
-              className="mt-4"
-            >
-              {localeItems && localeItems.length} items - Last sync{" "}
-              {timeAgo.format(new Date(modifiedTime))}
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 flex-grow-0 flex gap-4">
-            <Button
-              variant="secondary"
-              onClick={() => sync()}
-              loading={isSyncing}
-            >
-              Sync
-            </Button>
-          </div>
+              <LinkBreak1Icon />
+            </IconButton>
+          </Tooltip>
+          <CopyButton
+            url={`https://docs.google.com/spreadsheets/d/${sheetId}/edit`}
+          />
         </div>
+
+        <p
+          css={`
+            margin: 0;
+            color: var(--figma-color-text-secondary);
+          `}
+          className="mt-4"
+        >
+          {localeItems && localeItems.length} items - Last sync{" "}
+          {timeAgo.format(new Date(modifiedTime))}
+        </p>
+      </div>
+
+      <div className="flex-shrink-0 flex-grow-0 flex gap-4">
+        <Button variant="secondary" onClick={() => sync()} loading={isSyncing}>
+          Sync
+        </Button>
+      </div>
+    </div>
   );
-}
+};
 export default SheetManagement;

@@ -5,7 +5,7 @@ import { getLang, getKey, getVariables } from "./common";
 import { loadRobotoFontsAsync, isFrame, ContainerNode } from "figma-helpers";
 import { truncate } from "lodash";
 import { hexToFigmaRGB } from "figma-helpers/colors";
-type Annotation = LocaleText & { node: TextNode };
+type AnnotatedText = LocaleText & { node: TextNode };
 function sortByAbsolutePosition(a: SceneNode, b: SceneNode) {
   return (
     a.absoluteTransform[1][2] - b.absoluteTransform[1][2] ||
@@ -31,14 +31,14 @@ async function createAnnotation(texts: LocaleText[]) {
       textContainer = selectionItem;
     }
     if (!textContainer) return;
-    console.log(allTextNodes);
+    // console.log(allTextNodes);
     const paint: SolidPaint = {
       type: "SOLID",
       color: hexToFigmaRGB("#A966FF"),
     };
     // title.characters = "i18n";
     // title.visible = false;
-    const annotateTextData: Annotation[] = texts
+    const annotatedTextData: AnnotatedText[] = texts
       .filter((text) => text.key)
       .reduce((acc, text) => {
         const node = allTextNodes.find((node) => node.id == text.id);
@@ -51,65 +51,73 @@ async function createAnnotation(texts: LocaleText[]) {
         return acc;
       }, []);
     function sortAnnotationByTextAbsolutePosition(
-      a: Annotation,
-      b: Annotation
+      a: AnnotatedText,
+      b: AnnotatedText
     ) {
       return sortByAbsolutePosition(a.node, b.node);
     }
     const containerX = textContainer.absoluteTransform[0][2];
     const containerY = textContainer.absoluteTransform[1][2];
-    console.log({ containerX, containerY });
     const annotateX = containerX - 240 - 24;
     let currentY = 0;
     const groupNodes = [];
-    annotateTextData
+    annotatedTextData
       .sort(sortAnnotationByTextAbsolutePosition)
-      .forEach((annotation) => {
-        if (!annotation.node) return;
+      .forEach((annotatedText) => {
+        if (!annotatedText.node) return;
         // id: textNode.id,
-        const annotateTextNode = figma.createText();
-        annotateTextNode.fills = [paint];
-        annotateTextNode.fontName = { family: "Roboto Mono", style: "Regular" };
-        annotateTextNode.textAutoResize = "HEIGHT";
-        annotateTextNode.fontSize = 12;
-        annotateTextNode.resizeWithoutConstraints(240, 16);
-        annotateTextNode.textAlignHorizontal = "RIGHT";
-        annotateTextNode.characters = annotation.key;
-        annotateTextNode.x = annotateX;
+        const keyTextNode = figma.createText();
+        keyTextNode.fills = [paint];
+        keyTextNode.fontName = { family: "Roboto Mono", style: "Regular" };
+        keyTextNode.textAutoResize = "HEIGHT";
+        keyTextNode.fontSize = 12;
+        keyTextNode.resizeWithoutConstraints(240, 16);
+        keyTextNode.textAlignHorizontal = "RIGHT";
+        keyTextNode.characters = annotatedText.key;
+        keyTextNode.x = annotateX;
         const annotateLine = figma.createVector();
         annotateLine.strokeWeight = 1;
         annotateLine.strokes = [paint];
-        const textX = annotation.node.absoluteTransform[0][2];
-        const textY = annotation.node.absoluteTransform[1][2];
-        const calY =
-          textY + (annotation.node.height - annotateTextNode.height) / 2;
-        if (calY > currentY - 16 && calY < currentY + 16) {
-          annotateTextNode.y = calY + annotation.node.height / 2 + 16;
-          const textCenterX = textX + 4;
-          const bottomTextY = textY + annotation.node.height + 2;
+        const textX = annotatedText.node.absoluteTransform[0][2];
+        const textY = annotatedText.node.absoluteTransform[1][2];
+        const textWidth = annotatedText.node.width;
+        const textHeight = annotatedText.node.height;
+        const textHorizontalAlign = annotatedText.node.textAlignHorizontal;
+        const centerOfTextY =
+          textY + (textHeight - keyTextNode.height) / 2;
+        // cung X = ve duong cong
+        if (centerOfTextY > currentY - 16 && centerOfTextY < currentY + 16) {
+          keyTextNode.y = centerOfTextY + textHeight / 2 + 16;
+          const lineEndXCases = {
+            'LEFT': textX + 4,
+            'CENTER': textX + textWidth/2,
+            'RIGHT': textX + textWidth - 4
+          }
+          const lineEndX: number = lineEndXCases[textHorizontalAlign];
+          const bottomTextY = textY + textHeight + 2;
           annotateLine.vectorPaths = [
             {
               windingRule: "NONE",
               data: `M ${containerX - 16} ${
-                annotateTextNode.y + 8
-              } L ${textCenterX} ${
-                annotateTextNode.y + 8
-              } L ${textCenterX} ${bottomTextY}`,
+                keyTextNode.y + 8
+              } L ${lineEndX} ${
+                keyTextNode.y + 8
+              } L ${lineEndX} ${bottomTextY}`,
             },
           ];
         } else {
-          annotateTextNode.y = calY;
+          keyTextNode.y = centerOfTextY;
           annotateLine.vectorPaths = [
             {
               windingRule: "NONE",
-              data: `M ${containerX - 16} ${calY + 8} L ${textX - 6} ${
-                calY + 8
+              data: `M ${containerX - 16} ${centerOfTextY + 8} L ${textX - 6} ${
+                centerOfTextY + 8
               }`,
             },
           ];
         }
-        currentY = annotateTextNode.y;
-        groupNodes.push(annotateTextNode, annotateLine);
+        currentY = keyTextNode.y;
+        groupNodes.push(keyTextNode, annotateLine);
         // figma.currentPage.appendChild(annotateTextNode);
       });
     const group = figma.group(groupNodes, figma.currentPage);

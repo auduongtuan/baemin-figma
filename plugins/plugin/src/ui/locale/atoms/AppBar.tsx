@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setLocaleData } from "../../state/localeSlice";
 import { Button, IconButton, TextBox, Tooltip, Dialog, Popover, WorkingIcon } from "ds";
 import { useForm } from "react-hook-form";
-import { CubeIcon, TableIcon } from "@radix-ui/react-icons";
+import { CubeIcon, TableIcon, UploadIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
 import SheetManagement from "../SheetManagement";
 import { isPlurals } from "../../../lib/localeData";
@@ -13,6 +13,8 @@ import { LANGUAGES } from "../../../constant/locale";
 // import { Token } from "prismjs";
 import {set} from "lodash";
 import { js_beautify } from "js-beautify";
+import { setCurrentDialog } from "../../state/localeAppSlice";
+import ImportDialog from "../dialogs/ImportDialog";
 
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
@@ -57,6 +59,15 @@ const AppBar = () => {
         {/* <WorkingIcon /> */}
       </div>
       <div className="flex flex-grow-0 flex-shrink-0 gap-16">
+        <Tooltip content="Import JSON files">
+          <IconButton
+            onClick={() => {
+              dispatch(setCurrentDialog({type: "IMPORT", opened: true}));
+            }}
+          >
+            <UploadIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip content="Generate Code">
           <IconButton
             onClick={() => {
@@ -98,7 +109,7 @@ const AppBar = () => {
             </IconButton>
           </Dialog.Trigger>
           </Tooltip>
-          <Dialog.Content title="Google sheet"><SheetManagement /></Dialog.Content>
+          <Dialog.Panel title="Google sheet"><SheetManagement /></Dialog.Panel>
           </Dialog>
         ) : 
         <Popover>
@@ -126,6 +137,7 @@ const AppBar = () => {
         </Popover>
         } */}
       </div>
+      <ImportDialog />
     </footer>
   );
 };

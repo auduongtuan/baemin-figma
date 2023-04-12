@@ -6,6 +6,7 @@ import {
 } from "../../../lib/localeData";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash";
+import { LANGUAGES } from "../../../constant/locale";
 function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean}) {
   const {
     register,
@@ -31,9 +32,8 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
           setValue("key", item.key);
         }
         // language
-        else {
+        else if (inputName in LANGUAGES) {
           const itemContent = item[inputName];
-          console.log(itemContent, isPlurals(itemContent));
           if (isPlurals(itemContent)) {
             setValue(`hasPlurals.${inputName}`, true);
             setValue(`${inputName}.one`, itemContent.one);
@@ -43,6 +43,9 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
             setValue(`${inputName}.one`, itemContent);
           }
         }
+        else if (inputName == 'prioritized') {
+          setValue(inputName, item[inputName]);
+        }
       }
     } else {
       reset({
@@ -51,6 +54,7 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
         en: null,
         vi: null,
         hasPlurals: { en: false, vi: false },
+        prioritized: undefined
       });
     }
   }, [item]);

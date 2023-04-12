@@ -13,8 +13,10 @@ function changeLang(
   lang,
   localeItems: LocaleItem[]
 ) {
-  const localeItem = findItemByKey(getKey(textNode), localeItems) || findItemByCharacters(textNode.characters, localeItems);
-  updateTextNode(textNode, {lang, item: localeItem});
+  const localeItem = findItemByKey(getKey(textNode), localeItems);
+  // turn off find by characters because of speed
+  //  || findItemByCharacters(textNode.characters, localeItems);
+  if(localeItem) updateTextNode(textNode, {lang, item: localeItem});
 }
 function switchLang(lang: Lang, localeItems: LocaleItem[], scope?: SceneNode | BaseNode) {
   const updateNodes = scope ? [scope] : h.selection();

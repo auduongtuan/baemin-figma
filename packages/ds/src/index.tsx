@@ -34,6 +34,8 @@ export * from "./Select";
 export {default as Switch} from "./Switch";
 export * from "./Switch";
 
+export {default as Checkbox} from "./Checkbox";
+export * from "./Checkbox";
 export {default as Tooltip} from "./Tooltip";
 // export * from "./Tooltip";
 
@@ -41,3 +43,6 @@ export {default as WorkingIcon} from "./WorkingIcon";
 export * from "./WorkingIcon";
 
 export {default as Tag} from "./Tag";
+
+export {default as Dropzone} from "./Dropzone";
+export * from "./Dropzone";

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "ds": "workspace:*"
+    "ds": "workspace:*",
+    "i18n-js": "^4.2.3"
   }
 }

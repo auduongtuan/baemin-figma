@@ -49,6 +49,7 @@
     "common": {
       "back": "Test thu ne"
     },
-    "dish_with_count": "{{count}} món"
+    "dish_with_count": "{{count}} món",
+    "dish_with_count_test": "{{count}} món"
   }
 }

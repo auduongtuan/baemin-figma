@@ -53,6 +53,10 @@
     "common": {
       "back": "test"
     },
+    "dish_with_count_test": {
+      "one": "{{count}} dish",
+      "other": "{{count}} dishes"
+    },
     "dish_with_count_one": "{{count}} dish",
     "dish_with_count_other": "{{count}} dishes"
   }

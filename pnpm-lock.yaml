@@ -170,8 +170,10 @@ importers:
   plugins/web:
     specifiers:
       ds: workspace:*
+      i18n-js: ^4.2.3
     dependencies:
       ds: link:../../packages/ds
+      i18n-js: 4.2.3
 
 packages:
 
@@ -2897,6 +2899,14 @@ packages:
       - supports-color
     dev: false
 
+  /i18n-js/4.2.3:
+    resolution: {integrity: sha512-UPt7tQTLsMNX2ylYmcfkromOlU4Azo0ueMJ6DG1n1Dv2bfp/szDeB7i/0Ie/Luzx24P00Fz4vsKuMluoLGdYjw==}
+    dependencies:
+      bignumber.js: 9.1.1
+      lodash: 4.17.21
+      make-plural: 7.2.0
+    dev: false
+
   /i18next/22.4.14:
     resolution: {integrity: sha512-VtLPtbdwGn0+DAeE00YkiKKXadkwg+rBUV+0v8v0ikEjwdiJ0gmYChVE4GIa9HXymY6wKapkL93vGT7xpq6aTw==}
     dependencies:
@@ -3121,6 +3131,10 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /make-plural/7.2.0:
+    resolution: {integrity: sha512-WkdI+iaWaBCFM2wUXwos8Z7spg5Dt64Xe/VI6NpRaly21cDtD76N6S97K//UtzV0dHOiXX+E90TnszdXHG0aMg==}
+    dev: false
 
   /mdn-data/2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}

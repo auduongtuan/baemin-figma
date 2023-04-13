@@ -7,10 +7,15 @@ export interface LocaleData {
   sheetId?: string;
   // localeSelection?: LocaleSelection;
   localeItems?: LocaleItem[];
+  localeLibraries?: LocaleLibrary[]
   // matchedItem?: LocaleItem;
   modifiedTime?: string;
 }
-
+export type LocaleLibrary = {
+  id?: string; // node id
+  name?: string;
+  local: boolean;
+}
 export type LocaleItemPluralContent = {
   zero?: "string";
   one?: "string";

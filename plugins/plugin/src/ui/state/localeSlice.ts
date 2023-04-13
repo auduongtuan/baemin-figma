@@ -51,6 +51,8 @@ export const localeSlice = createSlice({
         state.modifiedTime = action.payload.modifiedTime;
       if ("localeItems" in action.payload)
         state.localeItems = action.payload.localeItems;
+      if ("localeLibraries" in action.payload)
+        state.localeLibraries = action.payload.localeLibraries;
     },
     setTextsInLocaleSelection: (state, action: PayloadAction<LocaleText[]>) => {
       state.localeSelection.texts = action.payload;

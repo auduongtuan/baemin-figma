@@ -4,8 +4,9 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
 import { IconButton } from "./Button";
 
-interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
+interface PopoverContentProps extends React.ComponentPropsWithoutRef<"div"> {
   title?: string;
+  width?: string;
 }
 const overlayShow = keyframes`
   from {
@@ -24,7 +25,8 @@ const contentShow = keyframes`
   }
 `;
 
-const PopoverContent = ({ title, children, ...rest }: DialogProps) => {
+const PopoverContent = ({ title, children, width, ...rest }: PopoverContentProps) => {
+  console.log(width);
   return (
     <RPopover.Portal>
 
@@ -39,6 +41,7 @@ const PopoverContent = ({ title, children, ...rest }: DialogProps) => {
             hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
           padding: 12px;
           animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
+          width: ${width};
           &:focus {
             outline: none;
           }

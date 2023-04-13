@@ -9,7 +9,7 @@ export const commands = [
   "update_text",
   "get_locale_data",
   "save_locale_data",
-  "export_code",
+  "print_code_block",
   "show_figma_notify",
   "auto_set_key",
   "create_annotation"

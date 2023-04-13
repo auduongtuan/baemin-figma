@@ -3,7 +3,7 @@ import switchLang from "./locale/switchLang";
 import {updateTextByIds} from "./locale/updateText";
 import autoSetKeyForSelection from "./locale/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./locale/localeData";
-import exportCode from "./locale/exportCode";
+import printCodeBlock from "./locale/printCodeBlock";
 import updateSelection from "./locale/updateSelection";
 import selectTexts from "./locale/selectTexts";
 import { LocaleItem } from "../lib/localeData";
@@ -38,8 +38,8 @@ const locale = {
       case "save_locale_data":
         saveLocaleData(msg.localeData);
         break;
-      case "export_code":
-        await exportCode(msg.langJSONs);
+      case "print_code_block":
+        await printCodeBlock(msg.library, msg.langJSONs);
         break;
       case "create_annotation":
         await createAnnotation(msg.localeTexts);

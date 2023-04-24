@@ -38,9 +38,21 @@ export function getLocaleData() {
   };
 
   localeDataNodes.reverse().forEach((localeDataNode, i) => {
+   
     const nodeLocaleData = getData(localeDataNode);
+    
     try {
       let localeData = JSON.parse(nodeLocaleData);
+      // if
+
+      if(!('localeLibraries' in combinedLocaleData)) {
+        combinedLocaleData.localeLibraries = []; 
+      }
+      combinedLocaleData.localeLibraries.push({
+        id: localeDataNode.id,
+        name: localeDataNode.name,
+        local: i == localeDataNodes.length - 1
+      })
 
       // migrate to new typed system
       if ("items" in localeData) {
@@ -84,7 +96,6 @@ export function getLocaleData() {
       console.log(e);
     }
   });
-
   // console.log(localeItems);
   postData({ type: "load_locale_data", localeData: combinedLocaleData });
 }

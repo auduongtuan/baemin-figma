@@ -4,11 +4,13 @@ import Menu from "./Menu";
 
 const DropdownMenuItem = ({
   children,
+  icon,
+  content,
   ...rest
-}: DropdownMenu.DropdownMenuItemProps) => {
+}: DropdownMenu.DropdownMenuItemProps & {icon?: React.ReactNode, content?: React.ReactNode}) => {
   return (
     <DropdownMenu.Item {...rest} asChild>
-      <Menu.Item name={children}></Menu.Item>
+      <Menu.Item name={children} icon={icon} content={content}></Menu.Item>
     </DropdownMenu.Item>
   );
 };

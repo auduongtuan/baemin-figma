@@ -1,20 +1,12 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setLocaleData } from "../../state/localeSlice";
-import { Button, IconButton, TextBox, Tooltip, Dialog, Popover, WorkingIcon } from "ds";
+import { IconButton, Tooltip } from "ds";
 import { useForm } from "react-hook-form";
-import { CubeIcon, TableIcon, UploadIcon } from "@radix-ui/react-icons";
-import { runCommand } from "../../uiHelper";
-import SheetManagement from "../SheetManagement";
-import { isPlurals } from "../../../lib/localeData";
-// import Prism from "prismjs";
-// import "prismjs/components/prism-json";
-import { LANGUAGES } from "../../../constant/locale";
-// import { Token } from "prismjs";
-import {set} from "lodash";
-import { js_beautify } from "js-beautify";
+import { UploadIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import ImportDialog from "../dialogs/ImportDialog";
+import ExportCode from "../app/ExportCode";
 
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
@@ -68,38 +60,7 @@ const AppBar = () => {
             <UploadIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip content="Generate Code">
-          <IconButton
-            onClick={() => {
-              const tokensObject: {[key:string]: Array<string | Token>} = {};
-              const langJSONs: {[key:string]: string} = {};
-              Object.keys(LANGUAGES).forEach(lang => {
-                const langJSON = js_beautify(JSON.stringify(
-                  localeItems.reduce((acc, item) => {
-                    if(isPlurals(item[lang])) {
-                      Object.keys(item[lang]).forEach(quantity => {
-                        set(acc, `${item.key}_${quantity}`, item[lang][quantity]);
-                      });
-                    } else {
-                      set(acc, item.key, item[lang]);
-                    }
-                    return acc;
-                  }, {})
-                ));
-                langJSONs[lang] = langJSON;
-                // tokensObject[lang] = Prism.tokenize(
-                //   js_beautify(langJSON),
-                //   Prism.languages["json"]
-                // );
-              });
-           
-              // runCommand("export_code", { tokensObject: tokensObject });
-              runCommand("export_code", { langJSONs });
-            }}
-          >
-            <CubeIcon />
-          </IconButton>
-        </Tooltip>
+        <ExportCode />
         {/* {sheetId ? (
           <Dialog>
           <Tooltip content="Google sheet info">

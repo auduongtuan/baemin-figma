@@ -21,12 +21,11 @@ const Locale = ({}) => {
   useEffect(() => {
     runCommand("get_locale_data");
     window.onmessage = async (event) => {
-      console.log(event.data);
       if (event.data.pluginMessage && "type" in event.data.pluginMessage) {
         const { type, ...data } = event.data.pluginMessage;
         switch (type) {
           case "load_locale_data":
-            console.log('Load Locale Data', data);
+            // console.log('Load Locale Data', data);
             if (data.localeData) {
               // try {
               //   let localeData = JSON.parse(data.localeData);

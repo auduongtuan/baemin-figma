@@ -55,6 +55,12 @@ export function getKey(node: TextNode) {
 export function setKey(node: TextNode, key: string) {
   h.setNodeData(node, `${PREFIX}key`, key);
 }
+export function getFormula(node: TextNode) {
+  return h.getNodeData(node, `${PREFIX}formula`);
+}
+export function setFormula(node: TextNode, formula: string) {
+  h.setNodeData(node, `${PREFIX}formula`, formula);
+}
 
 
 export function autoSetKey(

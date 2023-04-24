@@ -1,22 +1,26 @@
 import * as h from "figma-helpers";
 import { LANGUAGES } from "../../constant/locale";
 import {
-  findItemByKey,
-  findItemByCharacters, LocaleItem,
+  findItemByKey, LocaleItem,
   Lang
 } from "../../lib/localeData";
 import updateSelection from "./updateSelection";
-import { getKey, setLang } from "./common";
-import updateText, { updateTextNode } from "./updateText";
+import { getFormula, getKey } from "./common";
+import { updateTextNode } from "./updateText";
 function changeLang(
   textNode: TextNode,
   lang,
   localeItems: LocaleItem[]
 ) {
-  const localeItem = findItemByKey(getKey(textNode), localeItems);
+  const formula = getFormula(textNode);
   // turn off find by characters because of speed
   //  || findItemByCharacters(textNode.characters, localeItems);
-  if(localeItem) updateTextNode(textNode, {lang, item: localeItem});
+  if(formula) {
+    updateTextNode(textNode, {lang, formula: formula, items: localeItems});
+  } else {
+    const localeItem = findItemByKey(getKey(textNode), localeItems);
+    if(localeItem) updateTextNode(textNode, {lang, item: localeItem});
+  }
 }
 function switchLang(lang: Lang, localeItems: LocaleItem[], scope?: SceneNode | BaseNode) {
   const updateNodes = scope ? [scope] : h.selection();

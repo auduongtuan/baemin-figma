@@ -91,7 +91,7 @@ title={ */}
             </Tooltip>
             <Dialog.Panel title="Delete locale item">
             <Dialog.Content>
-             Are you sure you want to delete this locale item?
+             Are you sure you want to delete <strong>{item.key}</strong>?
              <Button
                 // variant="secondary"
                 destructive

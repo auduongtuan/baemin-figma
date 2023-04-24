@@ -53,7 +53,7 @@ const MultipleTextEditor = () => {
       <div className="mt-16 flex flex-column gap-16">
         {localeSelection.texts.map((text) => {
           return (
-            <TextEditor text={text}></TextEditor>
+            <TextEditor key={text.id} text={text}></TextEditor>
           );
         })}
       </div>

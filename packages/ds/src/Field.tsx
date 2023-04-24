@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import styled, {css} from "styled-components";
 import { renderToString } from "react-dom/server";
+import TextareaAutosize, {TextareaAutosizeProps} from 'react-textarea-autosize';
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
@@ -14,13 +15,13 @@ export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   helpText?: React.ReactNode;
 }
 export interface TextareaProps
-  extends React.ComponentPropsWithoutRef<"textarea"> {
+  extends TextareaAutosizeProps {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
 }
 
-const BaseInputStyle = css`
+export const BaseInputStyle = css`
   font-size: var(--font-size-xsmall);
   font-weight: var(--font-weight-normal);
   letter-spacing: var(--font-letter-spacing-neg-xsmall);
@@ -30,9 +31,8 @@ const BaseInputStyle = css`
   overflow: visible;
   align-items: center;
   width: 100%;
-  margin: 1px 0 1px 0;
-  padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall)
-    var(--size-xxsmall);
+  margin: 0;
+  padding: 7px 8px;
   color: var(--black8);
   border: 1px solid var(--black1);
   /* border-color: var(--black1); */
@@ -52,7 +52,7 @@ const BaseInputStyle = css`
   }
   &::placeholder {
     color: var(--black3);
-    border: 1px solid transparent;
+    /* border: 1px solid transparent; */
   }
   &:placeholder-shown {
     border: 1px solid var(--black1);
@@ -95,7 +95,6 @@ const BaseInputStyle = css`
 `;
 const StyledTextBox = styled.input<TextBoxProps>`
   ${BaseInputStyle};
-  height: 30px;
 `;
 export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
@@ -112,6 +111,9 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
     },
     ref
   ) => {
+    useEffect(() => {
+
+    }, []);
     return (
       <div className={className && className}>
         {label && (
@@ -164,7 +166,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   }
 );
 
-const StyledTextarea = styled.textarea<TextareaProps>`
+const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
   ${BaseInputStyle}
 `;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(

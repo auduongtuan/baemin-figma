@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { updateLocaleItem } from "../../state/localeSlice";
 import { Controller } from "react-hook-form";
-import { TextBox, Button, Switch, Checkbox, IconButton, Tooltip } from "ds";
+import { TextBox, Textarea, Button, Switch, Checkbox, IconButton, Tooltip } from "ds";
 import { dateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, isString } from "lodash";
 import { LANGUAGES } from "../../../constant/locale";
@@ -245,7 +245,7 @@ function LocaleItemForm({
         {Object.keys(LANGUAGES).map((lang) => (
           <>
             <div className="relative mt-12">
-              <TextBox
+              <Textarea
                 label={LANGUAGES[lang]}
                 id={lang}
                 className=""
@@ -276,7 +276,7 @@ function LocaleItemForm({
               </div>
             </div>
             {watchHasPlurals[lang] && (
-              <TextBox
+              <Textarea
                 label={`${LANGUAGES[lang]} - Plural`}
                 id={lang}
                 className="mt-12"

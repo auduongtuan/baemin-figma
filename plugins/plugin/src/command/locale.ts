@@ -25,8 +25,8 @@ const locale = {
         autoSetKeyForSelection(msg.localeItems);
         break;
       case "update_text":
-        const {ids, lang, key, variables, item} = msg;
-        updateTextByIds(ids, {lang, key, variables, item});
+        const {ids, ...rest} = msg;
+        updateTextByIds(ids, rest);
         // figma.notify('updateText');
         break;
       case "switch_lang":

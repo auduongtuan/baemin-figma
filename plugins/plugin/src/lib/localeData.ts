@@ -42,10 +42,15 @@ export type LocaleTextVariables = { [key: string]: number | string };
 export interface LocaleText {
   id?: string;
   key?: string;
+  formula?: string;
   lang?: Lang | typeof MIXED_VALUE;
   characters?: string;
   variables?: LocaleTextVariables;
+}
+export interface LocaleTextProps extends Omit<LocaleText, "id"> {
+  ids?: string | string[],
   item?: LocaleItem;
+  items?: LocaleItem[];
 }
 export interface LocaleSelection {
   summary?: {

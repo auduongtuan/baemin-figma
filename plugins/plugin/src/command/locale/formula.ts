@@ -1,28 +1,23 @@
+// unused file
 import * as h from "figma-helpers";
 import { LANGUAGES } from "../../constant/locale";
 import {
-  findItemByKey,
-  findItemByCharacters,
-  LocaleItem,
+  findItemByKey, LocaleItem,
   Lang,
+  LocaleTextProps
 } from "../../lib/localeData";
 import updateSelection from "./updateSelection";
 import {
-  setKey,
-  getKey,
-  getLang,
-  getVariables,
+  setKey, getVariables,
   setLang,
-  setVariables,
-  setVariable,
+  setVariables
 } from "./common";
-import updateText from "./updateText";
-import { LocaleText, isPlurals, getTextCharacters } from "../../lib/localeData";
+import { getTextCharacters } from "../../lib/localeData";
 import { DEFAULT_LANG } from "../../constant/locale";
 import { matchAll } from "../../lib/helpers";
 function updateTextNode(
   textNode: TextNode,
-  textProps: Omit<LocaleText, "id">,
+  textProps: LocaleTextProps,
   localeItems?: LocaleItem[]
 ) {
   if (textProps) {

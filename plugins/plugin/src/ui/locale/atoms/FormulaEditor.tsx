@@ -1,10 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import { MentionsInput, Mention } from "react-mentions";
+import { MentionsInput, Mention, SuggestionDataItem } from "react-mentions";
 import { useAppSelector, useAppDispatch } from "../../hooks/redux";
 import { Menu, BaseInputStyle } from "ds";
 import styled, { css } from "styled-components";
 import { MentionsInputProps } from "react-mentions";
+import { getStringContent } from "../../../lib/localeData";
 const mentionInputClassName = "mention-input";
 const FormulaInputContainer = styled.div`
   .${mentionInputClassName}__input {
@@ -37,7 +38,7 @@ const FormulaEditor = ({
         return query ? item.key.indexOf(query.toLowerCase()) > -1 : true;
       })
       .slice(0, 10);
-    return matches.map(({ key }) => ({ id: key }));
+    return matches.map(({ key, vi }) => ({ id: key, content: getStringContent(vi) }));
   };
   const [internalValue, setInternalValue] = useState("");
   const passedValue = value ? value : internalValue;
@@ -73,13 +74,13 @@ const FormulaEditor = ({
           markup=":__id__:"
           data={queryItem}
           renderSuggestion={(
-            entry,
+            entry: SuggestionDataItem & {content?: string},
             search,
             highlightedDisplay,
             index,
             focused
           ) => {
-            return <Menu.Item name={entry.id} highlighted={focused} />;
+            return <Menu.Item name={entry.id} content={entry?.content} highlighted={focused} />;
           }}
         />
       </MentionsInput>

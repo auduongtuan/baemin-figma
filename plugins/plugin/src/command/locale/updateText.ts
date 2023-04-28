@@ -23,6 +23,66 @@ import {
 } from "./common";
 import { isString } from "lodash";
 import { matchAll } from "../../lib/helpers";
+import { hexToFigmaRGB } from "figma-helpers/colors";
+import parseTagsInText from "./parseTagsInText";
+
+const styleSegmentFields = [
+  "fontSize",
+  "fontName",
+  // "fontWeight",
+  "textDecoration",
+  "textCase",
+  "lineHeight",
+  "letterSpacing",
+  "fills",
+  "textStyleId",
+  "fillStyleId",
+  "hyperlink",
+  "listOptions",
+] as (
+  | "fontSize"
+  | "fontName"
+  | "textDecoration"
+  | "textCase"
+  | "lineHeight"
+  | "letterSpacing"
+  | "fills"
+  | "textStyleId"
+  | "fillStyleId"
+  | "hyperlink"
+  | "listOptions"
+  | "fontWeight"
+  | "indentation"
+)[];
+const settings = {
+  bold: {
+    fontNameStyle: "Bold",
+  },
+  link: {
+    fontNameStyle: "Medium",
+    paint: {
+      type: "SOLID",
+      color: hexToFigmaRGB("#25AFB6"),
+      opacity: 1,
+    } as SolidPaint,
+  },
+};
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function setRangeBulkFields(
+  textNode: TextNode,
+  segment: Partial<StyledTextSegment>,
+  start: number,
+  end: number
+) {
+  styleSegmentFields.forEach((field) => {
+    const functionName = "setRange" + capitalizeFirstLetter(field);
+    if (field in segment && functionName in textNode) {
+      textNode[functionName](start, end, segment[field]);
+    }
+  });
+}
 
 // find text node
 export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
@@ -35,8 +95,10 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
   }
   if (textProps.key === "") setKey(textNode, textProps.key);
   const oldLang = getLang(textNode) || DEFAULT_LANG;
-  const newLang = textProps.lang || DEFAULT_LANG;
-  setLang(textNode, newLang);
+  const newLang = textProps.lang || oldLang;
+  if (newLang != oldLang) {
+    setLang(textNode, newLang);
+  }
 
   if (typeof textProps.formula != "undefined") {
     setFormula(textNode, textProps.formula || "");
@@ -53,8 +115,42 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       variables.count = 1;
     }
     setKey(textNode, textProps.item.key);
-    // NON PLURAL
-    textNode.characters = getTextCharacters(localeItemContent, variables);
+    const textCharacters = getTextCharacters(localeItemContent, variables);
+    const parsedStyleCharacters = parseTagsInText(textCharacters);
+    console.log(parsedStyleCharacters.characters);
+    textNode.characters = parsedStyleCharacters.characters;
+    if (parsedStyleCharacters.style.unorderedList.length > 0) {
+      parsedStyleCharacters.style.unorderedList.forEach((listPos) => {
+        textNode.setRangeListOptions(listPos[0], listPos[1], {
+          type: "UNORDERED",
+        });
+      });
+    }
+    const fontName = textNode.getRangeFontName(0, 1) as FontName;
+
+    if (parsedStyleCharacters.style.bold.length > 0) {
+      // get first font
+      const boldFontName = {
+        family: fontName.family,
+        style: settings.bold.fontNameStyle,
+      };
+      parsedStyleCharacters.style.bold.forEach((boldPos) => {
+        console.log("bold pos", boldPos[0], boldPos[1]);
+        textNode.setRangeFontName(boldPos[0], boldPos[1], boldFontName);
+      });
+    }
+    if (parsedStyleCharacters.style.link.length > 0) {
+      // get first font
+      const linkFontName = {
+        family: fontName.family,
+        style: settings.link.fontNameStyle,
+      };
+      parsedStyleCharacters.style.link.forEach((linkPos) => {
+        console.log("link pos", linkPos[0], linkPos[1]);
+        textNode.setRangeFontName(linkPos[0], linkPos[1], linkFontName);
+        textNode.setRangeFills(linkPos[0], linkPos[1], [settings.link.paint]);
+      });
+    }
   }
   console.log("mark---");
   if (textProps.formula && textProps.items) {
@@ -65,37 +161,7 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
     const variables = getVariables(textNode);
     const matches = matchAll(/\:\s*([A-Za-z0-9\._]+)\s*\:/, textProps.formula);
     const oldCharacters = textNode.characters;
-    function capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-    const fields = [
-      "fontSize",
-      "fontName",
-      // "fontWeight",
-      "textDecoration",
-      "textCase",
-      "lineHeight",
-      "letterSpacing",
-      "fills",
-      "textStyleId",
-      "fillStyleId",
-      "hyperlink",
-      "listOptions",
-    ];
-    const styleSegments = textNode.getStyledTextSegments([
-      "fontSize",
-      "fontName",
-      // "fontWeight",
-      "textDecoration",
-      "textCase",
-      "lineHeight",
-      "letterSpacing",
-      "fills",
-      "textStyleId",
-      "fillStyleId",
-      "hyperlink",
-      "listOptions",
-    ]);
+    const styleSegments = textNode.getStyledTextSegments(styleSegmentFields);
     const keySegments = [];
     if (matches) {
       matches.forEach((match: string[]) => {
@@ -152,14 +218,7 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
         }
         const newStart = currentCheckedCharacter;
         const newEnd = currentCheckedCharacter + segmentLength;
-
-        fields.forEach((field) => {
-          const functionName = "setRange" + capitalizeFirstLetter(field);
-          if (field in segment && functionName in textNode) {
-            textNode[functionName](newStart, newEnd, segment[field]);
-          }
-        });
-
+        setRangeBulkFields(textNode, segment, newStart, newEnd);
         currentCheckedCharacter = newEnd;
       });
     }

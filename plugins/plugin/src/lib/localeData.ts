@@ -65,6 +65,13 @@ export function isPlurals(
 ): content is LocaleItemPluralContent {
   return typeof content != "string" && isObject(content) && "one" in content;
 }
+export function getStringContent(content: LocaleItemContent): string {
+  if (isPlurals(content)) {
+    return content.other || content.one;
+  } else {
+    return content;
+  }
+}
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems ? localeItems.find((item) => item.key == key) : null;
 }

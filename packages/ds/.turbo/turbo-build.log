@@ -6,10 +6,10 @@ vite v3.2.5 building for production...
 transforming...
 ✓ 152 modules transformed.
 rendering chunks...
-dist/index.js   551.30 KiB / gzip: 140.54 KiB
-dist/index.cjs   382.99 KiB / gzip: 122.78 KiB
-dist/index.umd.cjs   383.02 KiB / gzip: 122.71 KiB
+dist/index.js   551.21 KiB / gzip: 140.53 KiB
+dist/index.cjs   382.89 KiB / gzip: 122.76 KiB
+dist/index.umd.cjs   382.92 KiB / gzip: 122.69 KiB
 
 [vite:dts] Start generate declaration files...
-[vite:dts] Declaration files built in 10025ms.
+[vite:dts] Declaration files built in 7456ms.
 

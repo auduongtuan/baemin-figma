@@ -12,6 +12,7 @@ import {
   LocaleText,
   findItemByKey,
   isPlurals,
+  getStringContent,
 } from "../../../lib/localeData";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
 import { LocaleItem } from "../../../lib/localeData";
@@ -21,13 +22,7 @@ export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;
 }
-function getStringContent(content: LocaleItemContent): string {
-  if (isPlurals(content)) {
-    return content.other || content.one;
-  } else {
-    return content;
-  }
-}
+
 function KeyCombobox({
   label = "Key",
   value,

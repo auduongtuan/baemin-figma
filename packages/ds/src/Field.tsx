@@ -5,17 +5,18 @@ import React, {
   forwardRef,
   useEffect,
 } from "react";
-import styled, {css} from "styled-components";
+import styled, { css } from "styled-components";
 import { renderToString } from "react-dom/server";
-import TextareaAutosize, {TextareaAutosizeProps} from 'react-textarea-autosize';
+import TextareaAutosize, {
+  TextareaAutosizeProps,
+} from "react-textarea-autosize";
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
 }
-export interface TextareaProps
-  extends TextareaAutosizeProps {
+export interface TextareaProps extends TextareaAutosizeProps {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
@@ -111,19 +112,11 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
     },
     ref
   ) => {
-    useEffect(() => {
-
-    }, []);
+    useEffect(() => {}, []);
     return (
       <div className={className && className}>
         {label && (
-          <label
-            htmlFor={id}
-            className="mb-8"
-            css={`
-              font-size: var(----font-size-xsmall);
-            `}
-          >
+          <label htmlFor={id} className="mb-8 text-xsmall">
             {label}
           </label>
         )}
@@ -177,7 +170,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={className && className}>
         {label && (
-          <label htmlFor={id} className="mb-8">
+          <label htmlFor={id} className="mb-8 text-xsmall">
             {label}
           </label>
         )}

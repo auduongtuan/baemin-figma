@@ -12,10 +12,14 @@ interface IconButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   type?: "button" | "submit" | "reset";
 }
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ icon, className = "", children, ...rest }, forwardedRef) => {
+  (
+    { icon, className = "", type = "button", children, ...rest },
+    forwardedRef
+  ) => {
     return (
       <button
         ref={forwardedRef}
+        type={type}
         css={`
           color: var(--black8-opaque);
           background: transparent;
@@ -37,6 +41,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
+      type = "button",
       variant = "primary",
       destructive = false,
       loading = false,
@@ -167,11 +172,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={`button--${variant}${
           destructive ? "-destructive" : ""
         } ${className}`}
+        type={type}
         {...rest}
         ref={ref}
       >
-        {loading && <WorkingIcon />} 
-       {children}
+        {loading && <WorkingIcon />}
+        {children}
       </button>
     );
   }

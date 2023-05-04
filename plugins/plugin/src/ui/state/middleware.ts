@@ -9,7 +9,7 @@ import {
   updateTextsInLocaleSelection,
 } from "./localeSlice";
 import type { RootState } from "./store";
-import {runCommand} from "../uiHelper";
+import { runCommand } from "../uiHelper";
 import { LocaleData } from "../../lib/localeData";
 export const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
@@ -29,9 +29,9 @@ listenerMiddleware.startListening({
       modifiedTime: modifiedTime,
       localeItems: state.locale.localeItems,
     };
-    console.log('LOCALE DATA IN MIDDLEWARE', localeData);
+    // console.log('LOCALE DATA IN MIDDLEWARE', localeData);
     runCommand("save_locale_data", {
-      localeData: localeData
+      localeData: localeData,
     });
   },
 });

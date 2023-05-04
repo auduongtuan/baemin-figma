@@ -1,18 +1,29 @@
 import { matchAll } from "../../lib/helpers";
-const textCharacters =
-  "Oh la la <b>TestBold1</b>, <a>TestLink1</a> nghinh nhi:\n<ul><li>Lalala <b>TestBold2</b></li>\n<li>Dai hon ne <a>TestLink2</a></li></ul>";
-const tagRegex = /\<(b|a|ul|li)\b[^>]*>((?:.|\n)*?)\<\/\1>/;
-type StylePosition = [number, number];
-const styleTypes = ["bold", "link", "unorderedList", "orderedList"] as const;
-type ParsedStyle = {
-  [key in typeof styleTypes[number]]: StylePosition[];
+export const tagRegex = /\<(b|a|ul|ol|li)\b[^>]*>((?:.|\n)*?)\<\/\1>/;
+export type StyleInfo = {
+  start: number;
+  end: number;
+  href?: string;
 };
-type ParsedText = {
+export const styleTypes = [
+  "bold",
+  "link",
+  "unorderedList",
+  "orderedList",
+] as const;
+export type ParsedStylePositions = {
+  [key in typeof styleTypes[number]]: StyleInfo[];
+};
+export type ParsedText = {
   characters?: string;
-  style?: ParsedStyle;
+  stylePositions?: ParsedStylePositions;
+  tagsLength?: number;
   hasTags?: boolean;
 };
-function parseTagsInText(textCharacters: string, parentTag?: string) {
+function parseTagsInText(
+  textCharacters: string,
+  parentTag?: string
+): ParsedText {
   const matches = matchAll(tagRegex, textCharacters);
   if (matches.length == 0) {
     return {
@@ -23,7 +34,7 @@ function parseTagsInText(textCharacters: string, parentTag?: string) {
   let newString = "";
   let currentIndex = 0;
   let currentTagsLength = 0;
-  const style: ParsedStyle = {
+  const style: ParsedStylePositions = {
     bold: [],
     link: [],
     unorderedList: [],
@@ -31,10 +42,8 @@ function parseTagsInText(textCharacters: string, parentTag?: string) {
   };
   matches.forEach((match) => {
     const tag = match[1];
-    console.log(tag);
     const tagsLength = match[0].length - match[2].length;
     const textContent = parseTagsInText(match[2], tag);
-    console.log("textContent", textContent);
     newString +=
       textCharacters.substring(currentIndex, match.index) +
       textContent.characters;
@@ -42,36 +51,46 @@ function parseTagsInText(textCharacters: string, parentTag?: string) {
     // const openTagLength = tagsLength - closeTagLength;
     const newIndex = match.index - currentTagsLength;
     if (tag == "b") {
-      style.bold.push([newIndex, newIndex + textContent.characters.length]);
+      style.bold.push({
+        start: newIndex,
+        end: newIndex + textContent.characters.length,
+      });
     }
     if (tag == "a") {
-      style.link.push([newIndex, newIndex + textContent.characters.length]);
+      const href = match[0].match(/href=['"](.*?)['"]/);
+      style.link.push({
+        start: newIndex,
+        end: newIndex + textContent.characters.length,
+        href: href ? href[1] : undefined,
+      });
     }
     if (tag == "li") {
       if (parentTag == "ol") {
-        style.orderedList.push([
-          newIndex,
-          newIndex + textContent.characters.length,
-        ]);
-      } else {
-        style.unorderedList.push([
-          newIndex,
-          newIndex + textContent.characters.length,
-        ]);
+        style.orderedList.push({
+          start: newIndex,
+          end: newIndex + textContent.characters.length,
+        });
+      }
+      if (parentTag == "ul") {
+        style.unorderedList.push({
+          start: newIndex,
+          end: newIndex + textContent.characters.length,
+        });
       }
     }
     // if (textContent.hasTags) {
     styleTypes.forEach((styleType) => {
       if (
-        textContent.style &&
-        styleType in textContent.style &&
-        textContent.style[styleType]
+        textContent.stylePositions &&
+        styleType in textContent.stylePositions &&
+        textContent.stylePositions[styleType]
       ) {
-        const newStyle: StylePosition[] = textContent.style[styleType].map(
-          (pos: StylePosition): StylePosition => [
-            pos[0] + newIndex,
-            pos[1] + newIndex,
-          ]
+        const newStyle: StyleInfo[] = textContent.stylePositions[styleType].map(
+          (pos: StyleInfo): StyleInfo => ({
+            ...pos,
+            start: pos.start + newIndex,
+            end: pos.end + newIndex,
+          })
         );
         style[styleType].push(...newStyle);
       }
@@ -88,13 +107,16 @@ function parseTagsInText(textCharacters: string, parentTag?: string) {
     hasTags: true,
     characters: newString,
     tagsLength: currentTagsLength,
-    style: style,
+    stylePositions: style,
   };
 }
-const testParsed = parseTagsInText(textCharacters);
-console.log(JSON.stringify(testParsed));
-console.log("TestLink1", testParsed.characters.indexOf("TestLink1"));
-console.log("TestLink2", testParsed.characters.indexOf("TestLink2"));
-console.log("TestBold1", testParsed.characters.indexOf("TestBold1"));
-console.log("TestBold2", testParsed.characters.indexOf("TestBold2"));
+// test stuff
+// const textCharacters =
+//   "Oh la la <b>TestBold1</b>, <a>TestLink1</a> nghinh nhi:\n<ul><li>Lalala <b>TestBold2</b></li>\n<li>Dai hon ne <a>TestLink2</a></li></ul>";
+// const testParsed = parseTagsInText(textCharacters);
+// console.log(JSON.stringify(testParsed));
+// console.log("TestLink1", testParsed.characters.indexOf("TestLink1"));
+// console.log("TestLink2", testParsed.characters.indexOf("TestLink2"));
+// console.log("TestBold1", testParsed.characters.indexOf("TestBold1"));
+// console.log("TestBold2", testParsed.characters.indexOf("TestBold2"));
 export default parseTagsInText;

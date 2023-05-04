@@ -1,28 +1,29 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { debounce } from "lodash";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { Controller, useForm } from "react-hook-form";
-import { IconButton, Tooltip, TextBox, Textarea, Switch } from "ds";
 import {
   FontFamilyIcon,
   MinusCircledIcon,
+  PlusCircledIcon,
   TextIcon,
 } from "@radix-ui/react-icons";
-import KeyCombobox from "./KeyCombobox";
+import classNames from "classnames";
+import { IconButton, Switch, Tag, TextBox, Tooltip } from "ds";
+import { debounce, get, isObject } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
+  LocaleItem,
   LocaleText,
   LocaleTextVariables,
+  findItemByKey,
   getVariableNames,
 } from "../../../lib/localeData";
-import { findItemByKey } from "../../../lib/localeData";
-import { get, isObject } from "lodash";
-import { runCommand } from "../../uiHelper";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { setCurrentDialog } from "../../state/localeAppSlice";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
-import { Tag } from "ds";
-import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
+import { runCommand } from "../../uiHelper";
 import EditDialog from "../dialogs/EditDialog";
 import FormulaEditor from "./FormulaEditor";
-import classNames from "classnames";
+import KeyCombobox from "./KeyCombobox";
+import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
 const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
   className,
   children,
@@ -47,7 +48,7 @@ const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
     </div>
   );
 };
-const TextEditor = ({ text }: { text: LocaleText }) => {
+const TextEditForm = ({ text }: { text: LocaleText }) => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
@@ -73,6 +74,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
   const updateTextDebounce = useMemo(
     () =>
       debounce((data) => {
+        console.log("DEBOUNCE START");
         const { variables, formula } = data;
         const textProps = {
           variables: isObject(variables)
@@ -80,12 +82,14 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
             : undefined,
           formula: formula,
         };
+        console.log("Locale items", localeItems);
         runCommand("update_text", {
           ids: text.id,
           item: localeItem,
           items: localeItems,
           ...textProps,
         });
+        console.log("UPDATE TEXT", textProps);
         dispatch(
           updateTextInLocaleSelection({
             ...text,
@@ -93,7 +97,7 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
           })
         );
       }, 300),
-    []
+    [localeItems, text]
   );
   useEffect(() => {
     if (text.formula) setUseFormula(true);
@@ -167,6 +171,36 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
                     <EditDialog item={localeItem} text={text} />
                   )}
                 </>
+              )}
+              {!localeItem && (
+                <Tooltip content="Add new item">
+                  <IconButton
+                    onClick={(e) => {
+                      dispatch(
+                        setCurrentDialog({
+                          opened: true,
+                          type: "NEW",
+                          onDone: (localeItem: LocaleItem) => {
+                            console.log("NEW ADD", localeItem);
+                            runCommand("update_text", {
+                              ids: text.id,
+                              key: localeItem.key,
+                            });
+                            dispatch(
+                              updateTextInLocaleSelection({
+                                ...text,
+                                key: localeItem.key,
+                              })
+                            );
+                            // onChangeHandler(localeItem.key);
+                          },
+                        })
+                      );
+                    }}
+                  >
+                    <PlusCircledIcon />
+                  </IconButton>
+                </Tooltip>
               )}
               <Tooltip content="Use formula">
                 <IconButton
@@ -246,25 +280,24 @@ const TextEditor = ({ text }: { text: LocaleText }) => {
             ></Controller>
           </div>
         )}
-        {!useFormula && (
+        {!useFormula && variableNames && (
           <div>
-            {variableNames &&
-              variableNames.map((name) => (
-                <TextBox
-                  className="mt-8"
-                  label={
-                    <>
-                      <span>{name}</span> <Tag>VAR</Tag>
-                    </>
-                  }
-                  defaultValue={text.variables ? get(text.variables, name) : ""}
-                  {...register(`variables.${name}`)}
-                />
-              ))}
+            {variableNames.map((name) => (
+              <TextBox
+                className="mt-8"
+                label={
+                  <>
+                    <span>{name}</span> <Tag>VAR</Tag>
+                  </>
+                }
+                defaultValue={text.variables ? get(text.variables, name) : ""}
+                {...register(`variables.${name}`)}
+              />
+            ))}
           </div>
         )}
       </div>
     </div>
   );
 };
-export default TextEditor;
+export default TextEditForm;

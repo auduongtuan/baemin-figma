@@ -11,5 +11,5 @@ dist/index.cjs   382.89 KiB / gzip: 122.76 KiB
 dist/index.umd.cjs   382.92 KiB / gzip: 122.69 KiB
 
 [vite:dts] Start generate declaration files...
-[vite:dts] Declaration files built in 7456ms.
+[vite:dts] Declaration files built in 6537ms.
 

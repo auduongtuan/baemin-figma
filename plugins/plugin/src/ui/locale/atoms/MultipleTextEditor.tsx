@@ -4,7 +4,7 @@ import { Tooltip, IconButton } from "ds";
 import { ChatBubbleIcon, MagicWandIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
 import { pluralize } from "@capaj/pluralize";
-import TextEditor from "./TextEditor";
+import TextEditForm from "./TextEditForm";
 const MultipleTextEditor = () => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -42,7 +42,9 @@ const MultipleTextEditor = () => {
           <Tooltip content="Create annotation for selection">
             <IconButton
               onClick={() => {
-               runCommand("create_annotation", {localeTexts: localeSelection.texts});
+                runCommand("create_annotation", {
+                  localeTexts: localeSelection.texts,
+                });
               }}
             >
               <ChatBubbleIcon />
@@ -52,9 +54,7 @@ const MultipleTextEditor = () => {
       </header>
       <div className="mt-16 flex flex-column gap-16">
         {localeSelection.texts.map((text) => {
-          return (
-            <TextEditor key={text.id} text={text}></TextEditor>
-          );
+          return <TextEditForm key={text.id} text={text}></TextEditForm>;
         })}
       </div>
     </div>

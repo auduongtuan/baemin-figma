@@ -7,7 +7,7 @@ export interface LocaleData {
   sheetId?: string;
   // localeSelection?: LocaleSelection;
   localeItems?: LocaleItem[];
-  localeLibraries?: LocaleLibrary[]
+  localeLibraries?: LocaleLibrary[];
   // matchedItem?: LocaleItem;
   modifiedTime?: string;
 }
@@ -15,7 +15,7 @@ export type LocaleLibrary = {
   id?: string; // node id
   name?: string;
   local: boolean;
-}
+};
 export type LocaleItemPluralContent = {
   zero?: "string";
   one?: "string";
@@ -39,6 +39,16 @@ export type LocaleItem = {
 };
 
 export type LocaleTextVariables = { [key: string]: number | string };
+export type LocaleTextStyles = {
+  bold?: {
+    color?: string;
+    style?: string;
+  };
+  link?: {
+    color?: string;
+    style?: string;
+  };
+};
 export interface LocaleText {
   id?: string;
   key?: string;
@@ -47,10 +57,11 @@ export interface LocaleText {
   characters?: string;
   variables?: LocaleTextVariables;
 }
-export interface LocaleTextProps extends Omit<LocaleText, "id"> {
-  ids?: string | string[],
+export interface LocaleTextProps extends Omit<LocaleText, "id" | "lang"> {
+  ids?: string | string[];
   item?: LocaleItem;
   items?: LocaleItem[];
+  lang?: Lang;
 }
 export interface LocaleSelection {
   summary?: {
@@ -103,15 +114,16 @@ function isCharactersMatch(
 export function getTextByCharacter(
   characters: string,
   localeItems: LocaleItem[]
-): LocaleText {
+): LocaleTextProps {
   if (localeItems) {
     let foundLang: string;
     let foundVariables: LocaleTextVariables;
     const item = [...localeItems]
-      .sort((a, b) => 
-        Number(b.prioritized) - Number(a.prioritized) ||
-        compareTime(b.updatedAt, a.updatedAt) ||
-        compareTime(b.createdAt, a.createdAt)
+      .sort(
+        (a, b) =>
+          Number(b.prioritized) - Number(a.prioritized) ||
+          compareTime(b.updatedAt, a.updatedAt) ||
+          compareTime(b.createdAt, a.createdAt)
       )
       .find((item) => {
         return Object.keys(LANGUAGES).some((lang: Lang) => {
@@ -162,9 +174,9 @@ export function findItemByCharacters(
   characters: string,
   localeItems: LocaleItem[]
 ) {
-  if(localeItems) {
+  if (localeItems) {
     const text = getTextByCharacter(characters, localeItems);
-    if(text && text.item) {
+    if (text && text.item) {
       return text.item;
     }
   }
@@ -272,4 +284,30 @@ export function getTextCharacters(
       return placeholders(localeItemContent.other, variables);
     }
   }
+}
+export function getUsedTags(localeItem: LocaleItem) {
+  if (!localeItem) return [];
+  const reg = /\<(b|a|ul|li)\b[^>]*>/;
+
+  const tags = Object.keys(LANGUAGES).reduce((acc, lang) => {
+    const itemContent = localeItem[lang];
+    if (itemContent) {
+      if (isPlurals(itemContent)) {
+        Object.keys(itemContent).forEach((quantity) => {
+          const matches = matchAll(reg, itemContent[quantity]);
+          matches.forEach((matchItem) => {
+            if (!acc.includes(matchItem[1])) acc.push(matchItem[1]);
+          });
+        });
+      } else {
+        const matches = matchAll(reg, itemContent);
+        matches.forEach((matchItem) => {
+          if (!acc.includes(matchItem[1])) acc.push(matchItem[1]);
+        });
+      }
+    }
+    return acc;
+  }, []);
+
+  return tags;
 }

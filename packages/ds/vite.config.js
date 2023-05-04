@@ -14,11 +14,11 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        index: path.resolve(__dirname, "./src/index.tsx")
+        index: path.resolve(__dirname, "./src/index.ts"),
         // accordion: path.resolve(__dirname, "src/Accordion.tsx"),
         // button: path.resolve(__dirname, "src/Button.tsx"),
       },
-      
+
       name: "ds",
       fileName: "index",
       formats: ["es", "cjs", "umd"],

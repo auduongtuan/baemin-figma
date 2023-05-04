@@ -3,11 +3,7 @@ import { useAppSelector } from "../../hooks/redux";
 import CurrentTextInfo from "../CurrentTextInfo";
 import MultipleTextEditor from "../atoms/MultipleTextEditor";
 import LocaleItemForm from "../form/LocaleItemForm";
-import {
-  findItemByKey,
-  getTextByCharacter,
-  LocaleTextProps,
-} from "../../../lib/localeData";
+import { findItemByKey, getTextByCharacter } from "../../../lib/localeData";
 import { Divider, Button } from "ds";
 import { useAppDispatch } from "../../hooks/redux";
 import { runCommand } from "../../uiHelper";
@@ -28,15 +24,16 @@ const SelectionEditor = () => {
       ? getTextByCharacter(localeSelection.texts[0].characters, localeItems)
       : null;
 
-  const assignKey = (textOrItem: LocaleTextProps) => {
+  const assignKey = (key: string) => {
+    console.log(key);
     runCommand("update_text", {
       ids: localeSelection.texts[0].id,
-      ...textOrItem,
+      key,
     });
     dispatch(
       updateTextInLocaleSelection({
         id: localeSelection.texts[0].id,
-        ...textOrItem,
+        key,
       })
     );
   };
@@ -52,10 +49,12 @@ const SelectionEditor = () => {
           {matchedItem && (
             <LocaleItemForm saveOnChange showTitle item={matchedItem} />
           )}
-          {suggestedText && suggestedText.key &&
+          {suggestedText &&
+            suggestedText.key &&
             localeSelection &&
             localeSelection.texts.length == 1 &&
-            !localeSelection.texts[0].key && !localeSelection.texts[0].formula && (
+            !localeSelection.texts[0].key &&
+            !localeSelection.texts[0].formula && (
               <div className="">
                 <p>
                   Assign key{" "}
@@ -65,18 +64,21 @@ const SelectionEditor = () => {
                 <Button
                   // variant="secondary"
                   className="mt-16"
-                  onClick={() => assignKey(suggestedText)}
+                  onClick={() => assignKey(suggestedText.key)}
                 >
                   Assign key
                 </Button>
               </div>
             )}
-          {!matchedItem && !suggestedText && localeSelection && localeSelection.texts.length == 1 && (
-            <LocaleItemForm
-              showTitle
-              onDone={(item) => assignKey({ key: item.key, item })}
-            />
-          )}
+          {!matchedItem &&
+            !suggestedText &&
+            localeSelection &&
+            localeSelection.texts.length == 1 && (
+              <LocaleItemForm
+                showTitle
+                onDone={(item) => assignKey(item.key)}
+              />
+            )}
         </div>
       </>
     )

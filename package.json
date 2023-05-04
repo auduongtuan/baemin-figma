@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "pnpm --stream -r start",
     "dev": "pnpm --stream --parallel -r run dev",
+    "locale:dev": "turbo run dev --filter=locale-plugin",
     "build": "pnpm --stream -r run build",
     "clean": "rm -rf .parcel-cache && pnpm -r run clean"
   },
@@ -46,7 +47,9 @@
     "react-hook-form": "^7.40.0",
     "react-i18next": "^12.2.0",
     "react-is": ">=16.8.0",
+    "react-mentions": "^4.4.7",
     "react-redux": "^8.0.5",
+    "react-textarea-autosize": "^8.4.1",
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.6"
@@ -58,6 +61,7 @@
     "@types/prismjs": "^1.26.0",
     "@types/react": "^17.0.52",
     "@types/react-dom": "^17.0.18",
+    "@types/react-mentions": "^4.1.8",
     "@types/styled-components": "^5.1.26",
     "@vitejs/plugin-react": "^2.2.0",
     "concurrently": "^6.5.1",

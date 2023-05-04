@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import path from "node:path";
+import path from "path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
@@ -11,25 +11,14 @@ import dts from "vite-plugin-dts";
 // const entries = Object.fromEntries(files);
 
 export default defineConfig({
-  plugins: [
-    react({
-      // jsxImportSource: "@emotion/react",
-      babel: {
-        plugins: ["babel-plugin-styled-components"],
-      },
-    }),
-    dts({
-      insertTypesEntry: true,
-    }),
-  ],
   build: {
     lib: {
       entry: {
-        index: path.resolve(__dirname, "./src/index.tsx")
+        index: path.resolve(__dirname, "./src/index.ts"),
         // accordion: path.resolve(__dirname, "src/Accordion.tsx"),
         // button: path.resolve(__dirname, "src/Button.tsx"),
       },
-      
+
       name: "ds",
       fileName: "index",
       formats: ["es", "cjs", "umd"],
@@ -46,4 +35,15 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    react({
+      // jsxImportSource: "@emotion/react",
+      babel: {
+        plugins: ["babel-plugin-styled-components"],
+      },
+    }),
+    dts({
+      insertTypesEntry: true,
+    }),
+  ],
 });

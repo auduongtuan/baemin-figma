@@ -1,7 +1,7 @@
 import * as h from "figma-helpers";
 import { MIXED_VALUE } from "../../constant/locale";
 import { LocaleText } from "../../lib/localeData";
-import { getLang, getKey, getVariables, getTextNodes } from "./common";
+import { getLang, getKey, getVariables, getTextNodes, getFormula } from "./common";
 /*
  * TODO: Optimize update selection 
  */
@@ -14,6 +14,7 @@ function updateSelection() {
           id: textNode.id,
           key: getKey(textNode),
           lang: getLang(textNode),
+          formula: getFormula(textNode),
           variables: getVariables(textNode),
           characters: textNode.characters
         });

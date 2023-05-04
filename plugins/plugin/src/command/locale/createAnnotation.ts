@@ -39,7 +39,7 @@ async function createAnnotation(texts: LocaleText[]) {
     // title.characters = "i18n";
     // title.visible = false;
     const annotatedTextData: AnnotatedText[] = texts
-      .filter((text) => text.key)
+      .filter((text) => text.formula || text.key)
       .reduce((acc, text) => {
         const node = allTextNodes.find((node) => node.id == text.id);
         if (node) {
@@ -56,9 +56,10 @@ async function createAnnotation(texts: LocaleText[]) {
     ) {
       return sortByAbsolutePosition(a.node, b.node);
     }
+    const keyTextNodeSize = 320;
     const containerX = textContainer.absoluteTransform[0][2];
     const containerY = textContainer.absoluteTransform[1][2];
-    const annotateX = containerX - 240 - 24;
+    const annotateX = containerX - keyTextNodeSize - 24;
     let currentY = 0;
     const groupNodes = [];
     annotatedTextData
@@ -71,9 +72,9 @@ async function createAnnotation(texts: LocaleText[]) {
         keyTextNode.fontName = { family: "Roboto Mono", style: "Regular" };
         keyTextNode.textAutoResize = "HEIGHT";
         keyTextNode.fontSize = 12;
-        keyTextNode.resizeWithoutConstraints(240, 16);
+        keyTextNode.resizeWithoutConstraints(keyTextNodeSize, 16);
         keyTextNode.textAlignHorizontal = "RIGHT";
-        keyTextNode.characters = annotatedText.key;
+        keyTextNode.characters = annotatedText.formula || annotatedText.key;
         keyTextNode.x = annotateX;
         const annotateLine = figma.createVector();
         annotateLine.strokeWeight = 1;

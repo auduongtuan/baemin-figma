@@ -12,6 +12,7 @@ import {
   LocaleText,
   findItemByKey,
   isPlurals,
+  getStringContent,
 } from "../../../lib/localeData";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
 import { LocaleItem } from "../../../lib/localeData";
@@ -21,13 +22,7 @@ export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;
 }
-function getStringContent(content: LocaleItemContent): string {
-  if (isPlurals(content)) {
-    return content.other || content.one;
-  } else {
-    return content;
-  }
-}
+
 function KeyCombobox({
   label = "Key",
   value,
@@ -119,14 +114,13 @@ function KeyCombobox({
           characters: localeItem[_text.lang],
         })
       );
-      console.log(`Update text ${_text.id} with locale item`, localeItem);
+      // console.log(`Update text ${_text.id} with locale item`, localeItem);
     }
   };
   const updateSelectionOrText = (localeItemOrKey: string | LocaleItem) => {
     // dang selection
     if (forSelection && isString(localeItemOrKey)) {
       dispatch(setIsWorking(true));
-      console.log("update for selection");
       updateText(localeSelection.texts, localeItemOrKey);
     }
     // dang text
@@ -138,20 +132,18 @@ function KeyCombobox({
     }
   };
   return (
-    <>
-      <Combobox
-        label={label}
-        value={value}
-        placeholder="Select key"
-        menuWidth={"300px"}
-        options={localeItemOptions}
-        onChange={updateSelectionOrText}
-        // disabled={
-        //   forSelection && localeSelection && localeSelection.summary.key == MIXED_VALUE ? true : false
-        // }
-        {...rest}
-      ></Combobox>
-    </>
+    <Combobox
+      label={label}
+      value={value}
+      placeholder="Select key"
+      menuWidth={"300px"}
+      options={localeItemOptions}
+      onChange={updateSelectionOrText}
+      // disabled={
+      //   forSelection && localeSelection && localeSelection.summary.key == MIXED_VALUE ? true : false
+      // }
+      {...rest}
+    ></Combobox>
   );
 }
 export default KeyCombobox;

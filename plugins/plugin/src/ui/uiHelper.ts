@@ -1,4 +1,4 @@
-import { LocaleText } from "../lib/localeData";
+import { LocaleText, LocaleItem, LocaleTextProps } from "../lib/localeData";
 
 export const postData = (data: { [key: string]: any }) => {
   parent.postMessage({ pluginMessage: data }, "*");
@@ -17,9 +17,7 @@ export const commands = [
 export type Command = typeof commands[number];
 
 export function runCommand(type: "show_figma_notify", data: {message: string}): void;
-export function runCommand(type: "update_text", data: Omit<LocaleText, "id"> & {
-  ids: string | string[]
-}): void;
+export function runCommand(type: "update_text", data: LocaleTextProps): void;
 export function runCommand(type: Exclude<Command, "update_text">, data?: { [key: string]: any }): void;
 
 export function runCommand(type: string, data: { [key: string]: any } = {}): void {

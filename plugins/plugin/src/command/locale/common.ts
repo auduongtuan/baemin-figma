@@ -1,17 +1,14 @@
 import * as h from "figma-helpers";
-import { PREFIX, DEFAULT_LANG, LANGUAGES } from "../../constant/locale";
+import { isArray } from "lodash";
+import { DEFAULT_LANG, PREFIX } from "../../constant/locale";
 import {
-  LocaleTextVariables,
-  findItemByKey,
-  findItemByCharacters,
-  findItemByKeyOrCharacters,
-  LocaleItem,
   Lang,
-  findVariablesInCharacters,
+  LocaleItem,
+  LocaleTextStyles,
+  LocaleTextVariables,
   getTextByCharacter,
 } from "../../lib/localeData";
-import updateSelection from "./updateSelection";
-import { isArray } from "lodash";
+
 export function getLang(node: TextNode): Lang {
   const lang = h.getNodeData(node, `${PREFIX}lang`);
   if (lang == "en" || lang == "vi") {
@@ -21,6 +18,10 @@ export function getLang(node: TextNode): Lang {
   }
 }
 export function getVariables(node: TextNode): LocaleTextVariables {
+  const string = h.getNodeData(node, `${PREFIX}variables`);
+  return string ? JSON.parse(string) : {};
+}
+export function getStyles(node: TextNode): LocaleTextStyles {
   const string = h.getNodeData(node, `${PREFIX}variables`);
   return string ? JSON.parse(string) : {};
 }
@@ -42,7 +43,7 @@ export function setVariable(
 ) {
   setVariables(node, {
     ...getVariables(node),
-    [variableName]: variableValue 
+    [variableName]: variableValue,
   });
 }
 
@@ -55,14 +56,22 @@ export function getKey(node: TextNode) {
 export function setKey(node: TextNode, key: string) {
   h.setNodeData(node, `${PREFIX}key`, key);
 }
-
+export function getFormula(node: TextNode) {
+  return h.getNodeData(node, `${PREFIX}formula`);
+}
+export function setFormula(node: TextNode, formula: string) {
+  h.setNodeData(node, `${PREFIX}formula`, formula);
+}
 
 export function autoSetKey(
   textNode: TextNode,
   localeItems: LocaleItem[],
   callback?: Function
 ) {
-  const {item, lang, variables} = getTextByCharacter(textNode.characters, localeItems);
+  const { item, lang, variables } = getTextByCharacter(
+    textNode.characters,
+    localeItems
+  );
   if (item) {
     if (getKey(textNode) != item.key) {
       setKey(textNode, item.key);
@@ -89,15 +98,20 @@ export function autoSetKey(
 //   );
 // }
 
-
 export function getTextNodes(scope?: BaseNode | BaseNode[]): TextNode[] {
-  const updateNodes = scope ? (isArray(scope) ? [...scope] : [scope]) : h.selection();
+  const updateNodes = scope
+    ? isArray(scope)
+      ? [...scope]
+      : [scope]
+    : h.selection();
   const textNodes: TextNode[] = [];
   updateNodes.forEach((parentNode) => {
     if (h.isContainer(parentNode) || parentNode.type == "PAGE") {
-      textNodes.push(...parentNode.findAllWithCriteria({types: ['TEXT']}) as TextNode[]);
-    } 
-    if (parentNode.type == 'TEXT') {
+      textNodes.push(
+        ...(parentNode.findAllWithCriteria({ types: ["TEXT"] }) as TextNode[])
+      );
+    }
+    if (parentNode.type == "TEXT") {
       textNodes.push(parentNode);
     }
   });

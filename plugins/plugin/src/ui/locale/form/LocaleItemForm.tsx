@@ -2,7 +2,15 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { updateLocaleItem } from "../../state/localeSlice";
 import { Controller } from "react-hook-form";
-import { TextBox, Button, Switch, Checkbox, IconButton, Tooltip } from "ds";
+import {
+  TextBox,
+  Textarea,
+  Button,
+  Switch,
+  Checkbox,
+  IconButton,
+  Tooltip,
+} from "ds";
 import { dateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, isString } from "lodash";
 import { LANGUAGES } from "../../../constant/locale";
@@ -13,7 +21,10 @@ import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "./formCommon";
 import { addLocaleItem } from "../../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
-import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
+import {
+  CounterClockwiseClockIcon,
+  InfoCircledIcon,
+} from "@radix-ui/react-icons";
 const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
   return (
     localeItem &&
@@ -208,6 +219,15 @@ function LocaleItemForm({
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
+      <p
+        css={`
+          color: var(--figma-color-text-secondary);
+          font-size: var(--font-size-xsmall);
+          margin-top: 8px;
+        `}
+      >
+        {`You can use <b>, <a>, <ul>, <ol>, <li> HTML tags to style texts.`}
+      </p>
       <div>
         {!saveOnChange && (
           <TextBox
@@ -245,9 +265,10 @@ function LocaleItemForm({
         {Object.keys(LANGUAGES).map((lang) => (
           <>
             <div className="relative mt-12">
-              <TextBox
+              <Textarea
                 label={LANGUAGES[lang]}
                 id={lang}
+                maxRows={6}
                 className=""
                 {...register(`${lang}.one`, { required: true })}
                 errorText={
@@ -276,7 +297,7 @@ function LocaleItemForm({
               </div>
             </div>
             {watchHasPlurals[lang] && (
-              <TextBox
+              <Textarea
                 label={`${LANGUAGES[lang]} - Plural`}
                 id={lang}
                 className="mt-12"

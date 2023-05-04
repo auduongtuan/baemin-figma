@@ -25,11 +25,14 @@ const contentShow = keyframes`
   }
 `;
 
-const PopoverContent = ({ title, children, width, ...rest }: PopoverContentProps) => {
-  console.log(width);
+const PopoverContent = ({
+  title,
+  children,
+  width,
+  ...rest
+}: PopoverContentProps) => {
   return (
     <RPopover.Portal>
-
       <RPopover.Content
         sideOffset={2}
         collisionPadding={4}
@@ -76,7 +79,6 @@ const PopoverContent = ({ title, children, width, ...rest }: PopoverContentProps
           Make changes to your profile here. Click save when you're done.
         </RDialog.Description> */}
         {children}
-       
       </RPopover.Content>
     </RPopover.Portal>
   );

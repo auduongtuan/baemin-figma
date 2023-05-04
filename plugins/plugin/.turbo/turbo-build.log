@@ -1,55 +1,21 @@
 
-> baemin-figma-plugin@0.1.1 build /Users/tuan.au/Coding/baemin-figma/plugins/plugin
+> locale-plugin@0.1.1 build /Users/tuan.au/Work/baemin-figma/plugins/plugin
 > npm run build:ui && npm run build:main -- --minify
 
 
-> baemin-figma-plugin@0.1.1 build:ui
+> locale-plugin@0.1.1 build:ui
 > npx vite build --minify esbuild --emptyOutDir=false
 
 vite v3.2.5 building for production...
 transforming...
-✓ 127 modules transformed.
-'Tooltip' is not exported by ../../packages/ds/dist/index.js, imported by src/ui/locale/atoms/AppBar.tsx
-file: /Users/tuan.au/Coding/baemin-figma/plugins/plugin/src/ui/locale/atoms/AppBar.tsx:4:38
-2: import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-3: import { setLocaleData } from "../../state/localeSlice";
-4: import { Button, IconButton, TextBox, Tooltip, Dialog, Popover, WorkingIcon } from "ds";
-                                         ^
-5: import { useForm } from "react-hook-form";
-6: import { CubeIcon, TableIcon } from "@radix-ui/react-icons";
-error during build:
-Error: 'Tooltip' is not exported by ../../packages/ds/dist/index.js, imported by src/ui/locale/atoms/AppBar.tsx
-    at error (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:1858:30)
-    at Module.error (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:12429:16)
-    at Module.traceVariable (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:12788:29)
-    at ModuleScope.findVariable (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:11440:39)
-    at ReturnValueScope.findVariable (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:6372:38)
-    at ChildScope.findVariable (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:6372:38)
-    at Identifier.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:7439:40)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:8935:15)
-    at Property.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5269:23)
-    at ObjectExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:8935:15)
-    at ArrayExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at Property.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5269:23)
-    at ObjectExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at CallExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:8935:15)
-    at ReturnStatement.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5269:23)
-    at BlockStatement.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at ArrowFunctionExpression.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5269:23)
-    at VariableDeclarator.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5269:23)
-    at VariableDeclaration.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at Program.bind (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:5265:73)
-    at Module.bindReferences (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:12425:18)
-    at Graph.sortModules (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:23062:20)
-    at Graph.build (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:22940:14)
-    at async file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:23730:13
-    at async catchUnfinishedHookActions (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:23126:20)
-    at async rollupInternal (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/rollup@2.79.1/node_modules/rollup/dist/es/shared/rollup.js:23727:5)
-    at async doBuild (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/vite@3.2.5_sass@1.56.2/node_modules/vite/dist/node/chunks/dep-5605cfa4.js:45705:24)
-    at async build (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/vite@3.2.5_sass@1.56.2/node_modules/vite/dist/node/chunks/dep-5605cfa4.js:45543:16)
-    at async CAC.<anonymous> (file:///Users/tuan.au/Coding/baemin-figma/node_modules/.pnpm/vite@3.2.5_sass@1.56.2/node_modules/vite/dist/node/cli.js:756:9)
- ELIFECYCLE  Command failed with exit code 1.
+✓ 270 modules transformed.
+rendering chunks...
+../../dist/index.html   866.12 KiB
+
+> locale-plugin@0.1.1 build:main
+> node ./esbuild.js --minify
+
+
+  dist/code.js  176.4kb
+
+⚡ Done in 51ms

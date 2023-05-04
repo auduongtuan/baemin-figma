@@ -1,4 +1,4 @@
-import * as _ from "lodash"
+import * as _ from "lodash";
 import locale from "./locale";
 import designSystem from "./designSystem";
 const dsFonts = [
@@ -7,21 +7,21 @@ const dsFonts = [
   // {family: "Inter", style: "Semi Bold"},
   // {family: "Inter", style: "Bold"},
   // { family: "JetBrains Mono", style: "Regular" },
-  {family: "Roboto", style: "Regular"},
-  {family: "Roboto", style: "Medium"},
-  {family: "Roboto", style: "SemiBold"},
-  {family: "Roboto", style: "Bold"},
-  {family: "Roboto Mono", style: "Regular"},
-]
+  { family: "Roboto", style: "Regular" },
+  { family: "Roboto", style: "Medium" },
+  { family: "Roboto", style: "SemiBold" },
+  { family: "Roboto", style: "Bold" },
+  { family: "Roboto Mono", style: "Regular" },
+];
 
 const uiCommands = {
-  "locale": locale,
+  locale: locale,
   // "vertical_data_value": verticalDataValue,
   // "multiselect": multiSelect,
   // "plugin_data": pluginData,
   // // "test": test,
   // "codehighlighter": codeHighlighter.codeHighlighter,
-}
+};
 
 const nonuiCommands = {
   // ...designSystem
@@ -42,15 +42,15 @@ const nonuiCommands = {
   // "grid_toggle_vertical_scroll": gridHelper.toggleVerticalScroll,
   // "codehighlighter_init": codeHighlighter.init,
   // "get_ds_keys": getDsKeys
-}
+};
 
-figma.ui.onmessage = msg => {
+figma.ui.onmessage = (msg) => {
   _.forOwn(uiCommands, (value, key) => {
     if (figma.command == key) {
-      if('onMessage' in value) value.onMessage(msg);
+      if ("onMessage" in value) value.onMessage(msg);
     }
   });
-}
+};
 
 figma.on("selectionchange", async () => {
   // debug selection
@@ -58,21 +58,22 @@ figma.on("selectionchange", async () => {
   // console.log(figma.currentPage.selection);
   _.forOwn(uiCommands, (value, key) => {
     if (figma.command == key) {
-      if('onSelectionChange' in value) {
+      if ("onSelectionChange" in value) {
         value.onSelectionChange();
       }
     }
   });
 });
 
-
 figma.on("run", async ({ command, parameters }: RunEvent) => {
-  await Promise.all(dsFonts.map((fontName: FontName) => figma.loadFontAsync(fontName)))
+  await Promise.all(
+    dsFonts.map((fontName: FontName) => figma.loadFontAsync(fontName))
+  );
 
   _.forOwn(uiCommands, async (value, key) => {
     if (command == key) {
       // console.log(value.run);
-      if('run' in value) value.run();
+      if ("run" in value) value.run();
     }
   });
   _.forOwn(nonuiCommands, async (value, key) => {
@@ -81,7 +82,6 @@ figma.on("run", async ({ command, parameters }: RunEvent) => {
       figma.closePlugin();
     }
   });
-
 });
 
 // // figma.parameters.on('input', ({ parameters, key, query, result }: ParameterInputEvent) => {

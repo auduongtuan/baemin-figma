@@ -1,26 +1,37 @@
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Menu from "./Menu";
-
+import Menu, { MenuItemProps } from "./Menu";
+export interface DropdownMenuProps extends DropdownMenu.DropdownMenuProps {}
+export interface DropdownMenuContentProps
+  extends DropdownMenu.DropdownMenuContentProps {}
+export interface DropdownMenuItemProps
+  extends DropdownMenu.DropdownMenuItemProps, Pick<MenuItemProps, "icon" | "content" | "selected"> {
+}
 const DropdownMenuItem = ({
   children,
   icon,
   content,
+  selected,
   ...rest
-}: DropdownMenu.DropdownMenuItemProps & {icon?: React.ReactNode, content?: React.ReactNode}) => {
+}: DropdownMenuItemProps) => {
   return (
     <DropdownMenu.Item {...rest} asChild>
-      <Menu.Item name={children} icon={icon} content={content}></Menu.Item>
+      <Menu.Item name={children} icon={icon} content={content} selected={selected}></Menu.Item>
     </DropdownMenu.Item>
   );
 };
 const DropDownMenuContent = ({
   children,
   ...rest
-}: DropdownMenu.DropdownMenuContentProps) => {
+}: DropdownMenuContentProps) => {
   return (
     <DropdownMenu.Portal>
-      <DropdownMenu.Content sideOffset={2} collisionPadding={4} {...rest} asChild>
+      <DropdownMenu.Content
+        sideOffset={2}
+        collisionPadding={4}
+        {...rest}
+        asChild
+      >
         <Menu>{children}</Menu>
       </DropdownMenu.Content>
     </DropdownMenu.Portal>

@@ -1,15 +1,10 @@
-import React, { useState, ComponentType } from "react";
-import { useEffect } from "react";
-import { Fragment } from "react";
-// import { Listbox } from "@headlessui/react";
-// import * as Select from "@radix-ui/react-select";
-import Menu, { MenuItemProps } from "./Menu";
+import React, { useEffect } from "react";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
-import { useSelect } from "downshift";
 import classNames from "classnames";
+import { useSelect } from "downshift";
 import { isEqual } from "lodash";
-// type ExtractProps<T> = T extends ComponentType<infer P> ? P : T;
+import Menu, { MenuItemProps } from "./Menu";
 export interface SelectOption extends MenuItemProps {
   id?: string;
   value: any;
@@ -24,20 +19,20 @@ export interface SelectProps {
   className?: string;
   selectClassName?: string;
   placeholder?: string;
-  options: SelectOption[];
+  options?: SelectOption[];
   disabled?: boolean;
-  onChange: (value: any) => void;
+  onChange?: (value: any) => void;
   inline?: boolean;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
 }
-const DownshiftSelect = ({
+const Select = ({
   label,
   id,
   defaultValue = "",
   value,
   className = "",
-  options,
+  options = [],
   placeholder = null,
   disabled = false,
   inline = false,
@@ -46,7 +41,7 @@ const DownshiftSelect = ({
   helpText,
   ...rest
 }: SelectProps) => {
-  const optionToString = (option) => (option ? option.name : "");
+  const optionToString = (option: SelectOption) => (option ? option.name : "");
   const [selectedItem, setSelectedItem] = React.useState(null);
   useEffect(() => {
     const newSelectedItem = options
@@ -121,7 +116,9 @@ const DownshiftSelect = ({
                   `}
                 >
                   {selectedItem.icon && selectedItem.icon}
-                  <span className="flex-shrink-1 truncate">{selectedItem.name}</span>
+                  <span className="flex-shrink-1 truncate">
+                    {selectedItem.name}
+                  </span>
                 </span>
               ) : (
                 placeholder
@@ -194,4 +191,4 @@ const DownshiftSelect = ({
   );
 };
 
-export default DownshiftSelect;
+export default Select;

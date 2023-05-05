@@ -1,7 +1,7 @@
 // unused file
 import * as h from "figma-helpers";
-import { LANGUAGES } from "../../constant/locale";
-import { DEFAULT_LANG } from "../../constant/locale";
+import { LANGUAGES } from "../../lib/constant";
+import { DEFAULT_LANG } from "../../lib/constant";
 import {
   Lang,
   LocaleItem,

@@ -1,4 +1,4 @@
-import { MIXED_VALUE, LANGUAGES } from "../constant/locale";
+import { MIXED_VALUE, LANGUAGES } from "./constant";
 
 export interface LocaleData {
   sheetName?: string;

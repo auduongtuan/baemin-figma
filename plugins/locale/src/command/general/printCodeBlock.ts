@@ -1,6 +1,6 @@
 import { getNodeData, loadRobotoFontsAsync, setNodeData } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
-import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../constant/locale";
+import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../lib/constant";
 import { LocaleLibrary } from "../../lib";
 const firstPage = figma.root.children[0];
 // async function exportCode(tokensObject: {[key:string]: Array<string | Token>}) {

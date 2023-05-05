@@ -1,5 +1,5 @@
 import { isObject } from "lodash";
-import { LANGUAGES } from "../constant/locale";
+import { LANGUAGES } from "./constant";
 import { matchAll } from "./helpers";
 import { getTextPropsByCharacters } from "./localeText";
 import {

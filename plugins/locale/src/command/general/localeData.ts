@@ -6,7 +6,7 @@ import {
   isInstance,
 } from "figma-helpers";
 const firstPage = figma.root.children[0];
-import { PREFIX, DATA_FRAME_NAME } from "../../constant/locale";
+import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
 import { LocaleData, LocaleItem } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { unionWith, isArray } from "lodash";

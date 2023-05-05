@@ -1,5 +1,5 @@
 import { escapeRegExp, isObject } from "lodash";
-import { DEFAULT_LANG, LANGUAGES } from "../constant/locale";
+import { DEFAULT_LANG, LANGUAGES } from "./constant";
 import { compareTime, matchAll, placeholders } from "./helpers";
 import { isPlurals } from "./localeItem";
 import {

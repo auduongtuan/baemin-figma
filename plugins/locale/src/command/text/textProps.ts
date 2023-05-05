@@ -1,5 +1,5 @@
 import * as h from "figma-helpers";
-import { DEFAULT_LANG, PREFIX } from "../../constant/locale";
+import { DEFAULT_LANG, PREFIX } from "../../lib/constant";
 import {
   Lang,
   LocaleItem,

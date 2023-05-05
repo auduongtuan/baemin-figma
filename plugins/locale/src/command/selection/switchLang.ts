@@ -1,5 +1,5 @@
 import * as h from "figma-helpers";
-import { LANGUAGES } from "../../constant/locale";
+import { LANGUAGES } from "../../lib/constant";
 import { LocaleItem, Lang, findItemByKey } from "../../lib";
 import updateSelection from "./updateSelection";
 import { getFormula, getKey } from "../text/textProps";

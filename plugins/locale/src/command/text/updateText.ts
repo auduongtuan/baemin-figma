@@ -1,6 +1,6 @@
 import { isContainer, selection } from "figma-helpers";
 import { isString } from "lodash";
-import { DEFAULT_LANG } from "../../constant/locale";
+import { DEFAULT_LANG } from "../../lib/constant";
 import { matchAll } from "../../lib/helpers";
 import {
   Lang,

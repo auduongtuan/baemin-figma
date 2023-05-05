@@ -3,7 +3,7 @@ import { useAppSelector } from "../../hooks/redux";
 import CurrentTextInfo from "../CurrentTextInfo";
 import MultipleTextEditor from "../atoms/MultipleTextEditor";
 import LocaleItemForm from "../form/LocaleItemForm";
-import { findItemByKey, getTextByCharacter } from "../../../lib/localeData";
+import { findItemByKey, getTextPropsByCharacters } from "../../../lib";
 import { Divider, Button } from "ds";
 import { useAppDispatch } from "../../hooks/redux";
 import { runCommand } from "../../uiHelper";
@@ -21,7 +21,10 @@ const SelectionEditor = () => {
 
   const suggestedText =
     !matchedItem && localeSelection && localeSelection.texts.length == 1
-      ? getTextByCharacter(localeSelection.texts[0].characters, localeItems)
+      ? getTextPropsByCharacters(
+          localeSelection.texts[0].characters,
+          localeItems
+        )
       : null;
 
   const assignKey = (key: string) => {

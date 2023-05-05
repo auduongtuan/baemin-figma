@@ -1,18 +1,13 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { viteSingleFile } from "vite-plugin-singlefile";
-import { resolve } from 'path'
+// import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: './src/ui/',
+  root: "./src/ui/",
   plugins: [
-    react({
-      // jsxImportSource: "@emotion/react",
-      babel: {
-        plugins: ["babel-plugin-styled-components"],
-      },
-    }),
+    react({ plugins: [["@swc/plugin-styled-components", {}]] }),
     viteSingleFile(),
   ],
   // server: {
@@ -27,8 +22,11 @@ export default defineConfig({
     cssCodeSplit: false,
     reportCompressedSize: false,
     outDir: "../../dist",
+
     rollupOptions: {
-      inlineDynamicImports: true,
+      output: {
+        inlineDynamicImports: true,
+      },
       // input: {
       //   "index": './src/ui/index.html'
       // }, // default      },

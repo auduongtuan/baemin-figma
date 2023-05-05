@@ -1,13 +1,22 @@
 import React from "react";
 import { DropdownMenu, IconButton, Tooltip, DropdownMenuProps } from "ds";
-import { Lang } from "../../../lib/localeData";
+import { Lang } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
 import { GlobeIcon } from "@radix-ui/react-icons";
 import { LANGUAGES } from "../../../constant/locale";
-import { LocaleText, LocaleItem } from "../../../lib/localeData";
+import { LocaleText, LocaleItem } from "../../../lib";
 import { useAppDispatch } from "../../hooks/redux";
-const SwitchLanguageDropdownMenu = ({text, item, items, ...rest}: DropdownMenuProps & {text: LocaleText, item?: LocaleItem, items?: LocaleItem[]}) => {
+const SwitchLanguageDropdownMenu = ({
+  text,
+  item,
+  items,
+  ...rest
+}: DropdownMenuProps & {
+  text: LocaleText;
+  item?: LocaleItem;
+  items?: LocaleItem[];
+}) => {
   const dispatch = useAppDispatch();
   return (
     <DropdownMenu {...rest}>
@@ -24,24 +33,25 @@ const SwitchLanguageDropdownMenu = ({text, item, items, ...rest}: DropdownMenuPr
             <DropdownMenu.Item
               selected={text && text.lang == lang}
               onSelect={() => {
-                if(!text) return;
-                if(text.formula) {
+                if (!text) return;
+                if (text.formula) {
                   runCommand("update_text", {
                     ids: text.id,
                     formula: text.formula,
                     lang: lang as Lang,
-                    items: items
+                    items: items,
                   });
-                }
-                else {
+                } else {
                   runCommand("update_text", {
                     ids: text.id,
                     lang: lang as Lang,
-                    item: item
+                    item: item,
                   });
                 }
                 // only need to update lang
-                dispatch(updateTextInLocaleSelection({id: text.id, lang: lang}));
+                dispatch(
+                  updateTextInLocaleSelection({ id: text.id, lang: lang })
+                );
               }}
             >
               {LANGUAGES[lang]}
@@ -50,6 +60,6 @@ const SwitchLanguageDropdownMenu = ({text, item, items, ...rest}: DropdownMenuPr
         })}
       </DropdownMenu.Content>
     </DropdownMenu>
-  )
-}
+  );
+};
 export default SwitchLanguageDropdownMenu;

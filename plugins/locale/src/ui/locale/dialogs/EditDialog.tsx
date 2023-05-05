@@ -4,7 +4,7 @@ import { Pencil2Icon } from "@radix-ui/react-icons";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useAppSelector, useAppDispatch } from "../../hooks/redux";
-import { LocaleItem, LocaleText } from "../../../lib/localeData";
+import { LocaleItem, LocaleText } from "../../../lib";
 const EditDialog = ({ item, text }: { item: LocaleItem; text: LocaleText }) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog

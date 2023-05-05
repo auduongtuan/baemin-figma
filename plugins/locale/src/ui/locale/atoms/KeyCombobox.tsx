@@ -1,23 +1,21 @@
-import React from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { PlusIcon } from "@radix-ui/react-icons";
 import { Combobox, ComboboxOption, ComboboxProps } from "ds";
+import { isArray, isString } from "lodash";
+import React from "react";
 import { MIXED_VALUE } from "../../../constant/locale";
+import {
+  LocaleItem,
+  LocaleText,
+  findItemByKey,
+  getStringContent,
+} from "../../../lib";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
 import {
   updateTextInLocaleSelection,
   updateTextsInLocaleSelection,
 } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
-import {
-  LocaleItemContent,
-  LocaleText,
-  findItemByKey,
-  isPlurals,
-  getStringContent,
-} from "../../../lib/localeData";
-import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
-import { LocaleItem } from "../../../lib/localeData";
-import { isArray, isString } from "lodash";
-import { PlusIcon } from "@radix-ui/react-icons";
 export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;

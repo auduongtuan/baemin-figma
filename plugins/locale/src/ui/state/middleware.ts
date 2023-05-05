@@ -10,7 +10,7 @@ import {
 } from "./localeSlice";
 import type { RootState } from "./store";
 import { runCommand } from "../uiHelper";
-import { LocaleData } from "../../lib/localeData";
+import { LocaleData } from "../../lib";
 export const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
   matcher: isAnyOf(

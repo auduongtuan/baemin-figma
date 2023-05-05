@@ -8,7 +8,7 @@ import {
   FrameIcon,
 } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
-import { LocaleLibrary, isPlurals, LocaleItem } from "../../../lib/localeData";
+import { isPlurals, LocaleLibrary, LocaleItem } from "../../../lib";
 // import Prism from "prismjs";
 // import "prismjs/components/prism-json";
 // import { Token } from "prismjs";
@@ -70,10 +70,11 @@ const printCodeBlock = (
             }
             return acc;
           }, {})
-      )
-    , {
-      indent_size: 2
-    });
+      ),
+      {
+        indent_size: 2,
+      }
+    );
     langJSONs[lang] = langJSON;
     // tokensObject[lang] = Prism.tokenize(
     //   js_beautify(langJSON),
@@ -180,7 +181,9 @@ const ExportCode = () => {
               />
             )}
           />
-          <Button type="submit" className="mt-16">Export</Button>
+          <Button type="submit" className="mt-16">
+            Export
+          </Button>
         </form>
       </Popover.Content>
     </Popover>

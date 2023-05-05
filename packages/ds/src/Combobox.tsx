@@ -1,14 +1,7 @@
-import React, {
-  useEffect,
-  useState,
-  ComponentType,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   UseComboboxState,
   UseComboboxStateChangeOptions,
-  UseComboboxStateChangeTypes,
   useCombobox,
 } from "downshift";
 import classnames from "classnames";
@@ -133,7 +126,7 @@ const Combobox = ({
           setItems(suggestions);
         }
       }, 150),
-    []
+    [options]
   );
   useEffect(() => {
     return () => {

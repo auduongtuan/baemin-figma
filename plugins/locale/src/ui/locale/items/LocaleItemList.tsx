@@ -12,7 +12,7 @@ import {
   Tooltip,
   Select,
   SelectOption,
-  Divider
+  Divider,
 } from "ds";
 import {
   Crosshair2Icon,
@@ -23,9 +23,17 @@ import {
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
-import { LocaleItem } from "../../../lib/localeData";
+import { LocaleItem } from "../../../lib";
 import LocaleItemRecord from "./LocaleItemRecord";
-const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleItem[], action?: boolean, filter?: boolean}) => {
+const LocaleItemList = ({
+  action = true,
+  filter = true,
+  items,
+}: {
+  items?: LocaleItem[];
+  action?: boolean;
+  filter?: boolean;
+}) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -40,7 +48,9 @@ const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleIt
     },
     [source]
   );
-  const localeItems = items ? items : useAppSelector((state) => state.locale.localeItems);
+  const localeItems = items
+    ? items
+    : useAppSelector((state) => state.locale.localeItems);
   const filteredLocaleItems = localeItems.filter(filterFn);
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -79,50 +89,57 @@ const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleIt
   }, [watch]);
 
   return (
-    <div className="" css={`
-      position: relative;
-    `}>
-      <header css={`
-        position: sticky;
-        background: var(--figma-color-bg);
-        z-index: 20;
-        top: 0;
-      `}>
+    <div
+      className=""
+      css={`
+        position: relative;
+      `}
+    >
+      <header
+        css={`
+          position: sticky;
+          background: var(--figma-color-bg);
+          z-index: 20;
+          top: 0;
+        `}
+      >
         <div className="flex items-center px-16 py-4">
           {localeItems && (
             <h4 className="mt-0 flex-grow-1 font-medium text-secondary">
-              {localeItems.length} locale {pluralize('item', localeItems.length)} 
+              {localeItems.length} locale{" "}
+              {pluralize("item", localeItems.length)}
             </h4>
           )}
-          {filter &&
-          <div className="flex gap-8">
-            <div className="items-center">
-              <Select
-                inline
-                label="Source"
-                value="all"
-                options={[
-                  { value: "all", name: "All" },
-                  { value: "local", name: "Local" },
-                  { value: "library", name: "Library" },
-                ]}
-                onChange={(value: string) => {
-                  setSource(value);
-                }}
-              />
+          {filter && (
+            <div className="flex gap-8">
+              <div className="items-center">
+                <Select
+                  inline
+                  label="Source"
+                  value="all"
+                  options={[
+                    { value: "all", name: "All" },
+                    { value: "local", name: "Local" },
+                    { value: "library", name: "Library" },
+                  ]}
+                  onChange={(value: string) => {
+                    setSource(value);
+                  }}
+                />
+              </div>
+              <div className="inline-flex justify-center items-center">
+                <Tooltip content="Add new item">
+                  <IconButton
+                    onClick={() =>
+                      dispatch(setCurrentDialog({ type: "NEW", opened: true }))
+                    }
+                  >
+                    <PlusIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
             </div>
-            <div className="inline-flex justify-center items-center">
-              <Tooltip content="Add new item">
-                <IconButton
-                  onClick={() =>
-                    dispatch(setCurrentDialog({ type: "NEW", opened: true }))
-                  }
-                >
-                  <PlusIcon />
-                </IconButton>
-              </Tooltip>
-            </div>
-          </div>}
+          )}
         </div>
         <Divider />
       </header>
@@ -141,6 +158,7 @@ const LocaleItemList = ({action = true, filter = true, items}: {items?: LocaleIt
               <Collapsible.Content
                 css={`
                   padding-left: 16px;
+                  padding-bottom: 8px;
                 `}
               >
                 {items.map((item) => (

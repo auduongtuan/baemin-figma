@@ -1,10 +1,6 @@
-import {
-  updateTextsInLocaleSelection
-} from "../../state/localeSlice";
-import {
-  LocaleItem,
-  LocaleSelection, getTextCharacters
-} from "../../../lib/localeData";
+import { updateTextsInLocaleSelection } from "../../state/localeSlice";
+import { LocaleItem, LocaleSelection } from "../../../lib";
+import { applyVariablesToContent } from "../../../lib/localeText";
 import { runCommand } from "../../uiHelper";
 import { store } from "../../state/store";
 
@@ -15,7 +11,10 @@ export function updateTextsOfItem(
 ) {
   // newKey
   // update selected text also
-  const texts = localeSelection.texts.filter((text) => (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key));
+  const texts = localeSelection.texts.filter(
+    (text) =>
+      (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key)
+  );
   texts.forEach((text) => {
     runCommand("update_text", {
       ids: text.id,
@@ -28,7 +27,7 @@ export function updateTextsOfItem(
       texts.map((text) => ({
         ...text,
         key: item.key,
-        characters: getTextCharacters(item[text.lang], text.variables),
+        characters: applyVariablesToContent(item[text.lang], text.variables),
       }))
     )
   );

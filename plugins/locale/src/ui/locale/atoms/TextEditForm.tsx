@@ -9,13 +9,9 @@ import { IconButton, Switch, Tag, TextBox, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  LocaleItem,
-  LocaleText,
-  LocaleTextVariables,
-  findItemByKey,
-  getVariableNames,
-} from "../../../lib/localeData";
+import { LocaleItem, LocaleText, LocaleTextVariables } from "../../../lib";
+import { findItemByKey } from "../../../lib/localeItem";
+import { getVariableNames } from "../../../lib/localeText";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
@@ -74,7 +70,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
   const updateTextDebounce = useMemo(
     () =>
       debounce((data) => {
-        console.log("DEBOUNCE START");
         const { variables, formula } = data;
         const textProps = {
           variables: isObject(variables)
@@ -82,7 +77,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
             : undefined,
           formula: formula,
         };
-        console.log("Locale items", localeItems);
         runCommand("update_text", {
           ids: text.id,
           item: localeItem,

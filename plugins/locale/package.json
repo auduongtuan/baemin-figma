@@ -16,10 +16,11 @@
     "build:main": "node ./esbuild.js",
     "build:ui": "npx vite build --minify esbuild --emptyOutDir=false",
     "build:watch": "concurrently -n plugin,iframe \"npm run build:main -- --watch\" \"npm run build:ui -- --watch\"",
-    "dev-old": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'",
+    "dev-older": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'",
     "dev:ui": "vite build --minify esbuild --emptyOutDir=false --watch",
     "dev:command": "node ./esbuild.js",
-    "dev": "concurrently -n ui,command 'pnpm run dev:ui' 'pnpm run dev:command -- --watch'",
+    "dev-old": "concurrently -n ui,command 'pnpm run dev:ui' 'pnpm run dev:command -- --watch'",
+    "dev": "concurrently -n ui,command \"vite build --minify esbuild --emptyOutDir=false --watch\" \"tsup --watch\"",
     "dev-test": "npm run build:main -- --watch"
   },
   "author": "Tuan Au Duong",

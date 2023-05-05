@@ -5,7 +5,7 @@ import { Dialog, Dropzone, Button, Checkbox, Collapsible, Divider } from "ds";
 import { flat } from "../../../lib/helpers";
 import LocaleItemList from "../items/LocaleItemList";
 import { groupBy, orderBy, unionWith } from "lodash";
-import { LocaleItem } from "../../../lib/localeData";
+import { LocaleItem } from "../../../lib";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
 import { pluralize } from "@capaj/pluralize";
@@ -85,25 +85,26 @@ const ImportDialog = () => {
     const compareFn = (a: LocaleItem, b: LocaleItem) => a.key == b.key;
     let newLocaleItems: LocaleItem[];
     if (importState.options.override) {
-      newLocaleItems = unionWith(
-        importState.items,
-        localeItems,
-        compareFn
-      );
+      newLocaleItems = unionWith(importState.items, localeItems, compareFn);
     } else {
-      newLocaleItems = unionWith(
-        localeItems,
-        importState.items,
-        compareFn
-      );
+      newLocaleItems = unionWith(localeItems, importState.items, compareFn);
     }
-    dispatch(setLocaleData({
-      localeItems: newLocaleItems
-    }));
-    dispatch(setCurrentDialog({
-      opened: false
-    }));
-    runCommand("show_figma_notify", {message: `${importState.items.length} ${pluralize("item", importState.items.length)} imported`});
+    dispatch(
+      setLocaleData({
+        localeItems: newLocaleItems,
+      })
+    );
+    dispatch(
+      setCurrentDialog({
+        opened: false,
+      })
+    );
+    runCommand("show_figma_notify", {
+      message: `${importState.items.length} ${pluralize(
+        "item",
+        importState.items.length
+      )} imported`,
+    });
   }, [importState]);
   useEffect(() => {
     let parsedLangItems = {};
@@ -120,17 +121,15 @@ const ImportDialog = () => {
           const newKey = key.replace(/\.one$/, "");
           const newContent = {
             one: flattenItems[key],
-            other: flattenItems[newKey+'.other']
+            other: flattenItems[newKey + ".other"],
           };
           parsedItems[newKey] = newContent;
-        }
-        else if (
+        } else if (
           key.endsWith(".other") &&
           key.replace(".other", ".one") in flattenItems
         ) {
           // newKey = key.replace(".other", "_other");
-        }
-        else {
+        } else {
           parsedItems[key] = flattenItems[key];
         }
       });
@@ -153,7 +152,7 @@ const ImportDialog = () => {
             key: key,
             ...translations,
             createdAt: currentTime,
-            imported: true
+            imported: true,
           };
         }),
       });

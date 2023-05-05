@@ -1,13 +1,18 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../hooks/redux";
 import { useForm } from "react-hook-form";
-import {
-  LocaleItem, isPlurals
-} from "../../../lib/localeData";
+import { LocaleItem } from "../../../lib";
+import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash";
 import { LANGUAGES } from "../../../constant/locale";
-function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean}) {
+function useLocaleForm({
+  item,
+  quickEdit,
+}: {
+  item: LocaleItem;
+  quickEdit?: boolean;
+}) {
   const {
     register,
     handleSubmit,
@@ -22,7 +27,7 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
   const isEdit = item ? true : false;
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
-  );  
+  );
   // setup values for edit form
   useEffect(() => {
     if (item && item.key) {
@@ -42,8 +47,7 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
             setValue(`hasPlurals.${inputName}`, false);
             setValue(`${inputName}.one`, itemContent);
           }
-        }
-        else if (inputName == 'prioritized') {
+        } else if (inputName == "prioritized") {
           setValue(inputName, item[inputName]);
         }
       }
@@ -54,7 +58,7 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
         en: null,
         vi: null,
         hasPlurals: { en: false, vi: false },
-        prioritized: undefined
+        prioritized: undefined,
       });
     }
   }, [item]);
@@ -86,8 +90,8 @@ function useLocaleForm({item, quickEdit}: {item: LocaleItem, quickEdit?: boolean
     setValue,
     getValues,
     watchHasPlurals,
-    isEdit
-  }
+    isEdit,
+  };
 }
 
 export default useLocaleForm;

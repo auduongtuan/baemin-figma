@@ -7,7 +7,7 @@ import {
   SuggestionDataItem,
 } from "react-mentions";
 import styled from "styled-components";
-import { getStringContent } from "../../../lib/localeData";
+import { getStringContent } from "../../../lib";
 import { useAppSelector } from "../../hooks/redux";
 const mentionInputClassName = "mention-input";
 const FormulaInputContainer = styled.div`

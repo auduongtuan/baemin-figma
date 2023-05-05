@@ -1,11 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  LocaleText
-} from "../../lib/localeData";
+import { LocaleText } from "../../lib";
 import { MIXED_VALUE } from "../../constant/locale";
-import { LocaleSelection, LocaleItem, LocaleData } from "../../lib/localeData";
+import { LocaleSelection, LocaleItem, LocaleData } from "../../lib";
 import { cloneDeep } from "lodash";
-type LocaleState = LocaleData & {localeSelection: LocaleSelection};
+type LocaleState = LocaleData & { localeSelection: LocaleSelection };
 const initialState: LocaleState = {
   sheetName: null,
   sheetId: null,
@@ -26,7 +24,10 @@ function updateSummaryInLocaleSelection(state: LocaleState) {
     (text) => text && text.lang == state.localeSelection.texts[0].lang
   );
   const isSameKey = state.localeSelection.texts.every(
-    (text) => text && text.formula == state.localeSelection.texts[0].formula && text.key == state.localeSelection.texts[0].key
+    (text) =>
+      text &&
+      text.formula == state.localeSelection.texts[0].formula &&
+      text.key == state.localeSelection.texts[0].key
   );
   state.localeSelection.multiple =
     state.localeSelection.texts.length > 1 ? true : false;

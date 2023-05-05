@@ -1,20 +1,18 @@
-import {postData, selection} from "figma-helpers";
-import switchLang from "./locale/switchLang";
-import {updateTextByIds} from "./locale/updateText";
-import autoSetKeyForSelection from "./locale/autoSetKey";
-import { getLocaleData, saveLocaleData } from "./locale/localeData";
-import printCodeBlock from "./locale/printCodeBlock";
-import updateSelection from "./locale/updateSelection";
-import selectTexts from "./locale/selectTexts";
-import { LocaleItem } from "../lib/localeData";
-import createAnnotation from "./locale/createAnnotation";
+import { postData } from "figma-helpers";
+import switchLang from "./selection/switchLang";
+import { updateTextByIds } from "./text/updateText";
+import autoSetKeyForSelection from "./selection/autoSetKey";
+import { getLocaleData, saveLocaleData } from "./general/localeData";
+import printCodeBlock from "./general/printCodeBlock";
+import updateSelection from "./selection/updateSelection";
+import selectTexts from "./selection/selectTexts";
+import createAnnotation from "./selection/createAnnotation";
 figma.skipInvisibleInstanceChildren = true;
 const locale = {
   run: () => {
     figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
     postData({ page: "locale" });
     updateSelection();
-
   },
   onMessage: async (msg) => {
     switch (msg.type) {
@@ -25,7 +23,7 @@ const locale = {
         autoSetKeyForSelection(msg.localeItems);
         break;
       case "update_text":
-        const {ids, ...rest} = msg;
+        const { ids, ...rest } = msg;
         updateTextByIds(ids, rest);
         // figma.notify('updateText');
         break;

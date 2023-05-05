@@ -14,7 +14,7 @@ import {
 import { dateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, isString } from "lodash";
 import { LANGUAGES } from "../../../constant/locale";
-import { LocaleItem, findItemByKey } from "../../../lib/localeData";
+import { LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
@@ -193,7 +193,7 @@ function LocaleItemForm({
     <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
       {showTitle && item && saveOnChange && (
         <header className="flex justify-between items-center mb-8">
-          <h4 className="mt-0 font-medium text-secondary truncate">
+          <h4 className="mt-0 font-medium truncate">
             Quick edit {localeItem.key}
           </h4>
           <EditInfo localeItem={localeItem} />
@@ -219,16 +219,6 @@ function LocaleItemForm({
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
-      <p
-        className="text-secondary text-xsmall mt-8 first:mt-0"
-        css={`
-          color: var(--figma-color-text-secondary);
-          font-size: var(--font-size-xsmall);
-          margin-top: 8px;
-        `}
-      >
-        {`You can use <b>, <a>, <ul>, <ol>, <li> HTML tags to style texts.`}
-      </p>
       <div>
         {!saveOnChange && (
           <TextBox
@@ -253,9 +243,10 @@ function LocaleItemForm({
             }
           />
         )}
-        {!saveOnChange && (
-          <h4 className="mt-16 font-medium text-secondary">Translation</h4>
-        )}
+        {!saveOnChange && <h4 className="mt-16 font-medium">Translation</h4>}
+        <p className="text-secondary text-xsmall mt-4">
+          {`Tip: <b>, <a>, <ul>, <ol>, <li> HTML tags could be used to style texts.`}
+        </p>
         {/* <p
             css={`
               color: var(--figma-color-text-secondary);

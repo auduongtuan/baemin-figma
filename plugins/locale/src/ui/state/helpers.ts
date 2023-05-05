@@ -1,4 +1,10 @@
-import { LocaleTextProps, findItemByKey, getParsedText } from "../../lib";
+import {
+  LocaleTextProps,
+  LocaleItem,
+  LocaleSelection,
+  findItemByKey,
+  getParsedText,
+} from "../../lib";
 import { runCommand } from "../uiHelper";
 import { store } from "./store";
 import {
@@ -23,19 +29,26 @@ function handleTextPropsForSlice(textProps: LocaleTextProps) {
   };
 }
 export function updateText(id: string, textProps: LocaleTextProps) {
+  console.log(textProps);
   const { item, items, characters, ...rest } =
     handleTextPropsForSlice(textProps);
+  console.log({
+    id: id,
+    ...rest,
+    characters,
+  });
   runCommand("update_texts", {
     ids: id,
     item,
     items,
     ...rest,
   });
+
   store.dispatch(
     updateTextInLocaleSelection({
       id: id,
       ...rest,
-      characters,
+      ...(typeof characters != "undefined" ? { characters } : {}),
     })
   );
 }
@@ -55,8 +68,50 @@ export function updateTexts(ids: string[], textProps: LocaleTextProps) {
       ids.map((id) => ({
         id: id,
         ...rest,
-        characters,
+        ...(typeof characters != "undefined" ? { characters } : {}),
       }))
+    )
+  );
+}
+
+export function updateTextsOfItem(
+  oldKey: string,
+  item: LocaleItem,
+  localeSelection: LocaleSelection,
+  localeItems?: LocaleItem[]
+) {
+  // newKey
+  // update selected text also
+  const texts = localeSelection.texts.filter(
+    (text) =>
+      (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key)
+  );
+  texts.forEach((text) => {
+    console.log({
+      ids: text.id,
+      ...text,
+      item: item,
+      items: localeItems,
+    });
+    runCommand("update_texts", {
+      ids: text.id,
+      ...text,
+      item: item,
+      items: localeItems,
+    });
+  });
+  store.dispatch(
+    updateTextsInLocaleSelection(
+      texts.map((text) => {
+        const characters =
+          getParsedText({ ...text, item: item }, text.lang, text.variables)
+            .characters || undefined;
+        return {
+          ...text,
+          key: item.key,
+          ...(typeof characters != "undefined" ? { characters } : {}),
+        };
+      })
     )
   );
 }

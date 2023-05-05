@@ -59,7 +59,6 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       variables.count = 1;
     }
     const parsedText = getParsedText(textProps, newLang, variables);
-    console.log(parsedText);
     textNode.characters = parsedText.characters;
     if (parsedText.hasTags) {
       setStyles(textNode, parsedText, oldStyles);

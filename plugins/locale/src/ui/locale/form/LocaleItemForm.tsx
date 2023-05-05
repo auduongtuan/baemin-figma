@@ -18,7 +18,7 @@ import { LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
-import { updateTextsOfItem } from "./formCommon";
+import { updateTextsOfItem } from "../../state/helpers";
 import { addLocaleItem } from "../../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
 import {
@@ -121,19 +121,20 @@ function LocaleItemForm({
     if (prioritized) localeItemData.prioritized = true;
     dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
     if (localeSelection)
-      updateTextsOfItem(oldKey, localeItemData, localeSelection);
+      updateTextsOfItem(oldKey, localeItemData, localeSelection, localeItems);
     dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
     runCommand("show_figma_notify", { message: "Item updated" });
-  }, []);
+  }, [localeSelection, localeItems]);
 
   const updateLocaleItemDebounce = useMemo(
     () =>
       debounce((data) => {
         dispatch(updateLocaleItem(data));
         // update selected text also
-        if (localeSelection) updateTextsOfItem(null, data, localeSelection);
+        if (localeSelection)
+          updateTextsOfItem(null, data, localeSelection, localeItems);
       }, 300),
-    []
+    [localeSelection, localeItems]
   );
   useEffect(() => {
     return () => {

@@ -9,7 +9,12 @@ import { IconButton, Switch, Tag, TextBox, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { LocaleItem, LocaleText, LocaleTextVariables } from "../../../lib";
+import {
+  Lang,
+  LocaleItem,
+  LocaleText,
+  LocaleTextVariables,
+} from "../../../lib";
 import { findItemByKey } from "../../../lib/localeItem";
 import { getVariableNames } from "../../../lib/localeText";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
@@ -44,16 +49,9 @@ const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
   );
 };
 const TextEditForm = ({ text }: { text: LocaleText }) => {
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const localeItem =
     text && text.key ? findItemByKey(text.key, localeItems) : null;
-
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
   const [useFormula, setUseFormula] = useState(false);
   const dispatch = useAppDispatch();
   const {
@@ -61,10 +59,8 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     // handleSubmit,
     control,
     watch,
-    reset,
     formState: { errors },
     setValue,
-    getValues,
   } = useForm();
   const updateTextDebounce = useMemo(
     () =>
@@ -79,6 +75,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         updateText(text.id, {
           item: localeItem,
           items: localeItems,
+          lang: text.lang as Lang,
           ...textProps,
         });
       }, 300),

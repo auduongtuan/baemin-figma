@@ -51,7 +51,7 @@ export interface LocaleText {
   id?: string;
   key?: string;
   formula?: string;
-  lang?: Lang | typeof MIXED_VALUE;
+  lang?: Lang;
   characters?: string;
   variables?: LocaleTextVariables;
 }

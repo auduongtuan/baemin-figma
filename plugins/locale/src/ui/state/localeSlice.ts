@@ -80,7 +80,9 @@ export const localeSlice = createSlice({
     ) => {
       if (action.payload.length == 1) {
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
-          text.id != action.payload[0].id ? text : action.payload[0]
+          text.id != action.payload[0].id
+            ? text
+            : { ...text, ...action.payload[0] }
         );
       } else {
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>

@@ -3,11 +3,13 @@ import { useAppSelector } from "../../hooks/redux";
 import CurrentTextInfo from "../CurrentTextInfo";
 import MultipleTextEditor from "../atoms/MultipleTextEditor";
 import LocaleItemForm from "../form/LocaleItemForm";
-import { findItemByKey, getTextPropsByCharacters } from "../../../lib";
+import {
+  LocaleTextProps,
+  findItemByKey,
+  getTextPropsByCharacters,
+} from "../../../lib";
 import { Divider, Button } from "ds";
-import { useAppDispatch } from "../../hooks/redux";
-import { runCommand } from "../../uiHelper";
-import { updateTextInLocaleSelection } from "../../state/localeSlice";
+import { updateText } from "../../state/helpers";
 const SelectionEditor = () => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
@@ -17,7 +19,6 @@ const SelectionEditor = () => {
     localeSelection && localeSelection.summary
       ? findItemByKey(localeSelection.summary.key, localeItems)
       : null;
-  const dispatch = useAppDispatch();
 
   const suggestedText =
     !matchedItem && localeSelection && localeSelection.texts.length == 1
@@ -27,18 +28,12 @@ const SelectionEditor = () => {
         )
       : null;
 
-  const assignKey = (key: string) => {
-    console.log(key);
-    runCommand("update_texts", {
-      ids: localeSelection.texts[0].id,
+  const assignKey = (key: string, otherProps: LocaleTextProps = {}) => {
+    updateText(localeSelection.texts[0].id, {
       key,
+      ...otherProps,
+      item: findItemByKey(key, localeItems),
     });
-    dispatch(
-      updateTextInLocaleSelection({
-        id: localeSelection.texts[0].id,
-        key,
-      })
-    );
   };
   // return <div>Test</div>;
   return (
@@ -67,7 +62,7 @@ const SelectionEditor = () => {
                 <Button
                   // variant="secondary"
                   className="mt-16"
-                  onClick={() => assignKey(suggestedText.key)}
+                  onClick={() => assignKey(suggestedText.key, suggestedText)}
                 >
                   Assign key
                 </Button>

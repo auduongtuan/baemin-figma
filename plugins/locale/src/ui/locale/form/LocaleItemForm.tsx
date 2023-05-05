@@ -220,6 +220,7 @@ function LocaleItemForm({
       )}
       <input type="hidden" {...register("oldKey")} />
       <p
+        className="text-secondary text-xsmall mt-8 first:mt-0"
         css={`
           color: var(--figma-color-text-secondary);
           font-size: var(--font-size-xsmall);

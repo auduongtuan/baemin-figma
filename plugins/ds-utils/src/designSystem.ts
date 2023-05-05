@@ -17,13 +17,10 @@ import {
   isInstance,
   isComponent,
 } from "figma-helpers";
-import {
-  figmaAliasDark,
-  figmaAliasLight,
-} from "../constant/tokens/aliasColors";
-import globalColors from "../constant/tokens/globalColors";
+import { figmaAliasDark, figmaAliasLight } from "./constant/tokens/aliasColors";
+import globalColors from "./constant/tokens/globalColors";
 import { groupBy, isEqual, isObject, isString } from "lodash";
-import paintStyles from "../constant/paintStyles";
+import paintStyles from "./constant/paintStyles";
 import * as h from "figma-helpers";
 const designSystem: { [key: string]: Function } = {};
 
@@ -66,20 +63,20 @@ designSystem.changeTheme = async () => {
   // }
   async function getReversedStyleId(styleId: string): Promise<string | null> {
     const originalPaintStyle = figma.getStyleById(styleId);
-    if(originalPaintStyle) {
+    if (originalPaintStyle) {
       if (originalPaintStyle.name.startsWith("light")) {
         const darkStyleName = originalPaintStyle.name.replace("light", "dark");
         if (darkStyleName in importedIds) {
           return importedIds[darkStyleName];
-        }
-        else {
-          if(darkStyleName in paintStyles) {
-            console.log('import ' + darkStyleName);
-            const paintStyle = await figma.importStyleByKeyAsync(paintStyles[darkStyleName])
+        } else {
+          if (darkStyleName in paintStyles) {
+            console.log("import " + darkStyleName);
+            const paintStyle = await figma.importStyleByKeyAsync(
+              paintStyles[darkStyleName]
+            );
             importedIds[darkStyleName] = paintStyle.id;
             return paintStyle.id;
           }
-         
         }
       }
       if (originalPaintStyle.name.startsWith("dark")) {
@@ -87,16 +84,18 @@ designSystem.changeTheme = async () => {
         if (lightStyleName in importedIds) {
           return importedIds[lightStyleName];
         } else {
-          if(lightStyleName in paintStyles) {
-            console.log('import ' + lightStyleName);
-            const paintStyle = await figma.importStyleByKeyAsync(paintStyles[lightStyleName])
+          if (lightStyleName in paintStyles) {
+            console.log("import " + lightStyleName);
+            const paintStyle = await figma.importStyleByKeyAsync(
+              paintStyles[lightStyleName]
+            );
             importedIds[lightStyleName] = paintStyle.id;
             return paintStyle.id;
           }
         }
       }
     } else {
-      console.log('Paint style not found '+styleId);
+      console.log("Paint style not found " + styleId);
     }
     return null;
   }
@@ -105,49 +104,48 @@ designSystem.changeTheme = async () => {
     styleType: "fillStyleId" | "strokeStyleId"
   ) {
     if (styleType in node && typeof node[styleType] == "string") {
-      if(node.type == 'TEXT' && styleType == 'fillStyleId') {
+      if (node.type == "TEXT" && styleType == "fillStyleId") {
         const segments = node.getStyledTextSegments(["fillStyleId"]);
-        for(const segment of segments) {
-          if(segment.fillStyleId) {
-            const reversedStyleId = await getReversedStyleId(segment.fillStyleId);
+        for (const segment of segments) {
+          if (segment.fillStyleId) {
+            const reversedStyleId = await getReversedStyleId(
+              segment.fillStyleId
+            );
             if (reversedStyleId)
               node.setRangeFillStyleId(
                 segment.start,
                 segment.end,
                 reversedStyleId
               );
-              }
+          }
         }
       } else {
         console.log(styleType, node[styleType]);
-        if(node[styleType]) {
+        if (node[styleType]) {
           const reversedStyleId = await getReversedStyleId(node[styleType]);
           if (reversedStyleId) {
             node[styleType] = reversedStyleId;
           }
         }
       }
-  
     }
   }
   async function recursiveChangeTheme(node: BaseNode) {
-    if (h.isInstance(node))
-    {
-      const swapped = h.swapVariant(node, {"Dark": "True"});
-      if(!swapped) {
+    if (h.isInstance(node)) {
+      const swapped = h.swapVariant(node, { Dark: "True" });
+      if (!swapped) {
         await replaceStyle(node, "fillStyleId");
         await replaceStyle(node, "strokeStyleId");
-        for(const childNode of node.children) {
+        for (const childNode of node.children) {
           await recursiveChangeTheme(childNode);
-        };
+        }
       }
-    }
-    else if (h.isContainer(node)) {
+    } else if (h.isContainer(node)) {
       await replaceStyle(node, "fillStyleId");
       await replaceStyle(node, "strokeStyleId");
-      for(const childNode of node.children) {
+      for (const childNode of node.children) {
         await recursiveChangeTheme(childNode);
-      };
+      }
     } else {
       if (
         // node.type == "COMPONENT_SET" ||

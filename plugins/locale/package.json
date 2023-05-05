@@ -1,5 +1,5 @@
 {
-  "name": "locale-plugin",
+  "name": "locale",
   "version": "0.1.1",
   "description": "Figma plugin supporting for Aperia DS",
   "source": "src/ui/index.html",

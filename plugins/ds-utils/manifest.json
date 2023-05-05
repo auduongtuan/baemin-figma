@@ -1,0 +1,11 @@
+{
+  "name": "BAEMIN - DS Utils",
+  "id": "1236163515857741052",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "dist/code.global.js",
+  "menu": [
+    { "name": "Change theme", "command": "changeTheme" },
+    { "name": "Test", "command": "test" }
+  ]
+}

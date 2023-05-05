@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import locale from "./locale";
-import designSystem from "./designSystem";
 const dsFonts = [
   // {family: "Inter", style: "Regular"},
   // {family: "Inter", style: "Medium"},

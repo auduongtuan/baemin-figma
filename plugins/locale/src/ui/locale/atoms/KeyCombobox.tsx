@@ -2,20 +2,16 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { Combobox, ComboboxOption, ComboboxProps } from "ds";
 import { isArray, isString } from "lodash";
 import React from "react";
-import { MIXED_VALUE } from "../../../constant/locale";
 import {
   LocaleItem,
   LocaleText,
   findItemByKey,
   getStringContent,
 } from "../../../lib";
+import { MIXED_VALUE } from "../../../lib/constant";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { updateText, updateTexts } from "../../state/helpers";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
-import {
-  updateTextInLocaleSelection,
-  updateTextsInLocaleSelection,
-} from "../../state/localeSlice";
-import { runCommand } from "../../uiHelper";
 export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;
@@ -79,39 +75,25 @@ function KeyCombobox({
       },
     ],
   ];
-  const updateText = (
+  const updateTextCommon = (
     _text: LocaleText | LocaleText[],
     localeItemOrKey: LocaleItem | string
   ) => {
     const localeItem = isString(localeItemOrKey)
       ? findItemByKey(localeItemOrKey, localeItems)
       : localeItemOrKey;
+    const textProps = {
+      item: localeItem,
+      key: localeItem.key,
+      // characters: localeItem[text.lang],
+    };
     if (isArray(_text)) {
-      runCommand("update_text", {
-        ids: _text.map((text) => text.id),
-        item: localeItem,
-      });
-      dispatch(
-        updateTextsInLocaleSelection(
-          _text.map((text) => ({
-            ...text,
-            key: localeItem.key,
-            characters: localeItem[text.lang],
-          }))
-        )
+      updateTexts(
+        _text.map((text) => text.id),
+        textProps
       );
     } else {
-      runCommand("update_text", {
-        ids: _text.id,
-        item: localeItem,
-      });
-      dispatch(
-        updateTextInLocaleSelection({
-          ..._text,
-          key: localeItem.key,
-          characters: localeItem[_text.lang],
-        })
-      );
+      updateText(_text.id, textProps);
       // console.log(`Update text ${_text.id} with locale item`, localeItem);
     }
   };
@@ -119,13 +101,13 @@ function KeyCombobox({
     // dang selection
     if (forSelection && isString(localeItemOrKey)) {
       dispatch(setIsWorking(true));
-      updateText(localeSelection.texts, localeItemOrKey);
+      updateTextCommon(localeSelection.texts, localeItemOrKey);
     }
     // dang text
     else {
       if (text) {
         dispatch(setIsWorking(true));
-        updateText(text, localeItemOrKey);
+        updateTextCommon(text, localeItemOrKey);
       }
     }
   };

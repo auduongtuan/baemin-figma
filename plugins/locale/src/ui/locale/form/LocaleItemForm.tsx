@@ -13,7 +13,7 @@ import {
 } from "ds";
 import { dateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, isString } from "lodash";
-import { LANGUAGES } from "../../../constant/locale";
+import { LANGUAGES } from "../../../lib/constant";
 import { LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";

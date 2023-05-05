@@ -55,8 +55,9 @@ export interface LocaleText {
   characters?: string;
   variables?: LocaleTextVariables;
 }
-export interface LocaleTextProps extends Omit<LocaleText, "id" | "lang"> {
-  ids?: string | string[];
+export interface LocaleTextProps
+  extends Omit<LocaleText, "id" | "lang" | "characters"> {
+  // ids?: string | string[];
   item?: LocaleItem;
   items?: LocaleItem[];
   lang?: Lang;

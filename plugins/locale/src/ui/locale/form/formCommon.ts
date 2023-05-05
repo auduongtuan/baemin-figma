@@ -16,7 +16,7 @@ export function updateTextsOfItem(
       (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key)
   );
   texts.forEach((text) => {
-    runCommand("update_text", {
+    runCommand("update_texts", {
       ids: text.id,
       item: item,
     });

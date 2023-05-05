@@ -29,7 +29,7 @@ const SelectionEditor = () => {
 
   const assignKey = (key: string) => {
     console.log(key);
-    runCommand("update_text", {
+    runCommand("update_texts", {
       ids: localeSelection.texts[0].id,
       key,
     });

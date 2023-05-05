@@ -12,7 +12,7 @@ import { isPlurals, LocaleLibrary, LocaleItem } from "../../../lib";
 // import Prism from "prismjs";
 // import "prismjs/components/prism-json";
 // import { Token } from "prismjs";
-import { LANGUAGES } from "../../../constant/locale";
+import { LANGUAGES } from "../../../lib/constant";
 // import { Token } from "prismjs";
 import { set } from "lodash";
 import { js_beautify } from "js-beautify";

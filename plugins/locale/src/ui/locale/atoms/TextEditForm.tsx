@@ -14,12 +14,11 @@ import { findItemByKey } from "../../../lib/localeItem";
 import { getVariableNames } from "../../../lib/localeText";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import { updateTextInLocaleSelection } from "../../state/localeSlice";
-import { runCommand } from "../../uiHelper";
 import EditDialog from "../dialogs/EditDialog";
 import FormulaEditor from "./FormulaEditor";
 import KeyCombobox from "./KeyCombobox";
 import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
+import { updateText } from "../../state/helpers";
 const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
   className,
   children,
@@ -73,23 +72,15 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         const { variables, formula } = data;
         const textProps = {
           variables: isObject(variables)
-            ? (variables as LocaleTextVariables)
+            ? { ...(variables as LocaleTextVariables) }
             : undefined,
           formula: formula,
         };
-        runCommand("update_text", {
-          ids: text.id,
+        updateText(text.id, {
           item: localeItem,
           items: localeItems,
           ...textProps,
         });
-        console.log("UPDATE TEXT", textProps);
-        dispatch(
-          updateTextInLocaleSelection({
-            ...text,
-            ...textProps,
-          })
-        );
       }, 300),
     [localeItems, text]
   );
@@ -149,13 +140,9 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                   <Tooltip content="Unset this key">
                     <IconButton
                       onClick={(e) => {
-                        runCommand("update_text", {
-                          ids: text.id,
+                        updateText(text.id, {
                           key: "",
                         });
-                        dispatch(
-                          updateTextInLocaleSelection({ ...text, key: "" })
-                        );
                       }}
                     >
                       <MinusCircledIcon />
@@ -176,16 +163,9 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                           type: "NEW",
                           onDone: (localeItem: LocaleItem) => {
                             console.log("NEW ADD", localeItem);
-                            runCommand("update_text", {
-                              ids: text.id,
+                            updateText(text.id, {
                               key: localeItem.key,
                             });
-                            dispatch(
-                              updateTextInLocaleSelection({
-                                ...text,
-                                key: localeItem.key,
-                              })
-                            );
                             // onChangeHandler(localeItem.key);
                           },
                         })
@@ -228,20 +208,9 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                 checked={useFormula}
                 onCheckedChange={(checked) => {
                   setUseFormula(checked);
-                  runCommand("update_text", {
-                    ids: text.id,
+                  updateText(text.id, {
                     formula: "",
                   });
-                  console.log({
-                    ...text,
-                    formula: "",
-                  });
-                  dispatch(
-                    updateTextInLocaleSelection({
-                      ...text,
-                      formula: "",
-                    })
-                  );
                 }}
               />
               <div

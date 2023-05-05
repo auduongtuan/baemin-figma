@@ -4,9 +4,10 @@ import { Lang } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { updateTextInLocaleSelection } from "../../state/localeSlice";
 import { GlobeIcon } from "@radix-ui/react-icons";
-import { LANGUAGES } from "../../../constant/locale";
+import { LANGUAGES } from "../../../lib/constant";
 import { LocaleText, LocaleItem } from "../../../lib";
 import { useAppDispatch } from "../../hooks/redux";
+import { updateText } from "../../state/helpers";
 const SwitchLanguageDropdownMenu = ({
   text,
   item,
@@ -34,24 +35,12 @@ const SwitchLanguageDropdownMenu = ({
               selected={text && text.lang == lang}
               onSelect={() => {
                 if (!text) return;
-                if (text.formula) {
-                  runCommand("update_text", {
-                    ids: text.id,
-                    formula: text.formula,
-                    lang: lang as Lang,
-                    items: items,
-                  });
-                } else {
-                  runCommand("update_text", {
-                    ids: text.id,
-                    lang: lang as Lang,
-                    item: item,
-                  });
-                }
-                // only need to update lang
-                dispatch(
-                  updateTextInLocaleSelection({ id: text.id, lang: lang })
-                );
+                updateText(text.id, {
+                  formula: text.formula || undefined,
+                  lang: lang as Lang,
+                  item: item,
+                  items: items,
+                });
               }}
             >
               {LANGUAGES[lang]}

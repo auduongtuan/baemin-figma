@@ -5,7 +5,7 @@ import { LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash";
-import { LANGUAGES } from "../../../constant/locale";
+import { LANGUAGES } from "../../../lib/constant";
 function useLocaleForm({
   item,
   quickEdit,

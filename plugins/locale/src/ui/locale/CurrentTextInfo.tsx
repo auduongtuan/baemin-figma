@@ -1,5 +1,5 @@
 import React from "react";
-import { LANGUAGES, MIXED_VALUE } from "../../constant/locale";
+import { LANGUAGES, MIXED_VALUE } from "../../lib/constant";
 import { useAppSelector } from "../hooks/redux";
 import { runCommand } from "../uiHelper";
 import { Select, Divider } from "ds";

@@ -1,15 +1,15 @@
 import { isContainer, selection } from "figma-helpers";
 import { isString } from "lodash";
-import { DEFAULT_LANG } from "../../lib/constant";
-import { matchAll } from "../../lib/helpers";
 import {
-  Lang,
   LocaleItem,
   LocaleTextProps,
-  LocaleTextVariables,
+  findItemByKey,
+  getParsedText,
+  getTextCharactersWithTags,
+  isPlurals,
 } from "../../lib";
-import { findItemByKey, isPlurals } from "../../lib/localeItem";
-import { applyVariablesToContent } from "../../lib/localeText";
+import { DEFAULT_LANG } from "../../lib/constant";
+
 import {
   getKey,
   getLang,
@@ -20,42 +20,8 @@ import {
   setVariable,
   setVariables,
 } from "./textProps";
-import parseTagsInText from "./parseTagsInText";
 import { getStyles, setStyles } from "./textStyles";
 
-function parseFormula(textProps: LocaleTextProps) {
-  const { formula, items, lang = DEFAULT_LANG, variables = {} } = textProps;
-  let newString = formula;
-  const matches = matchAll(/\:\s*([A-Za-z0-9\._]+)\s*\:/, formula);
-  if (matches) {
-    matches.forEach((match: string[]) => {
-      if (match.length > 1) {
-        const localeItem = findItemByKey(match[1], items);
-        if (localeItem) {
-          const newLocaleItemContent =
-            lang in localeItem ? localeItem[lang] : undefined;
-          if (newLocaleItemContent) {
-            newString = newString.replace(
-              match[0],
-              applyVariablesToContent(newLocaleItemContent, variables)
-            );
-          }
-        }
-      }
-    });
-  }
-  return newString;
-}
-
-function getTextCharactersWithTags(
-  textProps: LocaleTextProps,
-  lang: Lang,
-  variables: LocaleTextVariables = {}
-) {
-  return textProps.formula
-    ? parseFormula({ ...textProps, lang: lang })
-    : applyVariablesToContent(textProps.item[lang], variables);
-}
 // find text node
 export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
   if (!textProps) return;
@@ -92,12 +58,8 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       setVariable(textNode, "count", 1);
       variables.count = 1;
     }
-    const textCharactersWithTags = getTextCharactersWithTags(
-      textProps,
-      newLang,
-      variables
-    );
-    const parsedText = parseTagsInText(textCharactersWithTags);
+    const parsedText = getParsedText(textProps, newLang, variables);
+    console.log(parsedText);
     textNode.characters = parsedText.characters;
     if (parsedText.hasTags) {
       setStyles(textNode, parsedText, oldStyles);
@@ -105,7 +67,7 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
   }
 }
 // update texts to use Locale item
-export function updateText(
+export function updateTextsInScope(
   filterFunction: (node: TextNode) => boolean,
   textProps: LocaleTextProps,
   scope: SceneNode | BaseNode
@@ -153,15 +115,15 @@ export function updateTexts(
     }
   });
 }
-export function updateTextByIds(
+export function updateTextsByIds(
   ids: string | string[],
   textProps: LocaleTextProps,
   scope?: SceneNode | BaseNode
 ) {
   const filterFunction = (node: TextNode) =>
     (isString(ids) && node.id == ids) || ids.includes(node.id);
-  updateText(filterFunction, textProps, scope);
+  updateTextsInScope(filterFunction, textProps, scope);
   // updateSelection();
   // update that text in state
 }
-export default updateText;
+export default updateTextsInScope;

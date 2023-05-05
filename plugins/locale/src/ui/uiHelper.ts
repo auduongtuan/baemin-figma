@@ -6,7 +6,7 @@ export const postData = (data: { [key: string]: any }) => {
 export const commands = [
   "select_texts",
   "switch_lang",
-  "update_text",
+  "update_texts",
   "get_locale_data",
   "save_locale_data",
   "print_code_block",
@@ -20,7 +20,7 @@ export function runCommand(
   type: "show_figma_notify",
   data: { message: string }
 ): void;
-export function runCommand(type: "update_text", data: LocaleTextProps): void;
+export function runCommand(type: "update_texts", data: LocaleTextProps): void;
 export function runCommand(
   type: Exclude<Command, "update_text">,
   data?: { [key: string]: any }

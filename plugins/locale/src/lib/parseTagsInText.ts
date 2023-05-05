@@ -1,4 +1,4 @@
-import { matchAll } from "../../lib/helpers";
+import { matchAll } from "./helpers";
 export const tagRegex = /\<(b|a|ul|ol|li)\b[^>]*>((?:.|\n)*?)\<\/\1>/;
 export type StyleInfo = {
   start: number;

@@ -1,6 +1,6 @@
 import { postData } from "figma-helpers";
 import switchLang from "./selection/switchLang";
-import { updateTextByIds } from "./text/updateText";
+import { updateTextsByIds } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./general/localeData";
 import printCodeBlock from "./general/printCodeBlock";
@@ -22,9 +22,9 @@ const locale = {
       case "auto_set_key":
         autoSetKeyForSelection(msg.localeItems);
         break;
-      case "update_text":
+      case "update_texts":
         const { ids, ...rest } = msg;
-        updateTextByIds(ids, rest);
+        updateTextsByIds(ids, rest);
         // figma.notify('updateText');
         break;
       case "switch_lang":

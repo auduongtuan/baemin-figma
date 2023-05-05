@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LocaleText } from "../../lib";
-import { MIXED_VALUE } from "../../constant/locale";
-import { LocaleSelection, LocaleItem, LocaleData } from "../../lib";
+import {
+  LocaleText,
+  MIXED_VALUE,
+  LocaleSelection,
+  LocaleItem,
+  LocaleData,
+} from "../../lib";
 import { cloneDeep } from "lodash";
 type LocaleState = LocaleData & { localeSelection: LocaleSelection };
 const initialState: LocaleState = {

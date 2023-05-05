@@ -1,5 +1,5 @@
 import { hexToFigmaRGB } from "figma-helpers/colors";
-import parseTagsInText, { ParsedText } from "./parseTagsInText";
+import parseTagsInText, { ParsedText } from "../../lib/parseTagsInText";
 function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

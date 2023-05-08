@@ -1,4 +1,0 @@
-
-> baemin-figma-plugin@0.1.1 lint /Users/tuan.au/Coding/baemin-figma/packages/plugin
-> tsc --noEmit -p src/command
-

@@ -1,21 +1,14 @@
-import React, {
-  useEffect,
-  useState,
-  ComponentType,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   UseComboboxState,
   UseComboboxStateChangeOptions,
-  UseComboboxStateChangeTypes,
   useCombobox,
 } from "downshift";
 import classnames from "classnames";
 import Menu from "./Menu";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 // import { removeVietnameseAccent } from "../../lib/helpers";
 export interface ComboboxOption {
   id?: string;
@@ -133,7 +126,7 @@ const Combobox = ({
           setItems(suggestions);
         }
       }, 150),
-    []
+    [options]
   );
   useEffect(() => {
     return () => {

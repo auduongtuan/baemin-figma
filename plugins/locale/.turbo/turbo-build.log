@@ -1,0 +1,21 @@
+
+> locale-plugin@0.1.1 build /Users/tuan.au/Work/baemin-figma/plugins/plugin
+> npm run build:ui && npm run build:main -- --minify
+
+
+> locale-plugin@0.1.1 build:ui
+> npx vite build --minify esbuild --emptyOutDir=false
+
+vite v3.2.5 building for production...
+transforming...
+✓ 270 modules transformed.
+rendering chunks...
+../../dist/index.html   866.12 KiB
+
+> locale-plugin@0.1.1 build:main
+> node ./esbuild.js --minify
+
+
+  dist/code.js  176.4kb
+
+⚡ Done in 51ms

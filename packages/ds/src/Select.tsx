@@ -3,7 +3,7 @@ import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
 import classNames from "classnames";
 import { useSelect } from "downshift";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 import Menu, { MenuItemProps } from "./Menu";
 export interface SelectOption extends MenuItemProps {
   id?: string;

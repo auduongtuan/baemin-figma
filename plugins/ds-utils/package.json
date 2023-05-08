@@ -1,0 +1,19 @@
+{
+  "name": "ds-utils",
+  "version": "0.1.1",
+  "description": "Figma plugin supporting for BAEMIN design system",
+  "main": "dist/code.js",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "author": "Tuan Au Duong",
+  "license": "",
+  "dependencies": {
+    "figma-helpers": "workspace:*",
+    "tsconfig": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^6.7.0"
+  }
+}

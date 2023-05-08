@@ -1,4 +1,4 @@
-import { get } from "lodash";
+import { get } from "lodash-es";
 
 export function removeVietnameseAccent(str: string) {
   // remove accents
@@ -136,27 +136,31 @@ export const flat = (object: Object) => {
 };
 
 export const compareTime = (a: string, b: string) => {
-  const date1 = a ? (new Date(a)).getTime() : 0;
-  const date2 = b ? (new Date(b)).getTime() : 0;
+  const date1 = a ? new Date(a).getTime() : 0;
+  const date2 = b ? new Date(b).getTime() : 0;
   return date1 - date2;
 };
 function padTo2Digits(num: number) {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 }
 export function dateTimeFormat(dateString: Date | string) {
-  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
   return (
     [
       date.getFullYear(),
       padTo2Digits(date.getMonth() + 1),
       padTo2Digits(date.getDate()),
-    ].join('-') +
-    ' ' +
+    ].join("-") +
+    " " +
     [
       padTo2Digits(date.getHours()),
       padTo2Digits(date.getMinutes()),
       padTo2Digits(date.getSeconds()),
-    ].join(':')
+    ].join(":")
   );
 }
 
+export function stripTags(str: string) {
+  return str.replace(/(<([^>]+)>)/gi, "");
+}

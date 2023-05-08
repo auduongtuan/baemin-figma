@@ -1,7 +1,7 @@
 import * as h from "figma-helpers";
-import { LocaleText } from "../../lib";
-import { loadRobotoFontsAsync, isFrame, ContainerNode } from "figma-helpers";
+import { ContainerNode, isFrame } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
+import { LocaleText } from "../../lib";
 type AnnotatedText = LocaleText & { node: TextNode };
 function sortByAbsolutePosition(a: SceneNode, b: SceneNode) {
   return (
@@ -11,7 +11,6 @@ function sortByAbsolutePosition(a: SceneNode, b: SceneNode) {
 }
 async function createAnnotation(texts: LocaleText[]) {
   const selection = h.selection();
-  await loadRobotoFontsAsync("Mono", "Regular");
   figma.skipInvisibleInstanceChildren = true;
   selection.forEach((selectionItem) => {
     const allTextNodes: TextNode[] = [];

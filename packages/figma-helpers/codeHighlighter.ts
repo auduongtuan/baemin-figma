@@ -1,4 +1,4 @@
-import globalColors from "../../plugins/plugin/src/constant/tokens/globalColors";
+import globalColors from "../../plugins/ds-utils/src/constant/tokens/globalColors";
 const tokenColors = {
   default: globalColors.gray[50],
   comment: globalColors.gray[100],
@@ -33,20 +33,23 @@ const tokenColors = {
   important: globalColors.yellow[300],
   variable: globalColors.yellow[300],
 };
-import * as _ from 'lodash';
-import { hexToFigmaRGB } from './colors';
+import { isString, isArray } from "lodash-es";
+import { hexToFigmaRGB } from "./colors";
 import { Token } from "prismjs";
-function updateCodeHighlighter(textNode: TextNode, tokens: Array<string | Token>) {
+function updateCodeHighlighter(
+  textNode: TextNode,
+  tokens: Array<string | Token>
+) {
   let characters = "";
   // create characters
   function tokenRecursive(tokenStream) {
     tokenStream.forEach((token) => {
-      if (_.isString(token)) {
+      if (isString(token)) {
         characters += token;
       } else if ("content" in token) {
-        if (_.isString(token.content)) {
+        if (isString(token.content)) {
           characters += token.content;
-        } else if (_.isArray(token.content)) {
+        } else if (isArray(token.content)) {
           tokenRecursive(token.content);
         }
       }
@@ -57,20 +60,26 @@ function updateCodeHighlighter(textNode: TextNode, tokens: Array<string | Token>
   if (textNode.type == "TEXT") {
     textNode.characters = characters;
     let characterCount = 0;
-    const themedTokenColors: {[key:string]:SolidPaint} = Object.keys(tokenColors).reduce((acc, name) => {
+    const themedTokenColors: { [key: string]: SolidPaint } = Object.keys(
+      tokenColors
+    ).reduce((acc, name) => {
       // const paintStyle = figma.createPaintStyle();
       // console.log(name, tokenColors[name]);
       const paint: SolidPaint = {
         type: "SOLID",
-        color: hexToFigmaRGB(name in tokenColors && tokenColors[name] ? tokenColors[name] : tokenColors.default)
-      }
+        color: hexToFigmaRGB(
+          name in tokenColors && tokenColors[name]
+            ? tokenColors[name]
+            : tokenColors.default
+        ),
+      };
       // paintStyle.paints = [paint];
       acc[name] = paint;
       return acc;
-    }, {})
-    tokens.forEach(token => {
+    }, {});
+    tokens.forEach((token) => {
       let paint: SolidPaint;
-      if (_.isString(token)) {
+      if (isString(token)) {
         paint = themedTokenColors.default;
       } else if ("content" in token && "type" in token) {
         // const paintStyle = h.getLocalPaintStyle(token.type in themedTokenColors ? themedTokenColors[token.type] : globalColors.gray[90]);
@@ -80,11 +89,9 @@ function updateCodeHighlighter(textNode: TextNode, tokens: Array<string | Token>
             : themedTokenColors.default;
       }
       if (paint) {
-        textNode.setRangeFills(
-          characterCount,
-          characterCount + token.length,
-          [paint]
-        );
+        textNode.setRangeFills(characterCount, characterCount + token.length, [
+          paint,
+        ]);
       }
       characterCount = characterCount + token.length;
     });

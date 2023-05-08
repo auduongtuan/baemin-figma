@@ -6,7 +6,7 @@ import {
   LocaleItem,
   LocaleData,
 } from "../../lib";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 type LocaleState = LocaleData & { localeSelection: LocaleSelection };
 const initialState: LocaleState = {
   sheetName: null,

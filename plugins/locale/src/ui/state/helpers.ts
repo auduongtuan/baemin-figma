@@ -29,21 +29,14 @@ function handleTextPropsForSlice(textProps: LocaleTextProps) {
   };
 }
 export function updateText(id: string, textProps: LocaleTextProps) {
-  console.log(textProps);
   const { item, items, characters, ...rest } =
     handleTextPropsForSlice(textProps);
-  console.log({
-    id: id,
-    ...rest,
-    characters,
-  });
   runCommand("update_texts", {
     ids: id,
     item,
     items,
     ...rest,
   });
-
   store.dispatch(
     updateTextInLocaleSelection({
       id: id,
@@ -55,14 +48,12 @@ export function updateText(id: string, textProps: LocaleTextProps) {
 export function updateTexts(ids: string[], textProps: LocaleTextProps) {
   const { item, items, characters, ...rest } =
     handleTextPropsForSlice(textProps);
-
   runCommand("update_texts", {
     ids,
     item,
     items,
     ...rest,
   });
-
   store.dispatch(
     updateTextsInLocaleSelection(
       ids.map((id) => ({
@@ -87,12 +78,6 @@ export function updateTextsOfItem(
       (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key)
   );
   texts.forEach((text) => {
-    console.log({
-      ids: text.id,
-      ...text,
-      item: item,
-      items: localeItems,
-    });
     runCommand("update_texts", {
       ids: text.id,
       ...text,

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
-import { snakeCase } from "lodash";
+import { snakeCase } from "lodash-es";
 import { LANGUAGES } from "../../../lib/constant";
 function useLocaleForm({
   item,

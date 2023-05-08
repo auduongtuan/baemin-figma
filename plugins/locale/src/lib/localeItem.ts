@@ -1,4 +1,4 @@
-import { isObject } from "lodash";
+import { isObject } from "lodash-es";
 import { LANGUAGES } from "./constant";
 import { matchAll } from "./helpers";
 import { getTextPropsByCharacters } from "./localeText";

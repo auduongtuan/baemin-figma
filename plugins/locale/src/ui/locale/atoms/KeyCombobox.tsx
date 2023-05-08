@@ -1,6 +1,6 @@
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Combobox, ComboboxOption, ComboboxProps } from "ds";
-import { isArray, isString } from "lodash";
+import { isArray, isString } from "lodash-es";
 import React from "react";
 import {
   LocaleItem,

@@ -1,15 +1,13 @@
-import { getNodeData, loadRobotoFontsAsync, setNodeData } from "figma-helpers";
+import { getNodeData, setNodeData } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
-import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../lib/constant";
 import { LocaleLibrary } from "../../lib";
+import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../lib/constant";
 const firstPage = figma.root.children[0];
 // async function exportCode(tokensObject: {[key:string]: Array<string | Token>}) {
 async function printCodeBlock(
   library: LocaleLibrary,
   langJSONs: { [key: string]: string }
 ) {
-  await loadRobotoFontsAsync("Sans", "Bold");
-  await loadRobotoFontsAsync("Mono", "Regular");
   let localeCodeBlock =
     (firstPage.findOne(
       (node) =>

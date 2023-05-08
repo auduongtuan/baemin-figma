@@ -1,18 +1,15 @@
 import React, { forwardRef } from "react";
 import * as RCheckbox from "@radix-ui/react-checkbox";
-import { uniqueId } from "lodash";
+import { uniqueId } from "lodash-es";
 import { CheckIcon } from "@radix-ui/react-icons";
 
-const Checkbox = forwardRef<HTMLButtonElement, RCheckbox.CheckboxProps & { label: React.ReactNode }>(({
-  label,
-  className,
-  ...rest
-}, forwardedRef) => {
+const Checkbox = forwardRef<
+  HTMLButtonElement,
+  RCheckbox.CheckboxProps & { label: React.ReactNode }
+>(({ label, className, ...rest }, forwardedRef) => {
   const id = uniqueId("Switch");
   return (
-    <div
-      className={`flex gap-8 items-center ${className}`}
-    >
+    <div className={`flex gap-8 items-center ${className}`}>
       <RCheckbox.Root
         id={id}
         css={`
@@ -53,7 +50,6 @@ const Checkbox = forwardRef<HTMLButtonElement, RCheckbox.CheckboxProps & { label
       >
         {label}
       </label>
-     
     </div>
   );
 });

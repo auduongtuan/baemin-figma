@@ -1,6 +1,6 @@
-import { escapeRegExp, isObject } from "lodash";
+import { escapeRegExp, isObject } from "lodash-es";
 import { DEFAULT_LANG, LANGUAGES } from "./constant";
-import { compareTime, matchAll, placeholders } from "./helpers";
+import { compareTime, matchAll, placeholders, stripTags } from "./helpers";
 import parseTagsInText from "./parseTagsInText";
 import { isPlurals } from "./localeItem";
 import {
@@ -77,12 +77,6 @@ export function getTextPropsByCharacters(
             }
           } else {
             return Object.keys(itemContent).some((quantity) => {
-              // console.log({
-              //   characters,
-              //   itemContent,
-              //   quantity,
-              //   matched: isCharactersMatch(characters, itemContent[quantity]),
-              // });
               if (isCharactersMatch(characters, itemContent[quantity])) {
                 foundLang = lang;
                 foundVariables = findVariablesInCharacters(
@@ -113,13 +107,13 @@ function isCharactersMatch(
   itemContentString: string,
   caseSensitive = false
 ) {
-  if (itemContentString == characters) {
+  // stripped html tags
+  const template = itemContentString ? stripTags(itemContentString) : "";
+  if (template == characters) {
     return true;
   } else {
-    if (!itemContentString) return false;
-    const escaped = escapeRegExp(
-      itemContentString.replace(/\{\{([^}]+)\}\}/g, "(.*)")
-    );
+    if (!template) return false;
+    const escaped = escapeRegExp(template.replace(/\{\{([^}]+)\}\}/g, "(.*)"));
     const readded = escaped.replace("\\(\\.\\*\\)", "(.*)");
     // except for only variable case. e.g: {{url}}
     if (readded == "(.*)") return false;
@@ -135,12 +129,10 @@ function isCharactersMatch(
 
 export function findVariablesInCharacters(
   characters: string,
-  template: string
+  itemContentString: string
 ) {
   const nameReg = /\{\{([^}]+)\}\}/g;
-  // const characters = "Welcome Tuấn nha";
-  // const template = "Welcome {{merchant}} nha";
-
+  const template = stripTags(itemContentString);
   // variable names in template, allow duplicating
   const variableNames = matchAll(nameReg, template).map((match) => match[1]);
 
@@ -151,12 +143,6 @@ export function findVariablesInCharacters(
     (match) => match[1]
   );
 
-  // console.log({
-  //   variableNames,
-  //   variableValues,
-  //   valueReg,
-  //   matchTest: matchAll(valueReg, characters),
-  // });
   return variableNames.reduce((acc, name, i) => {
     acc[name] = variableValues[i];
     return acc;

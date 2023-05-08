@@ -6,7 +6,7 @@ import {
 } from "@radix-ui/react-icons";
 import classNames from "classnames";
 import { IconButton, Switch, Tag, TextBox, Tooltip } from "ds";
-import { debounce, get, isObject } from "lodash";
+import { debounce, get, isObject } from "lodash-es";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -162,6 +162,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                             console.log("NEW ADD", localeItem);
                             updateText(text.id, {
                               key: localeItem.key,
+                              item: localeItem,
                             });
                             // onChangeHandler(localeItem.key);
                           },

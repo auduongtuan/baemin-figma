@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ["src/code.ts"],
   format: "iife",
   splitting: false,
-  sourcemap: "inline",
+  sourcemap: false,
   target: "es6",
   clean: true,
   bundle: true,

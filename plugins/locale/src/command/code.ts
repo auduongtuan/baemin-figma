@@ -1,11 +1,14 @@
-import * as _ from "lodash";
 import locale from "./locale";
+import { loadFonts } from "figma-helpers/texts";
 const dsFonts = [
   { family: "Roboto", style: "Regular" },
   { family: "Roboto", style: "Medium" },
   { family: "Roboto", style: "SemiBold" },
   { family: "Roboto", style: "Bold" },
   { family: "Roboto Mono", style: "Regular" },
+  { family: "Roboto Mono", style: "Medium" },
+  { family: "Roboto Mono", style: "SemiBold" },
+  { family: "Roboto Mono", style: "Bold" },
 ];
 
 const uiCommands = {
@@ -15,34 +18,33 @@ const uiCommands = {
 const nonuiCommands = {};
 
 figma.ui.onmessage = (msg) => {
-  _.forOwn(uiCommands, (value, key) => {
+  Object.keys(uiCommands).forEach((key) => {
     if (figma.command == key) {
-      if ("onMessage" in value) value.onMessage(msg);
+      if ("onMessage" in uiCommands[key]) uiCommands[key].onMessage(msg);
     }
   });
 };
 
 figma.on("selectionchange", async () => {
-  _.forOwn(uiCommands, (value, key) => {
+  Object.keys(uiCommands).forEach((key) => {
     if (figma.command == key) {
-      if ("onSelectionChange" in value) {
-        value.onSelectionChange();
+      if ("onSelectionChange" in uiCommands[key]) {
+        uiCommands[key].onSelectionChange();
       }
     }
   });
 });
 
-figma.on("run", async ({ command, parameters }: RunEvent) => {
-  await Promise.all(
-    dsFonts.map((fontName: FontName) => figma.loadFontAsync(fontName))
-  );
-
-  _.forOwn(uiCommands, async (value, key) => {
-    if (command == key) {
-      // console.log(value.run);
-      if ("run" in value) value.run();
-    }
+figma.on("run", ({ command, parameters }: RunEvent) => {
+  loadFonts(dsFonts, () => {
+    Object.keys(uiCommands).forEach((key) => {
+      if (command == key) {
+        // console.log(value.run);
+        if ("run" in uiCommands[key]) uiCommands[key].run();
+      }
+    });
   });
+
   // _.forOwn(nonuiCommands, async (value, key) => {
   //   if (command == key) {
   //     await value();

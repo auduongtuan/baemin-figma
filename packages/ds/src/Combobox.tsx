@@ -8,7 +8,7 @@ import classnames from "classnames";
 import Menu from "./Menu";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 // import { removeVietnameseAccent } from "../../lib/helpers";
 export interface ComboboxOption {
   id?: string;

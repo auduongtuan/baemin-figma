@@ -1,5 +1,5 @@
 import { isContainer, selection } from "figma-helpers";
-import { isString } from "lodash";
+import { isString } from "lodash-es";
 import {
   LocaleItem,
   LocaleTextProps,
@@ -59,6 +59,7 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       variables.count = 1;
     }
     const parsedText = getParsedText(textProps, newLang, variables);
+
     textNode.characters = parsedText.characters;
     if (parsedText.hasTags) {
       setStyles(textNode, parsedText, oldStyles);

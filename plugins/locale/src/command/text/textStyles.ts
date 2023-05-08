@@ -1,5 +1,6 @@
 import { hexToFigmaRGB } from "figma-helpers/colors";
 import parseTagsInText, { ParsedText } from "../../lib/parseTagsInText";
+import { orderBy, uniqBy } from "lodash-es";
 function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -79,10 +80,36 @@ export function setStyles(
       });
     });
   }
+  // default font
   const fontName = textNode.getRangeFontName(0, 1) as FontName;
-
-  // default bold style
+  // const fontNameSegments = textNode.getStyledTextSegments(["fontName"]);
+  // const fontNames = uniqBy(
+  //   fontNameSegments.map((segment) => segment.fontName),
+  //   (fontName) => fontName.family + fontName.style
+  // );
+  // const fontName = fontNames[0];
+  const regularFontName =
+    // fontNames.find(
+    //   (fontName) => fontName.style == "Regular"
+    // ) ||
+    {
+      family: fontName.family,
+      style: "Regular",
+    };
+  // // reset regular style
+  // if (oldStyles.regular) {
+  //   // textNode.fontName = oldStyles.regular.fontName;
+  //   setRangeBulkFields(
+  //     textNode,
+  //     oldStyles.regular,
+  //     0,
+  //     textNode.characters.length
+  //   );
+  // } else {
+  //   textNode.fontName = regularFontName;
+  // }
   if (parsedText.stylePositions.bold.length > 0) {
+    // default bold style
     // get first font
     const boldFontName = {
       family: fontName.family,
@@ -110,7 +137,7 @@ export function setStyles(
       style: settings.link.fontNameStyle,
     };
     parsedText.stylePositions.link.forEach((linkPos, i) => {
-      if ("href" in linkPos) {
+      if ("href" in linkPos && linkPos["href"]) {
         textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
           type: "URL",
           value: linkPos.href,
@@ -135,6 +162,8 @@ export function setStyles(
 export interface TextStyles {
   bold?: Partial<StyledTextSegment>[];
   link?: Partial<StyledTextSegment>[];
+  // regular only one segment
+  regular?: Partial<StyledTextSegment>;
 }
 /**
  * Get styles
@@ -152,6 +181,26 @@ export function getStyles(
   if (parsedStyleCharacters.hasTags == false) {
     return defaultValue;
   }
+  const getRegularStyleSegment = (segments: typeof currentSegments) => {
+    const notBoldnotLinkSegments = segments.filter((segment) => {
+      const boldStarts = parsedStyleCharacters.stylePositions.bold.map(
+        (pos) => pos.start
+      );
+      const linkStarts = parsedStyleCharacters.stylePositions.link.map(
+        (pos) => pos.start
+      );
+      return (
+        !boldStarts.includes(segment.start) &&
+        !linkStarts.includes(segment.start)
+      );
+    });
+    const sortedByLength = orderBy(
+      notBoldnotLinkSegments,
+      (segment) => segment.end - segment.start,
+      "desc"
+    );
+    return sortedByLength.length > 0 ? sortedByLength[0] : undefined;
+  };
   const oldStyles = {
     bold: parsedStyleCharacters.stylePositions.bold.map((pos) => {
       const mappedSegment = currentSegments.find(
@@ -170,6 +219,7 @@ export function getStyles(
       if (mappedSegment) return mappedSegment;
       return {};
     }),
+    regular: getRegularStyleSegment(currentSegments),
   };
   return oldStyles;
 }

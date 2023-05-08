@@ -19,7 +19,7 @@ import {
 } from "figma-helpers";
 import { figmaAliasDark, figmaAliasLight } from "./constant/tokens/aliasColors";
 import globalColors from "./constant/tokens/globalColors";
-import { groupBy, isEqual, isObject, isString } from "lodash";
+import { groupBy, isEqual } from "lodash-es";
 import paintStyles from "./constant/paintStyles";
 import * as h from "figma-helpers";
 const designSystem: { [key: string]: Function } = {};

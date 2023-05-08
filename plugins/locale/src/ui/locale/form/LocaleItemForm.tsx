@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "ds";
 import { dateTimeFormat } from "../../../lib/helpers";
-import { debounce, get, isString } from "lodash";
+import { debounce, get, isString } from "lodash-es";
 import { LANGUAGES } from "../../../lib/constant";
 import { LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";

@@ -6,7 +6,7 @@ export default defineConfig({
   },
   format: "iife",
   splitting: false,
-  sourcemap: "inline",
+  sourcemap: false,
   target: "es6",
   bundle: true,
   minifyWhitespace: true,

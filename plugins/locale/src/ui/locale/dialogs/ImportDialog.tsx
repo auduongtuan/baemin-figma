@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Dialog, Dropzone, Button, Checkbox, Collapsible, Divider } from "ds";
 import { flat } from "../../../lib/helpers";
 import LocaleItemList from "../items/LocaleItemList";
-import { groupBy, orderBy, unionWith } from "lodash";
+import { groupBy, orderBy, unionWith } from "lodash-es";
 import { LocaleItem } from "../../../lib";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";

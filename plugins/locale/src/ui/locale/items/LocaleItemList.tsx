@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { removeLocaleItem, updateLocaleItems } from "../../state/localeSlice";
 import { useForm } from "react-hook-form";
-import { groupBy, orderBy } from "lodash";
+import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
 import {
   Button,

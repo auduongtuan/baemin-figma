@@ -14,7 +14,7 @@ import { isPlurals, LocaleLibrary, LocaleItem } from "../../../lib";
 // import { Token } from "prismjs";
 import { LANGUAGES } from "../../../lib/constant";
 // import { Token } from "prismjs";
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { js_beautify } from "js-beautify";
 import { pluralize } from "@capaj/pluralize";
 import { compareTime } from "../../../lib/helpers";
@@ -43,7 +43,7 @@ const printCodeBlock = (
 ) => {
   // const tokensObject: {[key:string]: Array<string | Token>} = {};
   const langJSONs: { [key: string]: string } = {};
-  console.log("LOCALE ITEMS", localeItems);
+  // console.log("LOCALE ITEMS", localeItems);
   Object.keys(LANGUAGES).forEach((lang) => {
     const langJSON = js_beautify(
       JSON.stringify(

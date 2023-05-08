@@ -9,7 +9,7 @@ const firstPage = figma.root.children[0];
 import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
 import { LocaleData, LocaleItem } from "../../lib";
 import { isFrame } from "figma-helpers";
-import { unionWith, isArray } from "lodash";
+import { unionWith, isArray } from "lodash-es";
 function getData(node: BaseNode) {
   return getNodeData(node, `${PREFIX}data`);
 }
@@ -99,15 +99,12 @@ export function getLocaleData() {
   postData({ type: "load_locale_data", localeData: combinedLocaleData });
 }
 export function saveLocaleData(localeData: LocaleData) {
-  // await figma.clientStorage.setAsync('localeData', msg.localeData);
-  // console.log('Saved', msg.localeData);
   // only save locale file
   if (localeData) {
     const filterLocaleData = localeData;
     filterLocaleData.localeItems = filterLocaleData.localeItems.filter(
       (localeItem) => !("fromLibrary" in localeItem) || !localeItem.fromLibrary
     );
-    console.log("FILTERED LOCALE DATA", filterLocaleData);
     const localeDataString = JSON.stringify(filterLocaleData);
     if (!mainLocaleDataFrame) {
       mainLocaleDataFrame = figma.createFrame();

@@ -7,7 +7,7 @@ import AppBar from "./atoms/AppBar";
 import LocaleItemList from "./items/LocaleItemList";
 import SelectionEditor from "./pages/SelectionEditor";
 import NewDialog from "./dialogs/NewDialog";
-import { isArray } from "lodash";
+import { isArray } from "lodash-es";
 import { Divider } from "ds";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
@@ -55,7 +55,7 @@ const Locale = ({}) => {
               // }
               dispatch(setLocaleData(data.localeData));
             }
-           
+
             break;
           case "change_locale_selection":
             dispatch(setTextsInLocaleSelection(data.texts));
@@ -63,7 +63,7 @@ const Locale = ({}) => {
         }
       }
     };
-  }, []); 
+  }, []);
   return (
     <div
       css={`
@@ -83,10 +83,13 @@ const Locale = ({}) => {
           overflow: scroll;
         `}
       >
-        {localeSelection && localeSelection.texts.length > 0 ? <SelectionEditor /> : <LocaleItemList />}
+        {localeSelection && localeSelection.texts.length > 0 ? (
+          <SelectionEditor />
+        ) : (
+          <LocaleItemList />
+        )}
       </section>
       <AppBar />
-
     </div>
   );
 };

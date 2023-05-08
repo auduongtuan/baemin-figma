@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { viteSingleFile } from "vite-plugin-singlefile";
-// import { resolve } from "path";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +15,11 @@ export default defineConfig({
   //     ignored: ['!**/node_modules/ds/**']
   //   }
   // },
+  resolve: {
+    alias: {
+      ds: path.resolve(__dirname, "../../packages/ds/src"),
+    },
+  },
   build: {
     target: "esnext",
     assetsInlineLimit: 100000000,

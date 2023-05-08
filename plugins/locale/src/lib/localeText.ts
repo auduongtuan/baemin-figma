@@ -7,7 +7,6 @@ import {
   Lang,
   LocaleItem,
   LocaleItemContent,
-  LocaleText,
   LocaleTextProps,
   LocaleTextVariables,
 } from "./types";
@@ -149,12 +148,11 @@ export function findVariablesInCharacters(
   }, {});
 }
 
-export function getVariableNames(localeItem: LocaleItem, text: LocaleText) {
-  if (!localeItem) return [];
+export function getVariableNamesFromItemContent(
+  itemContent: LocaleItemContent
+) {
   const variableNames = [];
   const reg = /\{\{([^}]+)\}\}/g;
-  const currentLang = (text.lang as Lang) || DEFAULT_LANG;
-  const itemContent = localeItem[currentLang];
   if (itemContent) {
     if (isPlurals(itemContent)) {
       Object.keys(itemContent).forEach((quantity) => {
@@ -174,51 +172,75 @@ export function getVariableNames(localeItem: LocaleItem, text: LocaleText) {
   }
   return variableNames;
 }
+export function getVariableNames(textProps: LocaleTextProps) {
+  const { formula, item, items, lang = DEFAULT_LANG } = textProps;
+  const variableNames = [];
+  if (formula) {
+    matchFormula(formula, items, (localeItem) => {
+      const newLocaleItemContent =
+        lang in localeItem ? localeItem[lang] : undefined;
+      if (newLocaleItemContent)
+        variableNames.push(
+          ...getVariableNamesFromItemContent(newLocaleItemContent)
+        );
+    });
+    return variableNames;
+  }
+  if (item) {
+    const itemContent = lang in item ? item[lang] : undefined;
+    if (itemContent)
+      variableNames.push(...getVariableNamesFromItemContent(itemContent));
+  }
+  return variableNames;
+}
 
-export function parseFormula(textProps: LocaleTextProps) {
-  const { formula, items, lang = DEFAULT_LANG, variables = {} } = textProps;
-  let newString = formula;
+export function matchFormula(
+  formula: string,
+  items: LocaleItem[],
+  callback?: (item?: LocaleItem, match?: string[]) => void
+) {
   const matches = matchAll(/\:\s*([A-Za-z0-9\._]+)\s*\:/, formula);
   if (matches) {
     matches.forEach((match: string[]) => {
       if (match.length > 1) {
         const localeItem = findItemByKey(match[1], items);
         if (localeItem) {
-          const newLocaleItemContent =
-            lang in localeItem ? localeItem[lang] : undefined;
-          if (newLocaleItemContent) {
-            newString = newString.replace(
-              match[0],
-              applyVariablesToContent(newLocaleItemContent, variables)
-            );
-          }
+          callback(localeItem, match);
         }
       }
     });
   }
+  return matches;
+}
+
+export function parseFormula(props: LocaleTextProps) {
+  const { formula, items = [], lang = DEFAULT_LANG, variables = {} } = props;
+  let newString = formula;
+  matchFormula(formula, items, (item, match) => {
+    const newLocaleItemContent = lang in item ? item[lang] : undefined;
+    if (newLocaleItemContent) {
+      newString = newString.replace(
+        match[0],
+        applyVariablesToContent(newLocaleItemContent, variables)
+      );
+    }
+  });
   return newString;
 }
 
-export function getTextCharactersWithTags(
-  textProps: LocaleTextProps,
-  lang: Lang,
-  variables: LocaleTextVariables = {}
-) {
-  return textProps.formula
-    ? parseFormula({ ...textProps, lang: lang })
-    : applyVariablesToContent(textProps.item[lang], variables);
+export function getTextCharactersWithTags(textProps: LocaleTextProps) {
+  if ("formula" in textProps && textProps.formula) {
+    return parseFormula(textProps);
+  } else {
+    return applyVariablesToContent(
+      textProps.item[textProps.lang],
+      textProps.variables
+    );
+  }
 }
 
-export function getParsedText(
-  textProps: LocaleTextProps,
-  newLang: Lang,
-  variables: LocaleTextVariables = {}
-) {
-  const textCharactersWithTags = getTextCharactersWithTags(
-    textProps,
-    newLang,
-    variables
-  );
+export function getParsedText(textProps: LocaleTextProps) {
+  const textCharactersWithTags = getTextCharactersWithTags(textProps);
   const parsedText = parseTagsInText(textCharactersWithTags);
   return parsedText;
 }

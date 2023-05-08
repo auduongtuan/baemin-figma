@@ -12,19 +12,34 @@ import {
   updateTextInLocaleSelection,
 } from "./localeSlice";
 function handleTextPropsForSlice(textProps: LocaleTextProps) {
-  const { item: originItem, items, ...rest } = textProps;
+  const {
+    item: originItem,
+    items,
+    formula,
+    lang,
+    variables = {},
+    key,
+  } = textProps;
   const item = originItem
     ? originItem
-    : items && textProps.key
-    ? findItemByKey(textProps.key, items)
+    : items && key
+    ? findItemByKey(key, items)
     : undefined;
   return {
-    ...rest,
-    item,
+    key,
+    formula,
     items,
+    item,
+    lang,
+    variables,
     characters: textProps.lang
-      ? getParsedText(textProps, textProps.lang, textProps.variables || {})
-          .characters
+      ? getParsedText({
+          formula,
+          items,
+          item,
+          lang,
+          variables,
+        }).characters
       : undefined,
   };
 }
@@ -75,7 +90,9 @@ export function updateTextsOfItem(
   // update selected text also
   const texts = localeSelection.texts.filter(
     (text) =>
-      (oldKey && text.key == oldKey) || (!oldKey && text.key == item.key)
+      (oldKey && text.key == oldKey) ||
+      (!oldKey && text.key == item.key) ||
+      (!oldKey && text?.formula && text.formula.includes(":" + item.key + ":"))
   );
   texts.forEach((text) => {
     runCommand("update_texts", {
@@ -89,8 +106,12 @@ export function updateTextsOfItem(
     updateTextsInLocaleSelection(
       texts.map((text) => {
         const characters =
-          getParsedText({ ...text, item: item }, text.lang, text.variables)
-            .characters || undefined;
+          getParsedText({
+            ...text,
+            item: item,
+            lang: text.lang,
+            variables: text.variables,
+          }).characters || undefined;
         return {
           ...text,
           key: item.key,

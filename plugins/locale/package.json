@@ -20,7 +20,7 @@
     "dev:ui": "vite build --minify esbuild --emptyOutDir=false --watch",
     "dev:command": "node ./esbuild.js",
     "dev-old": "concurrently -n ui,command 'pnpm run dev:ui' 'pnpm run dev:command -- --watch'",
-    "dev": "concurrently -n ui,command \"vite build --minify esbuild --emptyOutDir=false --watch\" \"tsup --watch\"",
+    "dev": "concurrently -n ui,command,lint \"vite build --minify esbuild --emptyOutDir=false --watch\" \"tsup --watch\" 'pnpm run tsc:watch'",
     "dev-test": "npm run build:main -- --watch"
   },
   "author": "Tuan Au Duong",

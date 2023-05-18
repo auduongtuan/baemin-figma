@@ -12,6 +12,7 @@ import { Divider } from "ds";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 TimeAgo.addDefaultLocale(en);
+import io from "figma-helpers/io";
 const timeAgo = new TimeAgo("en-US");
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
@@ -19,50 +20,15 @@ const Locale = ({}) => {
   );
   const dispatch = useAppDispatch();
   useEffect(() => {
-    runCommand("get_locale_data");
-    window.onmessage = async (event) => {
-      if (event.data.pluginMessage && "type" in event.data.pluginMessage) {
-        const { type, ...data } = event.data.pluginMessage;
-        switch (type) {
-          case "load_locale_data":
-            // console.log('Load Locale Data', data);
-            if (data.localeData) {
-              // try {
-              //   let localeData = JSON.parse(data.localeData);
-              //   // migrate to new typed system
-              //   if ("items" in localeData) {
-              //     localeData["localeItems"] = localeData.items;
-              //     delete localeData["items"];
-              //   }
-              //   if("localeItems" in localeData && isArray(localeData["localeItems"])) {
-              //     localeData.localeItems.forEach(localeItem => {
-              //       if('plurals' in localeItem) {
-              //         localeItem.en = {};
-              //         localeItem.en["one"] = localeItem.plurals.one.en;
-              //         localeItem.en["other"] = localeItem.plurals.other.en;
-              //         localeItem.vi = {};
-              //         localeItem.vi["one"] = localeItem.plurals.one.vi;
-              //         localeItem.vi["other"] = localeItem.plurals.other.vi;
-              //         delete localeItem["plurals"];
-              //       }
-              //     });
-              //   }
-              //   console.log(localeData);
-              //   dispatch(setLocaleData(localeData));
-              // }
-              // catch(e) {
-              //   console.error(e);
-              // }
-              dispatch(setLocaleData(data.localeData));
-            }
-
-            break;
-          case "change_locale_selection":
-            dispatch(setTextsInLocaleSelection(data.texts));
-            break;
-        }
+    io.send("get_locale_data");
+    io.once("get_locale_data", (data) => {
+      if (data.localeData) {
+        dispatch(setLocaleData(data.localeData));
       }
-    };
+    });
+    io.on("change_locale_selection", (data) => {
+      dispatch(setTextsInLocaleSelection(data.texts));
+    });
   }, []);
   return (
     <div

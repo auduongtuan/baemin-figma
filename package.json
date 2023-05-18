@@ -57,6 +57,7 @@
   "devDependencies": {
     "@figma/plugin-typings": "^1.62.0",
     "@swc/plugin-styled-components": "^1.5.61",
+    "@types/events": "^3.0.0",
     "@types/js-beautify": "^1.13.3",
     "@types/lodash-es": "^4.17.7",
     "@types/prismjs": "^1.26.0",

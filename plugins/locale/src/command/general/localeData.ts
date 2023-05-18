@@ -1,15 +1,14 @@
 import {
   setNodeData,
   getNodeData,
-  postData,
   isComponent,
   isInstance,
 } from "figma-helpers";
-const firstPage = figma.root.children[0];
 import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
 import { LocaleData, LocaleItem } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { unionWith, isArray } from "lodash-es";
+const firstPage = figma.root.children[0];
 function getData(node: BaseNode) {
   return getNodeData(node, `${PREFIX}data`);
 }
@@ -96,7 +95,7 @@ export function getLocaleData() {
     }
   });
   // console.log(localeItems);
-  postData({ type: "load_locale_data", localeData: combinedLocaleData });
+  return combinedLocaleData;
 }
 export function saveLocaleData(localeData: LocaleData) {
   // only save locale file

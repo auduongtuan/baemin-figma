@@ -14,10 +14,12 @@ import { isPlurals, LocaleLibrary, LocaleItem } from "../../../lib";
 // import { Token } from "prismjs";
 import { LANGUAGES } from "../../../lib/constant";
 // import { Token } from "prismjs";
-import { set } from "lodash-es";
+import { keys, set } from "lodash-es";
 import { js_beautify } from "js-beautify";
 import { pluralize } from "@capaj/pluralize";
 import { compareTime } from "../../../lib/helpers";
+import io from "figma-helpers/io";
+import { LocaleText } from "../../../lib";
 type JsonFormat = "i18n-js" | "i18next";
 const filterItemsByLibrary = (
   localeItems: LocaleItem[],
@@ -39,15 +41,28 @@ const filterItemsByLibrary = (
 const printCodeBlock = (
   localeItems: LocaleItem[],
   library: LocaleLibrary,
-  format: JsonFormat = "i18next"
+  format: JsonFormat = "i18next",
+  scope: "file" | "page" = "file",
+  texts: LocaleText[] = null
 ) => {
   // const tokensObject: {[key:string]: Array<string | Token>} = {};
   const langJSONs: { [key: string]: string } = {};
+  let filteredLocaleItems: LocaleItem[];
+  if (texts) {
+    const keysOfTextsSet = new Set(texts.map((text) => text.key));
+    keysOfTextsSet.delete("");
+    const keysOfTexts = [...keysOfTextsSet];
+    filteredLocaleItems = localeItems.filter((item) =>
+      keysOfTexts.includes(item.key)
+    );
+  } else {
+    filteredLocaleItems = localeItems;
+  }
   // console.log("LOCALE ITEMS", localeItems);
   Object.keys(LANGUAGES).forEach((lang) => {
     const langJSON = js_beautify(
       JSON.stringify(
-        filterItemsByLibrary(localeItems, library)
+        filterItemsByLibrary(filteredLocaleItems, library)
           .sort(
             (a, b) =>
               compareTime(a.updatedAt, b.updatedAt) ||
@@ -82,14 +97,16 @@ const printCodeBlock = (
     // );
   });
 
-  runCommand("print_code_block", { library, langJSONs });
+  runCommand("print_code_block", { library, langJSONs, scope });
 };
 const ExportCode = () => {
   const localeItems = useAppSelector((state) => state.locale.localeItems);
   const localeLibraries = useAppSelector(
     (state) => state.locale.localeLibraries
   );
-
+  const localeSelection = useAppSelector(
+    (state) => state.locale.localeSelection
+  );
   const libraryOptions =
     localeLibraries &&
     [...localeLibraries].reverse().map((library) => {
@@ -108,13 +125,35 @@ const ExportCode = () => {
     if (libraryOptions) {
       setValue("library", { ...libraryOptions[0].value });
       setValue("format", "i18n-js");
+      if (localeSelection && localeSelection.texts.length > 0) {
+        setValue("scope", "selection");
+      } else {
+        setValue("scope", "file");
+      }
     }
-  }, [libraryOptions]);
+  }, [libraryOptions, localeSelection]);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   const formSubmit = () => {
-    const { library, format } = getValues();
-    printCodeBlock(localeItems, library, format);
+    const { library, format, scope } = getValues();
+    if (scope == "file") {
+      printCodeBlock(localeItems, library, format, scope);
+    }
+    if (scope == "selection") {
+      printCodeBlock(
+        localeItems,
+        library,
+        format,
+        "page",
+        localeSelection.texts
+      );
+    }
+    if (scope == "page") {
+      io.send("get_texts_in_page");
+      io.once("get_texts_in_page", ({ texts }) => {
+        printCodeBlock(localeItems, library, format, "page", texts);
+      });
+    }
     setPopoverOpen(false);
   };
   return (
@@ -151,6 +190,43 @@ const ExportCode = () => {
           />
           <Controller
             control={control}
+            name="scope"
+            render={({
+              field: { onChange, onBlur, value, name, ref },
+              fieldState: { invalid, isTouched, isDirty, error },
+              formState,
+            }) => (
+              <Select
+                label={`Scope`}
+                placeholder="Select scope"
+                id="scope"
+                className="mt-16"
+                value={value}
+                // key={localeSelection ? localeSelection.id : 'select-lang-no-text'}
+                onChange={onChange}
+                options={[
+                  {
+                    name: "File",
+                    value: "file",
+                    content: "All items in this file",
+                  },
+                  {
+                    name: "Page",
+                    value: "page",
+                    content: "Items used in current page",
+                  },
+                  {
+                    name: "Selection",
+                    value: "selection",
+                    content: "Items used in current selection",
+                  },
+                ]}
+                // disabled={localeSelection ? false : true}
+              />
+            )}
+          />
+          <Controller
+            control={control}
             name="format"
             render={({
               field: { onChange, onBlur, value, name, ref },
@@ -181,6 +257,7 @@ const ExportCode = () => {
               />
             )}
           />
+
           <Button type="submit" className="mt-16">
             Export
           </Button>

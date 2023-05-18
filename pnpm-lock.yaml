@@ -125,6 +125,9 @@ importers:
       '@swc/plugin-styled-components':
         specifier: ^1.5.61
         version: 1.5.61
+      '@types/events':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/js-beautify':
         specifier: ^1.13.3
         version: 1.13.3
@@ -1759,6 +1762,10 @@ packages:
 
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+    dev: true
+
+  /@types/events@3.0.0:
+    resolution: {integrity: sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==}
     dev: true
 
   /@types/hoist-non-react-statics@3.3.1:

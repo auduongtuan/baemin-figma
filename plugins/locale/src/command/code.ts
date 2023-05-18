@@ -1,5 +1,15 @@
-import locale from "./locale";
 import { loadFonts } from "figma-helpers/texts";
+import switchLang from "./selection/switchLang";
+import { updateTextsByIds } from "./text/updateText";
+import autoSetKeyForSelection from "./selection/autoSetKey";
+import { getLocaleData, saveLocaleData } from "./general/localeData";
+import printCodeBlock from "./general/printCodeBlock";
+import updateSelection from "./selection/updateSelection";
+import selectTexts from "./selection/selectTexts";
+import createAnnotation from "./selection/createAnnotation";
+import io from "figma-helpers/io";
+import { getTexts } from "./text/textNodes";
+
 const dsFonts = [
   { family: "Roboto", style: "Regular" },
   { family: "Roboto", style: "Medium" },
@@ -11,46 +21,39 @@ const dsFonts = [
   { family: "Roboto Mono", style: "Bold" },
 ];
 
-const uiCommands = {
-  locale: locale,
-};
-
-const nonuiCommands = {};
-
-figma.ui.onmessage = (msg) => {
-  Object.keys(uiCommands).forEach((key) => {
-    if (figma.command == key) {
-      if ("onMessage" in uiCommands[key]) uiCommands[key].onMessage(msg);
-    }
-  });
-};
-
-figma.on("selectionchange", async () => {
-  Object.keys(uiCommands).forEach((key) => {
-    if (figma.command == key) {
-      if ("onSelectionChange" in uiCommands[key]) {
-        uiCommands[key].onSelectionChange();
-      }
-    }
+figma.skipInvisibleInstanceChildren = true;
+io.on("select_texts", (msg) => selectTexts(msg.key));
+io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
+io.on("update_texts", (msg) => {
+  const { ids, ...rest } = msg;
+  updateTextsByIds(ids, rest);
+});
+io.on("switch_lang", (msg) => switchLang(msg.lang, msg.localeItems));
+io.on("get_locale_data", () => {
+  io.send("get_locale_data", { localeData: getLocaleData() });
+});
+io.on("save_locale_data", (msg) => saveLocaleData(msg.localeData));
+io.on(
+  "print_code_block",
+  async (msg) => await printCodeBlock(msg.library, msg.langJSONs, msg.scope)
+);
+io.on(
+  "create_annotation",
+  async (msg) => await createAnnotation(msg.localeTexts)
+);
+io.on("show_figma_notify", (msg) => figma.notify(msg.message));
+io.on("get_texts_in_page", () => {
+  io.send("get_texts_in_page", { texts: getTexts() });
+});
+figma.on("run", ({ command, parameters }: RunEvent) => {
+  loadFonts(dsFonts, () => {
+    figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
+    updateSelection();
   });
 });
 
-figma.on("run", ({ command, parameters }: RunEvent) => {
-  loadFonts(dsFonts, () => {
-    Object.keys(uiCommands).forEach((key) => {
-      if (command == key) {
-        // console.log(value.run);
-        if ("run" in uiCommands[key]) uiCommands[key].run();
-      }
-    });
-  });
-
-  // _.forOwn(nonuiCommands, async (value, key) => {
-  //   if (command == key) {
-  //     await value();
-  //     figma.closePlugin();
-  //   }
-  // });
+figma.on("selectionchange", async () => {
+  updateSelection();
 });
 
 // // figma.parameters.on('input', ({ parameters, key, query, result }: ParameterInputEvent) => {

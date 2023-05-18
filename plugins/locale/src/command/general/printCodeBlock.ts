@@ -6,10 +6,12 @@ const firstPage = figma.root.children[0];
 // async function exportCode(tokensObject: {[key:string]: Array<string | Token>}) {
 async function printCodeBlock(
   library: LocaleLibrary,
-  langJSONs: { [key: string]: string }
+  langJSONs: { [key: string]: string },
+  scope: "page" | "file" = "file"
 ) {
+  const scopeFind = scope == "file" ? firstPage : figma.currentPage;
   let localeCodeBlock =
-    (firstPage.findOne(
+    (scopeFind.findOne(
       (node) =>
         getNodeData(node, `${PREFIX}code`) == "1" &&
         getNodeData(node, `${PREFIX}library_id`) == library.id
@@ -19,7 +21,7 @@ async function printCodeBlock(
   }
   setNodeData(localeCodeBlock, `${PREFIX}code`, "1");
   setNodeData(localeCodeBlock, `${PREFIX}library_id`, library.id);
-  firstPage.appendChild(localeCodeBlock);
+  scopeFind.appendChild(localeCodeBlock);
   // }
   const paint: SolidPaint = {
     type: "SOLID",

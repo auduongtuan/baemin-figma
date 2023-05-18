@@ -1,8 +1,6 @@
-import { LocaleText, LocaleItem, LocaleTextProps } from "../lib";
+import { LocaleTextProps } from "../lib";
+import io from "figma-helpers/io";
 
-export const postData = (data: { [key: string]: any }) => {
-  parent.postMessage({ pluginMessage: data }, "*");
-};
 export const commands = [
   "select_texts",
   "switch_lang",
@@ -30,13 +28,5 @@ export function runCommand(
   type: string,
   data: { [key: string]: any } = {}
 ): void {
-  parent.postMessage(
-    {
-      pluginMessage: {
-        type: type,
-        ...data,
-      },
-    },
-    "*"
-  );
+  io.send(type, data);
 }

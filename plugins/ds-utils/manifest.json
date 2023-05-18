@@ -6,6 +6,7 @@
   "main": "dist/code.global.js",
   "menu": [
     { "name": "Change theme", "command": "changeTheme" },
+    { "name": "Display tokens", "command": "displayTokens" },
     { "name": "Test", "command": "test" }
   ]
 }

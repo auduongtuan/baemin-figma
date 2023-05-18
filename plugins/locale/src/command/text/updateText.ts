@@ -41,11 +41,16 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
   const isFormula = textProps.formula && textProps.items;
   if (textProps.item || isFormula) {
     const variables = getVariables(textNode);
-    const oldTextCharactersWithTags = getTextCharactersWithTags(
-      textProps,
-      oldLang,
-      variables
-    );
+    const props = {
+      formula: textProps.formula,
+      items: textProps.items,
+      item: textProps.item,
+      variables,
+    };
+    const oldTextCharactersWithTags = getTextCharactersWithTags({
+      ...props,
+      lang: oldLang,
+    });
 
     const oldStyles = textNode.characters
       ? getStyles(textNode, oldTextCharactersWithTags)
@@ -58,7 +63,10 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       setVariable(textNode, "count", 1);
       variables.count = 1;
     }
-    const parsedText = getParsedText(textProps, newLang, variables);
+    const parsedText = getParsedText({
+      ...props,
+      lang: newLang,
+    });
 
     textNode.characters = parsedText.characters;
     if (parsedText.hasTags) {

@@ -1,12 +1,8 @@
-import React from "react";
-import { DropdownMenu, IconButton, Tooltip, DropdownMenuProps } from "ds";
-import { Lang } from "../../../lib";
-import { runCommand } from "../../uiHelper";
-import { updateTextInLocaleSelection } from "../../state/localeSlice";
 import { GlobeIcon } from "@radix-ui/react-icons";
+import { DropdownMenu, DropdownMenuProps, IconButton, Tooltip } from "ds";
+import React from "react";
+import { Lang, LocaleItem, LocaleText } from "../../../lib";
 import { LANGUAGES } from "../../../lib/constant";
-import { LocaleText, LocaleItem } from "../../../lib";
-import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 const SwitchLanguageDropdownMenu = ({
   text,
@@ -18,7 +14,6 @@ const SwitchLanguageDropdownMenu = ({
   item?: LocaleItem;
   items?: LocaleItem[];
 }) => {
-  const dispatch = useAppDispatch();
   return (
     <DropdownMenu {...rest}>
       <Tooltip content="Switch language">

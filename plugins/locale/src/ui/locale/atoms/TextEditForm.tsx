@@ -5,7 +5,7 @@ import {
   TextIcon,
 } from "@radix-ui/react-icons";
 import classNames from "classnames";
-import { IconButton, Switch, Tag, TextBox, Tooltip } from "ds";
+import { IconButton, Switch, Tag, TextBox, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -92,9 +92,13 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
       watcher.unsubscribe();
       updateTextDebounce.cancel();
     };
-  }, [watch, text, localeItem]);
+  }, [watch, text, localeItem, localeItems]);
 
-  const variableNames = getVariableNames(localeItem, text);
+  const variableNames = getVariableNames({
+    ...text,
+    item: localeItem,
+    items: localeItems,
+  });
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
     <div>
@@ -241,11 +245,12 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
             ></Controller>
           </div>
         )}
-        {!useFormula && variableNames && (
+        {variableNames && (
           <div>
             {variableNames.map((name) => (
-              <TextBox
+              <Textarea
                 className="mt-8"
+                maxRows={6}
                 label={
                   <>
                     <span>{name}</span> <Tag>VAR</Tag>

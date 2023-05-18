@@ -160,7 +160,8 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
 );
 
 const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
-  ${BaseInputStyle}
+  ${BaseInputStyle};
+  resize: none;
 `;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (

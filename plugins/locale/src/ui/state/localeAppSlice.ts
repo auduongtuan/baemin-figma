@@ -9,6 +9,7 @@ interface DialogState {
 const initialState: {
   currentDialog: DialogState;
   isWorking: boolean;
+  configs: { [key: string]: any };
 } = {
   currentDialog: {
     opened: false,
@@ -17,6 +18,7 @@ const initialState: {
     onDone: undefined,
   },
   isWorking: false,
+  configs: {},
 };
 export const localeAppSlice = createSlice({
   name: "localeApp",
@@ -28,9 +30,13 @@ export const localeAppSlice = createSlice({
     setIsWorking: (state, action: PayloadAction<boolean>) => {
       state.isWorking = action.payload;
     },
+    setConfigs: (state, action: PayloadAction<{ [key: string]: any }>) => {
+      state.configs = { ...state.configs, ...action.payload };
+    },
   },
 });
 
-export const { setCurrentDialog, setIsWorking } = localeAppSlice.actions;
+export const { setCurrentDialog, setIsWorking, setConfigs } =
+  localeAppSlice.actions;
 
 export default localeAppSlice.reducer;

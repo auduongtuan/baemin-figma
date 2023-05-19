@@ -14,12 +14,18 @@ import en from "javascript-time-ago/locale/en";
 TimeAgo.addDefaultLocale(en);
 import io from "figma-helpers/io";
 const timeAgo = new TimeAgo("en-US");
+import { LANGUAGES, PREFIX } from "../../lib";
+import { setConfigs } from "../state/localeAppSlice";
 const Locale = ({}) => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
   const dispatch = useAppDispatch();
   useEffect(() => {
+    io.send("get_configs");
+    io.once("get_configs", (data) => {
+      dispatch(setConfigs(data.configs));
+    });
     io.send("get_locale_data");
     io.once("get_locale_data", (data) => {
       if (data.localeData) {

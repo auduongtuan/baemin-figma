@@ -9,7 +9,7 @@ import {
   isPlurals,
 } from "../../lib";
 import { DEFAULT_LANG } from "../../lib/constant";
-
+import changeText from "figma-helpers/changeText";
 import {
   getKey,
   getLang,
@@ -68,7 +68,7 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       lang: newLang,
     });
 
-    textNode.characters = parsedText.characters;
+    changeText(textNode, parsedText.characters);
     if (parsedText.hasTags) {
       setStyles(textNode, parsedText, oldStyles);
     }

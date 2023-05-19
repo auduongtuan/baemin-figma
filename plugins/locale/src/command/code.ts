@@ -1,4 +1,4 @@
-import { loadFonts } from "figma-helpers/texts";
+import { LANGUAGES } from "./../lib/constant";
 import switchLang from "./selection/switchLang";
 import { updateTextsByIds } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
@@ -9,7 +9,8 @@ import selectTexts from "./selection/selectTexts";
 import createAnnotation from "./selection/createAnnotation";
 import io from "figma-helpers/io";
 import { getTexts } from "./text/textNodes";
-
+import changeText from "figma-helpers/changeText";
+import configs from "figma-helpers/configs";
 const dsFonts = [
   { family: "Roboto", style: "Regular" },
   { family: "Roboto", style: "Medium" },
@@ -45,13 +46,16 @@ io.on("show_figma_notify", (msg) => figma.notify(msg.message));
 io.on("get_texts_in_page", () => {
   io.send("get_texts_in_page", { texts: getTexts() });
 });
+io.on("get_configs", (msg) => {
+  configs.init({ languages: LANGUAGES });
+  io.send("get_configs", { configs: configs.getAll() });
+});
 figma.on("run", ({ command, parameters }: RunEvent) => {
-  loadFonts(dsFonts, () => {
+  changeText.loadFonts(dsFonts, () => {
     figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
     updateSelection();
   });
 });
-
 figma.on("selectionchange", async () => {
   updateSelection();
 });

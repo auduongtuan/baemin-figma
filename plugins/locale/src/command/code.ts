@@ -1,4 +1,4 @@
-import { LANGUAGES } from "./../lib/constant";
+import { LANGUAGE_LIST } from "./../lib/constant";
 import switchLang from "./selection/switchLang";
 import { updateTextsByIds } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
@@ -21,7 +21,10 @@ const dsFonts = [
   { family: "Roboto Mono", style: "SemiBold" },
   { family: "Roboto Mono", style: "Bold" },
 ];
-
+configs.set("languages", ["en", "vi", "ko"]);
+figma.clientStorage
+  .getAsync("configs")
+  .then((data) => console.log("TOP CONFIGS", data));
 figma.skipInvisibleInstanceChildren = true;
 io.on("select_texts", (msg) => selectTexts(msg.key));
 io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
@@ -47,13 +50,18 @@ io.on("get_texts_in_page", () => {
   io.send("get_texts_in_page", { texts: getTexts() });
 });
 io.on("get_configs", (msg) => {
-  configs.init({ languages: LANGUAGES });
   io.send("get_configs", { configs: configs.getAll() });
 });
 figma.on("run", ({ command, parameters }: RunEvent) => {
-  changeText.loadFonts(dsFonts, () => {
-    figma.showUI(__html__, { title: "Locale editor", width: 360, height: 640 });
-    updateSelection();
+  configs.fetch({ languages: LANGUAGE_LIST }).then((data) => {
+    changeText.loadFonts(dsFonts, () => {
+      figma.showUI(__html__, {
+        title: "Locale editor",
+        width: 360,
+        height: 640,
+      });
+      updateSelection();
+    });
   });
 });
 figma.on("selectionchange", async () => {

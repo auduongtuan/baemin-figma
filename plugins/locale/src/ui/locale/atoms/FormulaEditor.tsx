@@ -9,6 +9,7 @@ import {
 import styled from "styled-components";
 import { getStringContent } from "../../../lib";
 import { useAppSelector } from "../../hooks/redux";
+import { useLocaleSelection, useLocaleItems } from "../../hooks/locale";
 const mentionInputClassName = "mention-input";
 const FormulaInputContainer = styled.div`
   .${mentionInputClassName}__input {
@@ -29,7 +30,7 @@ export interface FormulaEditorProps
   onChange?: (e: React.FormEvent<HTMLTextAreaElement>) => void;
 }
 const FormulaEditor = ({ value, onChange, ...rest }: FormulaEditorProps) => {
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const queryItem = (query, callback) => {
     if (query.length === 0) return;
 

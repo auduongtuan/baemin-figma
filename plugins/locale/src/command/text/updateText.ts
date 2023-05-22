@@ -68,10 +68,11 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       lang: newLang,
     });
 
-    changeText(textNode, parsedText.characters);
-    if (parsedText.hasTags) {
-      setStyles(textNode, parsedText, oldStyles);
-    }
+    changeText(textNode, parsedText.characters, () => {
+      if (parsedText.hasTags) {
+        setStyles(textNode, parsedText, oldStyles);
+      }
+    });
   }
 }
 // update texts to use Locale item

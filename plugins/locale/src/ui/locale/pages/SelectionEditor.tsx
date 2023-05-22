@@ -1,5 +1,6 @@
 import React from "react";
 import { useAppSelector } from "../../hooks/redux";
+import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
 import CurrentTextInfo from "../CurrentTextInfo";
 import MultipleTextEditor from "../atoms/MultipleTextEditor";
 import LocaleItemForm from "../form/LocaleItemForm";
@@ -14,7 +15,7 @@ const SelectionEditor = () => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const matchedItem =
     localeSelection && localeSelection.summary
       ? findItemByKey(localeSelection.summary.key, localeItems)

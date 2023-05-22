@@ -10,6 +10,7 @@ import {
 } from "../../../lib";
 import { MIXED_VALUE } from "../../../lib/constant";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
 import { updateText, updateTexts } from "../../state/helpers";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
 export interface KeyComboboxProps extends ComboboxProps {
@@ -27,7 +28,7 @@ function KeyCombobox({
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const dispatch = useAppDispatch();
   const localeItemOptions: ComboboxOption[] = [
     ...(localeSelection &&

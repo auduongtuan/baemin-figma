@@ -32,6 +32,14 @@ export function createInterface(isFigma: boolean) {
       window.parent.postMessage({ pluginMessage: postData }, "*");
     }
   };
+  const sendAndReceive = async (type: string, data: Data = {}) => {
+    return new Promise<Data>((resolve) => {
+      send(type, data);
+      once(type, (msg) => {
+        resolve(msg);
+      });
+    });
+  };
   const emit = async (type: string, data: { [key: string]: any }) => {
     if (type in instance.listeners) {
       const handlers: Function[] = instance.listeners[type];
@@ -83,6 +91,7 @@ export function createInterface(isFigma: boolean) {
     send,
     on: addListener,
     once,
+    sendAndReceive,
   };
 }
 const io = createInterface(typeof figma !== "undefined");

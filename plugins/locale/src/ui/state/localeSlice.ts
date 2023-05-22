@@ -6,7 +6,7 @@ import {
   LocaleItem,
   LocaleData,
 } from "../../lib";
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, pickBy } from "lodash-es";
 type LocaleState = LocaleData & { localeSelection: LocaleSelection };
 const initialState: LocaleState = {
   sheetName: null,
@@ -68,7 +68,9 @@ export const localeSlice = createSlice({
     updateTextInLocaleSelection: (state, action: PayloadAction<LocaleText>) => {
       state.localeSelection.texts = [
         ...state.localeSelection.texts.map((text) =>
-          text.id != action.payload.id ? text : { ...text, ...action.payload }
+          text.id != action.payload.id
+            ? text
+            : { ...text, ...pickBy(action.payload, (v) => v !== undefined) }
         ),
       ];
       updateSummaryInLocaleSelection(state);
@@ -82,7 +84,7 @@ export const localeSlice = createSlice({
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
           text.id != action.payload[0].id
             ? text
-            : { ...text, ...action.payload[0] }
+            : { ...text, ...pickBy(action.payload[0], (v) => v !== undefined) }
         );
       } else {
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>

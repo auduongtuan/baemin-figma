@@ -1,4 +1,4 @@
-import { MIXED_VALUE, LANGUAGES } from "./constant";
+import { MIXED_VALUE, LANGUAGE_LIST } from "./constant";
 
 export interface LocaleData {
   sheetName?: string;
@@ -23,8 +23,7 @@ export type LocaleItemPluralContent = {
   other?: "string";
 };
 export type LocaleItemContent = string | LocaleItemPluralContent;
-export type Lang = keyof typeof LANGUAGES;
-
+export type Lang = keyof typeof LANGUAGE_LIST;
 export type LocaleItem = {
   key: string;
   fromLibrary?: boolean | string;

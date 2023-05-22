@@ -1,17 +1,16 @@
 import React from "react";
-import { LANGUAGES, MIXED_VALUE } from "../../lib/constant";
-import { useAppSelector } from "../hooks/redux";
+import { LANGUAGE_LIST, MIXED_VALUE } from "../../lib/constant";
+import { useLocaleItems, useLocaleSelection } from "../hooks/locale";
 import { runCommand } from "../uiHelper";
 import { Select, Divider } from "ds";
 
 import KeyCombobox from "./atoms/KeyCombobox";
+import configs from "figma-helpers/configs";
 
 const CurrentTextInfo = () => {
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
-
+  const localeSelection = useLocaleSelection();
+  const localeItems = useLocaleItems();
+  const languages = configs.get("languages");
   return (
     localeSelection && (
       <div
@@ -63,11 +62,11 @@ const CurrentTextInfo = () => {
                 ]
               : []
             ).concat(
-              Object.keys(LANGUAGES).map((lang) => {
+              languages.map((lang) => {
                 return {
                   id: lang,
                   value: lang,
-                  name: LANGUAGES[lang],
+                  name: LANGUAGE_LIST[lang],
                   disabled: false,
                 };
               })

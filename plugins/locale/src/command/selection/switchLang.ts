@@ -1,5 +1,5 @@
 import * as h from "figma-helpers";
-import { LANGUAGES } from "../../lib/constant";
+import { LANGUAGE_LIST } from "../../lib/constant";
 import { LocaleItem, Lang, findItemByKey } from "../../lib";
 import updateSelection from "./updateSelection";
 import { getFormula, getKey } from "../text/textProps";
@@ -33,7 +33,7 @@ function switchLang(
       });
     }
   });
-  figma.notify(`Switched selection to ${LANGUAGES[lang]}`);
+  figma.notify(`Switched selection to ${LANGUAGE_LIST[lang]}`);
   updateSelection();
 }
 

@@ -1,6 +1,7 @@
 import { hexToFigmaRGB } from "figma-helpers/colors";
 import parseTagsInText, { ParsedText } from "../../lib/parseTagsInText";
 import { orderBy, uniqBy } from "lodash-es";
+import { loadFonts } from "figma-helpers/changeText";
 function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -96,27 +97,33 @@ export function setStyles(
       family: fontName.family,
       style: "Regular",
     };
-  // // reset regular style
-  // if (oldStyles.regular) {
-  //   // textNode.fontName = oldStyles.regular.fontName;
-  //   setRangeBulkFields(
-  //     textNode,
-  //     oldStyles.regular,
-  //     0,
-  //     textNode.characters.length
-  //   );
-  // } else {
-  //   textNode.fontName = regularFontName;
-  // }
-  if (parsedText.stylePositions.bold.length > 0) {
+  const boldFontName = {
+    family: fontName.family,
+    style: settings.bold.fontNameStyle,
+  };
+  const linkFontName = {
+    family: fontName.family,
+    style: settings.link.fontNameStyle,
+  };
+  const fontsToLoad = [regularFontName];
+  if (parsedText.stylePositions.link.length > 0) fontsToLoad.push(linkFontName);
+  if (parsedText.stylePositions.bold.length > 0) fontsToLoad.push(boldFontName);
+  loadFonts(fontsToLoad, () => {
+    // reset regular style
+    if (oldStyles.regular) {
+      // textNode.fontName = oldStyles.regular.fontName;
+      setRangeBulkFields(
+        textNode,
+        oldStyles.regular,
+        0,
+        textNode.characters.length
+      );
+    } else {
+      textNode.fontName = regularFontName;
+    }
     // default bold style
     // get first font
-    const boldFontName = {
-      family: fontName.family,
-      style: settings.bold.fontNameStyle,
-    };
     parsedText.stylePositions.bold.forEach((boldPos, i) => {
-      // console.log("bold pos", boldPos.start, boldPos.end);
       if (oldStyles.bold[i] && Object.keys(oldStyles.bold[i]).length > 0) {
         setRangeBulkFields(
           textNode,
@@ -128,14 +135,8 @@ export function setStyles(
         textNode.setRangeFontName(boldPos.start, boldPos.end, boldFontName);
       }
     });
-  }
-  // default link style
-  if (parsedText.stylePositions.link.length > 0) {
+    // default link style
     // get first font
-    const linkFontName = {
-      family: fontName.family,
-      style: settings.link.fontNameStyle,
-    };
     parsedText.stylePositions.link.forEach((linkPos, i) => {
       if ("href" in linkPos && linkPos["href"]) {
         textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
@@ -157,7 +158,7 @@ export function setStyles(
         ]);
       }
     });
-  }
+  });
 }
 export interface TextStyles {
   bold?: Partial<StyledTextSegment>[];

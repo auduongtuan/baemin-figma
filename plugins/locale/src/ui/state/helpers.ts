@@ -95,6 +95,12 @@ export function updateTextsOfItem(
       (!oldKey && text?.formula && text.formula.includes(":" + item.key + ":"))
   );
   texts.forEach((text) => {
+    console.log({
+      ids: text.id,
+      ...text,
+      item: item,
+      items: localeItems,
+    });
     runCommand("update_texts", {
       ids: text.id,
       ...text,

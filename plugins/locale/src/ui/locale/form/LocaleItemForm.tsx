@@ -12,19 +12,17 @@ import {
   Tooltip,
 } from "ds";
 import { dateTimeFormat } from "../../../lib/helpers";
-import { debounce, get, isString } from "lodash-es";
-import { LANGUAGES } from "../../../lib/constant";
-import { LocaleItem, findItemByKey } from "../../../lib";
+import { debounce, get, has, isString } from "lodash-es";
+import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "../../state/helpers";
 import { addLocaleItem } from "../../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
-import {
-  CounterClockwiseClockIcon,
-  InfoCircledIcon,
-} from "@radix-ui/react-icons";
+import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
+import configs from "figma-helpers/configs";
 const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
   return (
     localeItem &&
@@ -65,14 +63,13 @@ function LocaleItemForm({
   item?: LocaleItem | string;
   onDone?: (item: LocaleItem) => void;
 }) {
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
+  const localeItems = useLocaleItems();
+  const localeSelection = useLocaleSelection();
   const localeItem = useMemo(
     () => (isString(item) ? findItemByKey(item, localeItems) : item),
     [item, localeItems, localeSelection]
   );
+  const languages = configs.get("languages");
   const dispatch = useAppDispatch();
   const {
     register,
@@ -100,25 +97,39 @@ function LocaleItemForm({
     },
     [localeItems]
   );
-
+  const getContent = (
+    type: "create" | "update" | "quick-update" = "create",
+    data = null
+  ): LocaleItem => {
+    const { key, hasPlurals, prioritized, ...content } = data || getValues();
+    const currentDate = new Date();
+    return languages.reduce(
+      (acc, lang: string) => {
+        console.log(lang, hasPlurals, hasPlurals[lang]);
+        if (lang in hasPlurals && lang in content && content[lang]) {
+          console.log(hasPlurals[lang], content[lang]);
+          acc[lang] = hasPlurals[lang] ? content[lang] : content[lang].one;
+        }
+        return acc;
+      },
+      {
+        key: key,
+        ...(type == "create"
+          ? {
+              createdAt: currentDate.toJSON(),
+            }
+          : {}),
+        updatedAt: currentDate.toJSON(),
+        ...(type != "quick-update"
+          ? { prioritized: prioritized || false }
+          : {}),
+      }
+    );
+  };
   // save on submit
   const updateLocaleItemHandler = useCallback(() => {
-    const [key, oldKey, en, vi, hasPlurals, prioritized] = getValues([
-      "key",
-      "oldKey",
-      "en",
-      "vi",
-      "hasPlurals",
-      "prioritized",
-    ]);
-    const currentDate = new Date();
-    const localeItemData: LocaleItem = {
-      key: key,
-      en: hasPlurals.en ? en : en.one,
-      vi: hasPlurals.vi ? vi : vi.one,
-      updatedAt: currentDate.toJSON(),
-    };
-    if (prioritized) localeItemData.prioritized = true;
+    const oldKey = getValues("oldKey");
+    const localeItemData = getContent("update");
     dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
     if (localeSelection)
       updateTextsOfItem(oldKey, localeItemData, localeSelection, localeItems);
@@ -147,14 +158,7 @@ function LocaleItemForm({
       const watcher = watch((data) => {
         if (localeItem && data.key) {
           // console.log("Update item using debounce!", data);
-          const currentDate = new Date();
-          const { key, en, vi, hasPlurals } = data;
-          const localeItemData = {
-            key: key,
-            en: hasPlurals.en ? en : en.one,
-            vi: hasPlurals.vi ? vi : vi.one,
-            updatedAt: currentDate.toJSON(),
-          };
+          const localeItemData = getContent("quick-update", data);
           updateLocaleItemDebounce(localeItemData);
         }
       });
@@ -166,29 +170,12 @@ function LocaleItemForm({
 
   // add new key
   const addNewKey = useCallback(() => {
-    const [key, en, vi, hasPlurals, prioritized] = getValues([
-      "key",
-      "en",
-      "vi",
-      "hasPlurals",
-      "prioritized",
-    ]);
-    const currentDate = new Date();
-    const localeItemData: LocaleItem = {
-      key: key,
-      en: hasPlurals.en ? en : en.one,
-      vi: hasPlurals.vi ? vi : vi.one,
-      createdAt: currentDate.toJSON(),
-      updatedAt: currentDate.toJSON(),
-    };
-    if (prioritized) localeItemData.prioritized = true;
+    const localeItemData = getContent();
+    console.log(localeItemData);
     dispatch(addLocaleItem(localeItemData));
-    // may be comment
-    // dispatch(updateLocaleSelection({ key: new_key }));
     if (onDone && typeof onDone == "function") onDone(localeItemData);
     runCommand("show_figma_notify", { message: "Item created" });
   }, [localeSelection]);
-  const timeAgo = new TimeAgo("en-US");
 
   return (
     <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
@@ -255,11 +242,11 @@ function LocaleItemForm({
               margin-top: 8px;
             `}
           >{`Use {{count}} for counter. Use {{variableName}} for variable`}</p> */}
-        {Object.keys(LANGUAGES).map((lang) => (
+        {languages.map((lang) => (
           <>
             <div className="relative mt-12">
               <Textarea
-                label={LANGUAGES[lang]}
+                label={LANGUAGE_LIST[lang]}
                 id={lang}
                 maxRows={6}
                 className=""
@@ -291,7 +278,7 @@ function LocaleItemForm({
             </div>
             {watchHasPlurals[lang] && (
               <Textarea
-                label={`${LANGUAGES[lang]} - Plural`}
+                label={`${LANGUAGE_LIST[lang]} - Plural`}
                 id={lang}
                 className="mt-12"
                 {...register(`${lang}.other`, { required: true })}

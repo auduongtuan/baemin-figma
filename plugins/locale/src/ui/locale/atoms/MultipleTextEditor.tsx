@@ -1,5 +1,6 @@
 import React from "react";
 import { useAppSelector } from "../../hooks/redux";
+import { useLocaleSelection, useLocaleItems } from "../../hooks/locale";
 import { Tooltip, IconButton } from "ds";
 import { ChatBubbleIcon, MagicWandIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
@@ -9,7 +10,7 @@ const MultipleTextEditor = () => {
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   return localeSelection && localeSelection.texts ? (
     <div className="p-16">
       <header className="flex items-center">

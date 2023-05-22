@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useReducer } from "react";
-import { setCurrentDialog } from "../../state/localeAppSlice";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { Dialog, Dropzone, Button, Checkbox, Collapsible, Divider } from "ds";
-import { flat } from "../../../lib/helpers";
-import LocaleItemList from "../items/LocaleItemList";
+import { pluralize } from "@capaj/pluralize";
+import { Button, Checkbox, Collapsible, Dialog, Divider, Dropzone } from "ds";
 import { groupBy, orderBy, unionWith } from "lodash-es";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { LocaleItem } from "../../../lib";
+import { flat } from "../../../lib/helpers";
+import { useLocaleItems } from "../../hooks/locale";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { setCurrentDialog } from "../../state/localeAppSlice";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
-import { pluralize } from "@capaj/pluralize";
 interface ImportFile {
   name: string;
   items: Object;
@@ -17,7 +17,7 @@ const ImportDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const dispatch = useAppDispatch();
 
   const [importState, dispatchImportState] = useReducer(

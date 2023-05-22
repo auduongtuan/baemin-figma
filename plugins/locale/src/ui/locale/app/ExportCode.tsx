@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../hooks/redux";
-import { useForm, Controller } from "react-hook-form";
-import { IconButton, Tooltip, Popover, Select, Button } from "ds";
 import {
   ComponentInstanceIcon,
   CubeIcon,
   FrameIcon,
 } from "@radix-ui/react-icons";
+import { Button, IconButton, Popover, Select, Tooltip } from "ds";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Lang, LocaleItem, LocaleLibrary, isPlurals } from "../../../lib";
+import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import { useAppSelector } from "../../hooks/redux";
 import { runCommand } from "../../uiHelper";
-import { isPlurals, LocaleLibrary, LocaleItem } from "../../../lib";
+import configs from "figma-helpers/configs";
 // import Prism from "prismjs";
 // import "prismjs/components/prism-json";
 // import { Token } from "prismjs";
-import { LANGUAGES } from "../../../lib/constant";
 // import { Token } from "prismjs";
-import { keys, set } from "lodash-es";
-import { js_beautify } from "js-beautify";
 import { pluralize } from "@capaj/pluralize";
-import { compareTime } from "../../../lib/helpers";
 import io from "figma-helpers/io";
+import { js_beautify } from "js-beautify";
+import { set } from "lodash-es";
 import { LocaleText } from "../../../lib";
+import { compareTime } from "../../../lib/helpers";
 type JsonFormat = "i18n-js" | "i18next";
 const filterItemsByLibrary = (
   localeItems: LocaleItem[],
@@ -58,8 +59,7 @@ const printCodeBlock = (
   } else {
     filteredLocaleItems = localeItems;
   }
-  // console.log("LOCALE ITEMS", localeItems);
-  Object.keys(LANGUAGES).forEach((lang) => {
+  configs.get("languages").forEach((lang) => {
     const langJSON = js_beautify(
       JSON.stringify(
         filterItemsByLibrary(filteredLocaleItems, library)
@@ -100,13 +100,11 @@ const printCodeBlock = (
   runCommand("print_code_block", { library, langJSONs, scope });
 };
 const ExportCode = () => {
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const localeLibraries = useAppSelector(
     (state) => state.locale.localeLibraries
   );
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
+  const localeSelection = useLocaleSelection();
   const libraryOptions =
     localeLibraries &&
     [...localeLibraries].reverse().map((library) => {
@@ -177,7 +175,7 @@ const ExportCode = () => {
             }) => (
               <Select
                 label={`Library`}
-                placeholder="Select language"
+                placeholder="Select library"
                 id="library"
                 value={value}
                 // key={localeSelection ? localeSelection.id : 'select-lang-no-text'}

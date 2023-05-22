@@ -1,7 +1,8 @@
 import { getNodeData, setNodeData } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
 import { LocaleLibrary } from "../../lib";
-import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../lib/constant";
+import { CODE_FRAME_NAME, LANGUAGE_LIST, PREFIX } from "../../lib/constant";
+import configs from "figma-helpers/configs";
 const firstPage = figma.root.children[0];
 // async function exportCode(tokensObject: {[key:string]: Array<string | Token>}) {
 async function printCodeBlock(
@@ -27,7 +28,6 @@ async function printCodeBlock(
     type: "SOLID",
     color: hexToFigmaRGB("#FFF"),
   };
-  console.log("Print code block");
   localeCodeBlock.name = `${library.name} JSON`;
   localeCodeBlock.resize(1400, 800);
   localeCodeBlock.fills = [paint];
@@ -62,7 +62,8 @@ async function printCodeBlock(
   localeCodes.name = CODE_FRAME_NAME;
 
   localeCodeBlock.appendChild(localeCodes);
-  Object.keys(LANGUAGES).forEach((lang) => {
+  const languages = configs.get("languages");
+  languages.forEach((lang) => {
     const langFrame = figma.createFrame();
     langFrame.fills = [paint];
     langFrame.resize(700, 800);
@@ -70,13 +71,13 @@ async function printCodeBlock(
     langFrame.layoutMode = "VERTICAL";
     langFrame.counterAxisSizingMode = "AUTO";
     langFrame.itemSpacing = 16;
-    langFrame.name = `${LANGUAGES[lang]}`;
+    langFrame.name = `${LANGUAGE_LIST[lang]}`;
 
     const headingTextNode = figma.createText();
     headingTextNode.name = `HEADING ${lang}`;
     headingTextNode.fontName = { family: "Roboto", style: "Bold" };
     headingTextNode.fontSize = 16;
-    headingTextNode.characters = LANGUAGES[lang];
+    headingTextNode.characters = LANGUAGE_LIST[lang];
     headingTextNode.textAutoResize = "HEIGHT";
     headingTextNode.layoutAlign = "STRETCH";
 

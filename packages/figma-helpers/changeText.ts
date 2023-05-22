@@ -13,7 +13,12 @@ const changeText = (function () {
       if (callback) callback();
     });
   }
-  function change(text: TextNode, characters: string) {
+  function change(
+    text: TextNode,
+    characters: string,
+    callback = (Function = null)
+  ) {
+    if (typeof characters != "string") return;
     const fontNames = text.getRangeAllFontNames(0, text.characters.length);
     const unloadedFontNames = fontNames.filter(
       (fontName) => !loadedFonts.has(fontName)
@@ -21,6 +26,7 @@ const changeText = (function () {
     if (unloadedFontNames.length) {
       loadFontsToSet(unloadedFontNames, () => {
         text.characters = characters;
+        if (callback) callback();
       });
     } else {
       text.characters = characters;

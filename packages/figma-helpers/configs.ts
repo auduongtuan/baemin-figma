@@ -3,7 +3,6 @@ const configs = (function (isFigma: boolean) {
   let configs = {};
   function set<T = unknown>(name: string, value: T) {
     configs[name] = value;
-    if (isFigma) figma.clientStorage.setAsync("configs", configs);
   }
   function getAll<T extends {}>() {
     return { ...configs } as T;
@@ -14,9 +13,13 @@ const configs = (function (isFigma: boolean) {
   }
   function setAll(configValues: { [key: string]: any }) {
     configs = { ...configValues };
-    if (isFigma) figma.clientStorage.setAsync("configs", configs);
   }
   if (isFigma) {
+    async function save() {
+      return await figma.clientStorage.setAsync("configs", configs).then(() => {
+        return true;
+      });
+    }
     async function fetch(defaultValues: { [key: string]: any } = {}) {
       return figma.clientStorage.getAsync("configs").then((data) => {
         configs = { ...defaultValues, ...data };
@@ -29,12 +32,14 @@ const configs = (function (isFigma: boolean) {
     return {
       configs,
       setAll,
+      save,
       fetch,
       get,
       getAll,
       set,
     };
   }
+
   return {
     configs,
     setAll,

@@ -67,7 +67,6 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       ...props,
       lang: newLang,
     });
-
     changeText(textNode, parsedText.characters, () => {
       if (parsedText.hasTags) {
         setStyles(textNode, parsedText, oldStyles);

@@ -11,6 +11,7 @@ export const commands = [
   "show_figma_notify",
   "auto_set_key",
   "create_annotation",
+  "set_configs",
 ] as const;
 export type Command = typeof commands[number];
 
@@ -23,7 +24,10 @@ export function runCommand(
   type: Exclude<Command, "update_text">,
   data?: { [key: string]: any }
 ): void;
-
+export function runCommand(
+  type: "set_configs",
+  data: { configs: { [key: string]: any } }
+): void;
 export function runCommand(
   type: string,
   data: { [key: string]: any } = {}

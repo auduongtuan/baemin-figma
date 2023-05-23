@@ -52,6 +52,13 @@ io.on("get_texts_in_page", () => {
 io.on("get_configs", (msg) => {
   io.send("get_configs", { configs: configs.getAll() });
 });
+io.on("set_configs", async (msg) => {
+  configs.setAll(msg.configs);
+  const success = await configs.save();
+  if (success) {
+    io.send("set_configs");
+  }
+});
 figma.on("run", ({ command, parameters }: RunEvent) => {
   configs.fetch({ languages: LANGUAGE_LIST }).then((data) => {
     changeText.loadFonts(dsFonts, () => {

@@ -3,11 +3,12 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setLocaleData } from "../../state/localeSlice";
 import { IconButton, Tooltip } from "ds";
 import { useForm } from "react-hook-form";
-import { UploadIcon } from "@radix-ui/react-icons";
+import { GearIcon, UploadIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useLocaleItems } from "../../hooks/locale";
 import ImportDialog from "../dialogs/ImportDialog";
 import ExportCode from "../app/ExportCode";
+import Settings from "../app/Settings";
 
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
@@ -63,6 +64,7 @@ const AppBar = () => {
           </IconButton>
         </Tooltip>
         <ExportCode />
+        <Settings />
         {/* {sheetId ? (
           <Dialog>
           <Tooltip content="Google sheet info">

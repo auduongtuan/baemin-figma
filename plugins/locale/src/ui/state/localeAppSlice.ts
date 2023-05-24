@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LocaleItem } from "../../lib";
+import { Lang, LocaleItem } from "../../lib";
+import configs from "figma-helpers/configs";
 interface DialogState {
   opened: boolean;
   key?: string;
@@ -9,7 +10,7 @@ interface DialogState {
 const initialState: {
   currentDialog: DialogState;
   isWorking: boolean;
-  // configs: { languages: Partial<typeof LANGUAGES>; [key: string]: any };
+  configs: { languages: Lang[]; defaultLanguage: Lang; altLanguage: Lang };
 } = {
   currentDialog: {
     opened: false,
@@ -18,9 +19,11 @@ const initialState: {
     onDone: undefined,
   },
   isWorking: false,
-  // configs: {
-  //   languages: {},
-  // },
+  configs: {
+    languages: [],
+    defaultLanguage: null,
+    altLanguage: null,
+  },
 };
 export const localeAppSlice = createSlice({
   name: "localeApp",
@@ -32,16 +35,20 @@ export const localeAppSlice = createSlice({
     setIsWorking: (state, action: PayloadAction<boolean>) => {
       state.isWorking = action.payload;
     },
-    // setConfigs: (state, action: PayloadAction<{ [key: string]: any }>) => {
-    //   state.configs = { ...state.configs, ...action.payload };
-    // },
+    setConfigs: (state, action: PayloadAction<{ [key: string]: any }>) => {
+      const newConfigs = { ...state.configs, ...action.payload };
+      if (newConfigs.languages && newConfigs.defaultLanguage) {
+        newConfigs.altLanguage = newConfigs.languages.find(
+          (lang) => lang !== newConfigs.defaultLanguage
+        );
+      }
+      configs.setAll(newConfigs);
+      state.configs = newConfigs;
+    },
   },
 });
 
-export const {
-  setCurrentDialog,
-  setIsWorking,
-  // setConfigs
-} = localeAppSlice.actions;
+export const { setCurrentDialog, setIsWorking, setConfigs } =
+  localeAppSlice.actions;
 
 export default localeAppSlice.reducer;

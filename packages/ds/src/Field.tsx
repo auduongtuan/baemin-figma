@@ -116,6 +116,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
       value,
       type = "text",
       className = "",
+      placeholder,
       errorText,
       helpText,
       ...rest
@@ -133,7 +134,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
         <StyledTextBox
           id={id}
           placeholder={
-            typeof label == "string" ? label : renderToString(<>label</>)
+            placeholder || (typeof label == "string" ? label : undefined)
           }
           defaultValue={defaultValue}
           value={value}
@@ -165,7 +166,15 @@ const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
 `;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    { label, id, defaultValue = "", className = "", helpText, ...rest },
+    {
+      label,
+      id,
+      defaultValue = "",
+      placeholder,
+      className = "",
+      helpText,
+      ...rest
+    },
     ref
   ) => {
     return (
@@ -178,7 +187,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <StyledTextarea
           id={id}
           placeholder={
-            typeof label == "string" ? label : renderToString(<>label</>)
+            placeholder || (typeof label == "string" ? label : undefined)
           }
           defaultValue={defaultValue}
           className="textarea"

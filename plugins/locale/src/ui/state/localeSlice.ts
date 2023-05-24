@@ -35,10 +35,12 @@ function updateSummaryInLocaleSelection(state: LocaleState) {
   );
   state.localeSelection.multiple =
     state.localeSelection.texts.length > 1 ? true : false;
-  state.localeSelection.summary = {
-    lang: isSameLang ? state.localeSelection.texts[0]?.lang : MIXED_VALUE,
-    key: isSameKey ? state.localeSelection.texts[0]?.key : MIXED_VALUE,
-  };
+  state.localeSelection.summary.lang = isSameLang
+    ? state.localeSelection.texts[0]?.lang
+    : MIXED_VALUE;
+  state.localeSelection.summary.key = isSameKey
+    ? state.localeSelection.texts[0]?.key
+    : MIXED_VALUE;
 }
 export const localeSlice = createSlice({
   name: "locale",

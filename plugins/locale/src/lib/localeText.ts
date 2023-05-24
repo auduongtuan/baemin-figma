@@ -1,6 +1,5 @@
 import configs from "figma-helpers/configs";
 import { escapeRegExp, isObject } from "lodash-es";
-import { DEFAULT_LANG, LANGUAGE_LIST } from "./constant";
 import { compareTime, matchAll, placeholders, stripTags } from "./helpers";
 import parseTagsInText from "./parseTagsInText";
 import { isPlurals } from "./localeItem";
@@ -64,7 +63,7 @@ export function getTextPropsByCharacters(
           compareTime(b.createdAt, a.createdAt)
       )
       .find((item) => {
-        return Object.keys(configs.get("languages")).some((lang: Lang) => {
+        return configs.get("languages").some((lang: Lang) => {
           const itemContent = item[lang];
           if (!isPlurals(itemContent)) {
             if (isCharactersMatch(characters, itemContent)) {
@@ -97,8 +96,6 @@ export function getTextPropsByCharacters(
         variables: foundVariables,
       };
     }
-    // console.log(item.vi.replace(/\{\{([^}]+)\}\}/g, '(.*)'));
-    // return false;
   }
   return { item: null, lang: null, key: null, variables: {} };
 }
@@ -174,7 +171,12 @@ export function getVariableNamesFromItemContent(
   return variableNames;
 }
 export function getVariableNames(textProps: LocaleTextProps) {
-  const { formula, item, items, lang = DEFAULT_LANG } = textProps;
+  const {
+    formula,
+    item,
+    items,
+    lang = configs.get("defaultLanguage"),
+  } = textProps;
   const variableNames = [];
   if (formula) {
     matchFormula(formula, items, (localeItem) => {
@@ -215,7 +217,12 @@ export function matchFormula(
 }
 
 export function parseFormula(props: LocaleTextProps) {
-  const { formula, items = [], lang = DEFAULT_LANG, variables = {} } = props;
+  const {
+    formula,
+    items = [],
+    lang = configs.get("defaultLanguage"),
+    variables = {},
+  } = props;
   let newString = formula;
   matchFormula(formula, items, (item, match) => {
     const newLocaleItemContent = lang in item ? item[lang] : undefined;

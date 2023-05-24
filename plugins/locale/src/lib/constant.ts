@@ -7,7 +7,7 @@ export const LANGUAGE_LIST = {
   fr: "French",
   de: "German",
 };
-export const DEFAULT_LANG = "vi";
+// export const DEFAULT_LANG = "vi";
 // export const PREFIX = "baemin_locale_";
 export const PREFIX = "locale_";
 export const MIXED_VALUE = "__mixed";

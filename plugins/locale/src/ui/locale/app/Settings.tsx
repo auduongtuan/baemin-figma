@@ -5,10 +5,11 @@ import {
   ErrorMessage,
   IconButton,
   Popover,
+  Select,
   Tooltip,
 } from "ds";
 import configs from "figma-helpers/configs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { LANGUAGE_LIST } from "../../../lib";
 // import Prism from "prismjs";
@@ -18,22 +19,35 @@ import { LANGUAGE_LIST } from "../../../lib";
 import { isArray } from "lodash-es";
 import { runCommand } from "../../uiHelper";
 import io from "figma-helpers/io";
+import { useConfigs } from "../../hooks/locale";
+import { useAppDispatch } from "../../hooks/redux";
+import { setConfigs } from "../../state/localeAppSlice";
 const Settings = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const languages = configs.get("languages");
+  const { languages, defaultLanguage } = useConfigs();
   const {
     handleSubmit,
     register,
     control,
     formState: { errors },
+    setValue,
+    reset,
+    getValues,
+    watch,
   } = useForm({
-    defaultValues: {
-      languages: [...languages],
-    },
+    // defaultValues,
   });
-  const onSubmit = ({ languages }) => {
-    configs.set("languages", languages);
-    io.sendAndReceive("set_configs", { configs: { languages } }).then(() => {
+  useEffect(() => {
+    reset({
+      languages,
+      defaultLanguage,
+    });
+  }, [languages, defaultLanguage]);
+  const fieldLanguages = watch("languages");
+  const dispatch = useAppDispatch();
+  const onSubmit = ({ languages, defaultLanguage }) => {
+    dispatch(setConfigs({ languages, defaultLanguage }));
+    io.sendAndReceive("set_configs", { configs: configs.getAll() }).then(() => {
       runCommand("show_figma_notify", { message: "Settings updated." });
     });
     setPopoverOpen(false);
@@ -50,6 +64,7 @@ const Settings = () => {
           </IconButton>
         </Popover.Trigger>
       </Tooltip>
+
       <Popover.Content title="Settings" width={"210px"}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label htmlFor="languages" className="text-xsmall">
@@ -92,6 +107,31 @@ const Settings = () => {
           {errors.languages && (
             <ErrorMessage>Please select at least 2 languages.</ErrorMessage>
           )}
+          <Controller
+            name="defaultLanguage"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                className="mt-16"
+                label="Default language"
+                options={
+                  fieldLanguages
+                    ? fieldLanguages.map((lang) => ({
+                        value: lang,
+                        name: LANGUAGE_LIST[lang],
+                      }))
+                    : []
+                }
+                errorText={
+                  errors.defaultLanguage
+                    ? "Please select default language."
+                    : undefined
+                }
+              />
+            )}
+          />
           <Button type="submit" className="mt-16">
             Save
           </Button>

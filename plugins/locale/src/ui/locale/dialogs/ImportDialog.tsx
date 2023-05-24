@@ -4,11 +4,12 @@ import { groupBy, orderBy, unionWith } from "lodash-es";
 import React, { useCallback, useEffect, useReducer } from "react";
 import { LocaleItem } from "../../../lib";
 import { flat } from "../../../lib/helpers";
-import { useLocaleItems } from "../../hooks/locale";
+import { useLanguages, useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
+import configs from "figma-helpers/configs";
 interface ImportFile {
   name: string;
   items: Object;
@@ -19,7 +20,7 @@ const ImportDialog = () => {
   );
   const localeItems = useLocaleItems();
   const dispatch = useAppDispatch();
-
+  const languages = useLanguages();
   const [importState, dispatchImportState] = useReducer(
     (
       state: {
@@ -201,8 +202,14 @@ const ImportDialog = () => {
                             </Collapsible.Trigger>
                             <Collapsible.Content>
                               <div className="py-8 pl-16 flex flex-column gap-4">
-                                <div className="truncate">{item.en}</div>
-                                <div className="truncate">{item.vi}</div>
+                                {languages.map(
+                                  (lang) =>
+                                    lang in item && (
+                                      <div className="truncate">
+                                        {item[lang]}
+                                      </div>
+                                    )
+                                )}
                               </div>
                             </Collapsible.Content>
                           </Collapsible>

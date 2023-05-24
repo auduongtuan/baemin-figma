@@ -3,7 +3,11 @@ import { DropdownMenu, DropdownMenuProps, IconButton, Tooltip } from "ds";
 import React from "react";
 import { LANGUAGE_LIST, Lang, LocaleItem, LocaleText } from "../../../lib";
 import { updateText } from "../../state/helpers";
-import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import {
+  useLanguages,
+  useLocaleItems,
+  useLocaleSelection,
+} from "../../hooks/locale";
 import { useAppSelector } from "../../hooks/redux";
 import configs from "figma-helpers/configs";
 const SwitchLanguageDropdownMenu = ({
@@ -16,7 +20,7 @@ const SwitchLanguageDropdownMenu = ({
   item?: LocaleItem;
   items?: LocaleItem[];
 }) => {
-  const languages = configs.get("languages");
+  const languages = useLanguages();
   return (
     <DropdownMenu {...rest}>
       <Tooltip content="Switch language">
@@ -33,7 +37,6 @@ const SwitchLanguageDropdownMenu = ({
               selected={text && text.lang == lang}
               onSelect={() => {
                 if (!text) return;
-                console.log(lang);
                 updateText(text.id, {
                   formula: text.formula || undefined,
                   key: text.key,

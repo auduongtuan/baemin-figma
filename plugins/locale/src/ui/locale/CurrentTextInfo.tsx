@@ -1,6 +1,10 @@
 import React from "react";
 import { LANGUAGE_LIST, MIXED_VALUE } from "../../lib/constant";
-import { useLocaleItems, useLocaleSelection } from "../hooks/locale";
+import {
+  useLanguages,
+  useLocaleItems,
+  useLocaleSelection,
+} from "../hooks/locale";
 import { runCommand } from "../uiHelper";
 import { Select, Divider } from "ds";
 
@@ -10,8 +14,10 @@ import configs from "figma-helpers/configs";
 const CurrentTextInfo = () => {
   const localeSelection = useLocaleSelection();
   const localeItems = useLocaleItems();
-  const languages = configs.get("languages");
+  const languages = useLanguages();
+  console.log(localeSelection.summary);
   return (
+    languages &&
     localeSelection && (
       <div
         className=""
@@ -38,39 +44,31 @@ const CurrentTextInfo = () => {
             className="w-half"
             placeholder="Select language"
             id="lang"
-            value={
-              localeSelection &&
-              localeSelection.summary &&
-              localeSelection.summary.lang
-                ? localeSelection.summary.lang
-                : undefined
-            }
+            value={localeSelection.summary.lang}
             // key={localeSelection ? localeSelection.id : 'select-lang-no-text'}
             onChange={(value) => {
               runCommand("switch_lang", { lang: value, localeItems });
             }}
-            options={(localeSelection &&
-            localeSelection.summary &&
-            localeSelection.summary.lang === MIXED_VALUE
-              ? [
-                  {
-                    id: "mixed",
-                    value: MIXED_VALUE,
-                    name: "Mixed",
-                    disabled: true,
-                  },
-                ]
-              : []
-            ).concat(
-              languages.map((lang) => {
+            options={[
+              ...(localeSelection.summary.lang === MIXED_VALUE
+                ? [
+                    {
+                      id: "mixed",
+                      value: MIXED_VALUE,
+                      name: "Mixed",
+                      disabled: true,
+                    },
+                  ]
+                : []),
+              ...languages.map((lang) => {
                 return {
                   id: lang,
                   value: lang,
                   name: LANGUAGE_LIST[lang],
                   disabled: false,
                 };
-              })
-            )}
+              }),
+            ]}
             disabled={localeSelection ? false : true}
           ></Select>
         </div>

@@ -8,7 +8,6 @@ import {
   getTextCharactersWithTags,
   isPlurals,
 } from "../../lib";
-import { DEFAULT_LANG } from "../../lib/constant";
 import changeText from "figma-helpers/changeText";
 import {
   getKey,
@@ -21,14 +20,18 @@ import {
   setVariables,
 } from "./textProps";
 import { getStyles, setStyles } from "./textStyles";
-
+import configs from "figma-helpers/configs";
 // find text node
-export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
+export function updateTextNode(
+  textNode: TextNode,
+  textProps: LocaleTextProps,
+  callback: Function = undefined
+) {
   if (!textProps) return;
   if (textProps.key || textProps.key === "") {
     setKey(textNode, textProps.key);
   }
-  const oldLang = getLang(textNode) || DEFAULT_LANG;
+  const oldLang = getLang(textNode) || configs.get("defaultLanguage");
   const newLang = textProps.lang || oldLang;
   if (newLang != oldLang) {
     setLang(textNode, newLang);
@@ -71,15 +74,11 @@ export function updateTextNode(textNode: TextNode, textProps: LocaleTextProps) {
       if (parsedText.hasTags) {
         setStyles(textNode, parsedText, oldStyles);
       }
+      callback && callback();
     });
   }
 }
-// update texts to use Locale item
-export function updateTextsInScope(
-  filterFunction: (node: TextNode) => boolean,
-  textProps: LocaleTextProps,
-  scope: SceneNode | BaseNode
-) {
+export function getTextNodesInScope(scope?: SceneNode | BaseNode) {
   const updateNodes = scope ? [scope] : selection();
   const textNodes: TextNode[] = [];
   updateNodes.forEach((parentNode) => {
@@ -92,6 +91,15 @@ export function updateTextsInScope(
       textNodes.push(parentNode);
     }
   });
+  return textNodes;
+}
+// update texts to use Locale item
+export function updateTextsInScope(
+  filterFunction: (node: TextNode) => boolean,
+  textProps: LocaleTextProps,
+  scope: SceneNode | BaseNode
+) {
+  const textNodes: TextNode[] = getTextNodesInScope(scope);
   textNodes.filter(filterFunction).forEach((textNode) => {
     updateTextNode(textNode, textProps);
   });
@@ -101,18 +109,7 @@ export function updateTexts(
   localeItems: LocaleItem[],
   scope?: SceneNode | BaseNode
 ) {
-  const updateNodes = scope ? [scope] : selection();
-  const textNodes: TextNode[] = [];
-  updateNodes.forEach((parentNode) => {
-    if (isContainer(parentNode) || parentNode.type == "PAGE") {
-      textNodes.push(
-        ...(parentNode.findAllWithCriteria({ types: ["TEXT"] }) as TextNode[])
-      );
-    }
-    if (parentNode.type == "TEXT") {
-      textNodes.push(parentNode);
-    }
-  });
+  const textNodes: TextNode[] = getTextNodesInScope(scope);
   textNodes.forEach((textNode) => {
     const key = getKey(textNode);
     if (!key) return;

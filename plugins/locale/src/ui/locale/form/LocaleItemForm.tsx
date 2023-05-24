@@ -20,7 +20,11 @@ import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "../../state/helpers";
 import { addLocaleItem } from "../../state/localeSlice";
 import TimeAgo from "javascript-time-ago";
-import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import {
+  useLanguages,
+  useLocaleItems,
+  useLocaleSelection,
+} from "../../hooks/locale";
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
 import configs from "figma-helpers/configs";
 const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
@@ -69,7 +73,7 @@ function LocaleItemForm({
     () => (isString(item) ? findItemByKey(item, localeItems) : item),
     [item, localeItems, localeSelection]
   );
-  const languages = configs.get("languages");
+  const languages = useLanguages();
   const dispatch = useAppDispatch();
   const {
     register,
@@ -105,9 +109,7 @@ function LocaleItemForm({
     const currentDate = new Date();
     return languages.reduce(
       (acc, lang: string) => {
-        console.log(lang, hasPlurals, hasPlurals[lang]);
         if (lang in hasPlurals && lang in content && content[lang]) {
-          console.log(hasPlurals[lang], content[lang]);
           acc[lang] = hasPlurals[lang] ? content[lang] : content[lang].one;
         }
         return acc;
@@ -170,8 +172,7 @@ function LocaleItemForm({
 
   // add new key
   const addNewKey = useCallback(() => {
-    const localeItemData = getContent();
-    console.log(localeItemData);
+    const localeItemData = getContent("create");
     dispatch(addLocaleItem(localeItemData));
     if (onDone && typeof onDone == "function") onDone(localeItemData);
     runCommand("show_figma_notify", { message: "Item created" });

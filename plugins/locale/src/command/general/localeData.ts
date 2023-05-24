@@ -70,6 +70,8 @@ export function getLocaleData() {
           }
         });
       }
+      // end migrate
+
       // if main node
       if (i == localeDataNodes.length - 1) {
         combinedLocaleData.sheetId = localeData.sheetId;

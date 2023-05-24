@@ -21,10 +21,6 @@ const dsFonts = [
   { family: "Roboto Mono", style: "SemiBold" },
   { family: "Roboto Mono", style: "Bold" },
 ];
-configs.set("languages", ["en", "vi", "ko"]);
-figma.clientStorage
-  .getAsync("configs")
-  .then((data) => console.log("TOP CONFIGS", data));
 figma.skipInvisibleInstanceChildren = true;
 io.on("select_texts", (msg) => selectTexts(msg.key));
 io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
@@ -60,16 +56,19 @@ io.on("set_configs", async (msg) => {
   }
 });
 figma.on("run", ({ command, parameters }: RunEvent) => {
-  configs.fetch({ languages: LANGUAGE_LIST }).then((data) => {
-    changeText.loadFonts(dsFonts, () => {
-      figma.showUI(__html__, {
-        title: "Locale editor",
-        width: 360,
-        height: 640,
+  configs
+    .fetch({ languages: ["en", "vi"], defaultLanguage: "vi" })
+    .then((data) => {
+      configs.setAll(data);
+      changeText.loadFonts(dsFonts, () => {
+        figma.showUI(__html__, {
+          title: "Locale editor",
+          width: 360,
+          height: 640,
+        });
+        updateSelection();
       });
-      updateSelection();
     });
-  });
 });
 figma.on("selectionchange", async () => {
   updateSelection();

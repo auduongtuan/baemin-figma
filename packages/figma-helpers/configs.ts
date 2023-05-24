@@ -1,6 +1,6 @@
 declare var figma: any;
 const configs = (function (isFigma: boolean) {
-  let configs = {};
+  const configs: { [key: string]: any } = {};
   function set<T = unknown>(name: string, value: T) {
     configs[name] = value;
   }
@@ -12,7 +12,9 @@ const configs = (function (isFigma: boolean) {
     return name in configs ? configs[name] : defaultValue;
   }
   function setAll(configValues: { [key: string]: any }) {
-    configs = { ...configValues };
+    for (const key in configValues) {
+      configs[key] = configValues[key];
+    }
   }
   if (isFigma) {
     async function save() {
@@ -22,7 +24,7 @@ const configs = (function (isFigma: boolean) {
     }
     async function fetch(defaultValues: { [key: string]: any } = {}) {
       return figma.clientStorage.getAsync("configs").then((data) => {
-        configs = { ...defaultValues, ...data };
+        setAll({ ...defaultValues, ...data });
         const promise = new Promise((resolve, reject) => {
           resolve(configs);
         });

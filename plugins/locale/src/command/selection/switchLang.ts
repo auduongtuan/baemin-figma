@@ -3,38 +3,46 @@ import { LANGUAGE_LIST } from "../../lib/constant";
 import { LocaleItem, Lang, findItemByKey } from "../../lib";
 import updateSelection from "./updateSelection";
 import { getFormula, getKey } from "../text/textProps";
-import { updateTextNode } from "../text/updateText";
-function changeLang(textNode: TextNode, lang: Lang, localeItems: LocaleItem[]) {
+import { updateTextNode, getTextNodesInScope } from "../text/updateText";
+function changeLang(
+  textNode: TextNode,
+  lang: Lang,
+  localeItems: LocaleItem[],
+  callback?: Function
+) {
   const formula = getFormula(textNode);
   // turn off find by characters because of speed
   //  || findItemByCharacters(textNode.characters, localeItems);
   if (formula) {
-    updateTextNode(textNode, { lang, formula: formula, items: localeItems });
+    updateTextNode(
+      textNode,
+      { lang, formula: formula, items: localeItems },
+      callback
+    );
   } else {
     const localeItem = findItemByKey(getKey(textNode), localeItems);
-    if (localeItem) updateTextNode(textNode, { lang, item: localeItem });
+    if (localeItem)
+      updateTextNode(textNode, { lang, item: localeItem }, callback);
   }
 }
-function switchLang(
+async function switchLang(
   lang: Lang,
   localeItems: LocaleItem[],
   scope?: SceneNode | BaseNode
 ) {
-  const updateNodes = scope ? [scope] : h.selection();
-  updateNodes.forEach((selection) => {
-    if (h.isText(selection)) {
-      changeLang(selection, lang, localeItems);
-    } else if (h.isContainer(selection)) {
-      const texts = selection.findAllWithCriteria({
-        types: ["TEXT"],
-      }) as TextNode[];
-      texts.forEach((textNode) => {
-        changeLang(textNode, lang, localeItems);
-      });
-    }
+  const textNodes = getTextNodesInScope(scope);
+  const promiseList = textNodes.map(
+    (textNode) =>
+      new Promise((resolve) => {
+        changeLang(textNode, lang, localeItems, () => {
+          resolve(true);
+        });
+      })
+  );
+  Promise.allSettled(promiseList).then(() => {
+    figma.notify(`Switched selection to ${LANGUAGE_LIST[lang]}`);
+    updateSelection();
   });
-  figma.notify(`Switched selection to ${LANGUAGE_LIST[lang]}`);
-  updateSelection();
 }
 
 export default switchLang;

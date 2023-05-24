@@ -73,7 +73,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
             : undefined,
           formula: formula,
         };
-        console.log("TEXT PROPS IN UPDATE TEXT DEBOUNCE", textProps);
         updateText(text.id, {
           item: localeItem,
           items: localeItems,
@@ -165,7 +164,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                           opened: true,
                           type: "NEW",
                           onDone: (localeItem: LocaleItem) => {
-                            console.log("NEW ADD", localeItem);
                             updateText(text.id, {
                               key: localeItem.key,
                               item: localeItem,

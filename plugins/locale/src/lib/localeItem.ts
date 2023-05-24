@@ -30,10 +30,12 @@ export function findItemByKeyOrCharacters(
   characters: string,
   localeItems: LocaleItem[]
 ) {
+  const languages = configs.get("languages");
   return localeItems
     ? localeItems.find(
         (item) =>
-          item.key == key || item.en == characters || item.vi == characters
+          item.key == key ||
+          languages.some((lang) => lang in item && item[lang] == characters)
       )
     : null;
 }

@@ -1,7 +1,10 @@
 import { getNodeData, setNodeData } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
-import { LocaleJsonFormat, LocaleLibrary } from "../../lib";
-import dayjs from "dayjs";
+import {
+  LocaleJsonFormat,
+  LocaleLibrary,
+  defaultDateTimeFormat,
+} from "../../lib";
 import {
   CODE_FRAME_NAME,
   CODE_INFO_FRAME_NAME,
@@ -73,9 +76,9 @@ async function printCodeBlock(
   namespaceInfoTextNode.fontName = { family: "Roboto", style: "Regular" };
   namespaceInfoTextNode.fontSize = 10;
   namespaceInfoTextNode.opacity = 0.6;
-  namespaceInfoTextNode.characters = `FORMAT: ${format}  —  EXPORT AT: ${dayjs().format(
-    "YYYY-MM-DD HH:mm:ss"
-  )} — BY: ${figma.currentUser.name}`;
+  namespaceInfoTextNode.characters = `FORMAT: ${format}  —  EXPORT AT: ${defaultDateTimeFormat()} — BY: ${
+    figma.currentUser.name
+  }`;
   namespaceInfoTextNode.textAutoResize = "HEIGHT";
   namespaceInfoTextNode.layoutAlign = "STRETCH";
   namespaceFrame.appendChild(namespaceTextNode);

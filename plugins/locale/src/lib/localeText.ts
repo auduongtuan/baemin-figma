@@ -1,7 +1,7 @@
 import configs from "figma-helpers/configs";
 import { escapeRegExp, isObject } from "lodash-es";
 import {
-  compareTime,
+  compareTimeDesc,
   isNumeric,
   matchAll,
   placeholders,
@@ -73,8 +73,8 @@ export function getTextPropsByCharacters(
       .sort(
         (a, b) =>
           Number(b.prioritized) - Number(a.prioritized) ||
-          compareTime(b.updatedAt, a.updatedAt) ||
-          compareTime(b.createdAt, a.createdAt)
+          compareTimeDesc(a.updatedAt, b.updatedAt) ||
+          compareTimeDesc(a.createdAt, b.createdAt)
       )
       .find((item) => {
         return configs.get("languages").some((lang: Lang) => {
@@ -272,13 +272,14 @@ export function getTextCharactersWithTags(
         textProps.variables
       );
     } else {
-      return "";
+      return undefined;
     }
   }
 }
 
 export function getParseText(textProps: LocaleTextProps, items: LocaleItem[]) {
   const textCharactersWithTags = getTextCharactersWithTags(textProps, items);
+  if (!textCharactersWithTags) return undefined;
   const parsedText = parseTagsInText(textCharactersWithTags);
   return parsedText;
 }
@@ -293,17 +294,8 @@ export function getFullLocaleText(
     : items && key
     ? findItemByKey(key, items)
     : undefined;
-  const characters = textProps.lang
-    ? getParseText(
-        {
-          formula,
-          item,
-          lang,
-          variables,
-        },
-        items
-      ).characters
-    : undefined;
+  const parsedText = getParseText({ item, formula, lang, variables }, items);
+  const characters = parsedText ? parsedText.characters : undefined;
   return {
     key,
     formula,

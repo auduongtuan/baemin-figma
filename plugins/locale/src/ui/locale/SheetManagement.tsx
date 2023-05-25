@@ -8,10 +8,8 @@ import { Button, IconButton, Tooltip } from "ds";
 import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
 import { clipWithSelection } from "../../lib/helpers";
 import { runCommand } from "../uiHelper";
-import TimeAgo from "javascript-time-ago";
 // const API_URL = "http://localhost:8001/api/";
 const API_URL = "https://baemin-figma.onrender.com/api";
-const timeAgo = new TimeAgo("en-US");
 const CopyButton = ({ url }) => {
   const [copied, setCopied] = useState(false);
   return (
@@ -116,7 +114,7 @@ const SheetManagement = () => {
           className="mt-4"
         >
           {localeItems && localeItems.length} items - Last sync{" "}
-          {timeAgo.format(new Date(modifiedTime))}
+          {/* {timeAgo.format(new Date(modifiedTime))} */}
         </p>
       </div>
 

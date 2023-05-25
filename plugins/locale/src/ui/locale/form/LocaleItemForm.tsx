@@ -19,14 +19,12 @@ import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
 import { updateTextsOfItem } from "../../state/helpers";
 import { addLocaleItem } from "../../state/localeSlice";
-import TimeAgo from "javascript-time-ago";
 import {
   useLanguages,
   useLocaleItems,
   useLocaleSelection,
 } from "../../hooks/locale";
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
-import configs from "figma-helpers/configs";
 const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
   return (
     localeItem &&

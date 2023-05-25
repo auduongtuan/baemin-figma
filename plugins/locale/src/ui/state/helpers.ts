@@ -1,17 +1,55 @@
-import { LocaleTextProps, LocaleItem, getParseText } from "../../lib";
+import {
+  LocaleTextProps,
+  LocaleItem,
+  LocaleSelection,
+  findItemByKey,
+  getParsedText,
+} from "../../lib";
 import { runCommand } from "../uiHelper";
 import { store } from "./store";
 import {
   updateTextsInLocaleSelection,
   updateTextInLocaleSelection,
 } from "./localeSlice";
-import { getFullLocaleText } from "../../lib";
+function handleTextPropsForSlice(textProps: LocaleTextProps) {
+  const {
+    item: originItem,
+    items,
+    formula,
+    lang,
+    variables = {},
+    key,
+  } = textProps;
+  const item = originItem
+    ? originItem
+    : items && key
+    ? findItemByKey(key, items)
+    : undefined;
+  return {
+    key,
+    formula,
+    items,
+    item,
+    lang,
+    variables,
+    characters: textProps.lang
+      ? getParsedText({
+          formula,
+          items,
+          item,
+          lang,
+          variables,
+        }).characters
+      : undefined,
+  };
+}
 export function updateText(id: string, textProps: LocaleTextProps) {
-  const items = store.getState().locale.localeItems;
-  const { characters, ...rest } = getFullLocaleText(textProps, items);
+  const { item, items, characters, ...rest } =
+    handleTextPropsForSlice(textProps);
   runCommand("update_texts", {
     ids: id,
-    // items: textProps.items,
+    item,
+    items,
     ...rest,
   });
   store.dispatch(
@@ -23,43 +61,33 @@ export function updateText(id: string, textProps: LocaleTextProps) {
   );
 }
 export function updateTexts(ids: string[], textProps: LocaleTextProps) {
-  console.log(textProps);
+  const { item, items, characters, ...rest } =
+    handleTextPropsForSlice(textProps);
   runCommand("update_texts", {
     ids,
-    // items: textProps.items,
-    ...textProps,
+    item,
+    items,
+    ...rest,
   });
-  const items = store.getState().locale.localeItems;
-  const currentTextsInLocaleSelection =
-    store.getState().locale.localeSelection.texts;
   store.dispatch(
     updateTextsInLocaleSelection(
-      ids.map((id) => {
-        const text = currentTextsInLocaleSelection.find(
-          (text) => text.id == id
-        );
-        const { characters, ...rest } = getFullLocaleText(
-          {
-            ...text,
-            ...textProps,
-          },
-          items
-        );
-        return {
-          id: id,
-          characters,
-          ...rest,
-        };
-      })
+      ids.map((id) => ({
+        id: id,
+        ...rest,
+        ...(typeof characters != "undefined" ? { characters } : {}),
+      }))
     )
   );
 }
 
-export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
+export function updateTextsOfItem(
+  oldKey: string,
+  item: LocaleItem,
+  localeSelection: LocaleSelection,
+  localeItems?: LocaleItem[]
+) {
   // newKey
   // update selected text also
-  const { localeItems, localeSelection } = store.getState().locale;
-
   const texts = localeSelection.texts.filter(
     (text) =>
       (oldKey && text.key == oldKey) ||
@@ -78,15 +106,12 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
     updateTextsInLocaleSelection(
       texts.map((text) => {
         const characters =
-          getParseText(
-            {
-              ...text,
-              item: item,
-              lang: text.lang,
-              variables: text.variables,
-            },
-            localeItems
-          ).characters || undefined;
+          getParsedText({
+            ...text,
+            item: item,
+            lang: text.lang,
+            variables: text.variables,
+          }).characters || undefined;
         return {
           ...text,
           key: item.key,

@@ -1,15 +1,14 @@
-import { pluralize } from "@capaj/pluralize";
-import { Button, Checkbox, Collapsible, Dialog, Divider, Dropzone } from "ds";
-import { groupBy, orderBy, unionWith } from "lodash-es";
 import React, { useCallback, useEffect, useReducer } from "react";
-import { LocaleItem } from "../../../lib";
-import { flat } from "../../../lib/helpers";
-import { useLanguages, useLocaleItems } from "../../hooks/locale";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { Dialog, Dropzone, Button, Checkbox, Collapsible, Divider } from "ds";
+import { flat } from "../../../lib/helpers";
+import LocaleItemList from "../items/LocaleItemList";
+import { groupBy, orderBy, unionWith } from "lodash-es";
+import { LocaleItem } from "../../../lib";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
-import configs from "figma-helpers/configs";
+import { pluralize } from "@capaj/pluralize";
 interface ImportFile {
   name: string;
   items: Object;
@@ -18,9 +17,9 @@ const ImportDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
-  const localeItems = useLocaleItems();
+  const localeItems = useAppSelector((state) => state.locale.localeItems);
   const dispatch = useAppDispatch();
-  const languages = useLanguages();
+
   const [importState, dispatchImportState] = useReducer(
     (
       state: {
@@ -202,14 +201,8 @@ const ImportDialog = () => {
                             </Collapsible.Trigger>
                             <Collapsible.Content>
                               <div className="py-8 pl-16 flex flex-column gap-4">
-                                {languages.map(
-                                  (lang) =>
-                                    lang in item && (
-                                      <div className="truncate">
-                                        {item[lang]}
-                                      </div>
-                                    )
-                                )}
+                                <div className="truncate">{item.en}</div>
+                                <div className="truncate">{item.vi}</div>
                               </div>
                             </Collapsible.Content>
                           </Collapsible>

@@ -3,7 +3,7 @@ import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
 import classNames from "classnames";
 import { useSelect } from "downshift";
-import { eq, isEqual } from "lodash-es";
+import { isEqual } from "lodash-es";
 import Menu, { MenuItemProps } from "./Menu";
 export interface SelectOption extends MenuItemProps {
   id?: string;
@@ -44,17 +44,20 @@ const Select = ({
   const optionToString = (option: SelectOption) => (option ? option.name : "");
   const [selectedItem, setSelectedItem] = React.useState(null);
   useEffect(() => {
-    const newSelectedItem = options.find(
-      (option) =>
-        isEqual(option.value, value) || isEqual(option.value, defaultValue)
-    );
+    const newSelectedItem = options
+      ? options.find(
+          (option) =>
+            isEqual(option.value, value) ||
+            (defaultValue && isEqual(option.value, defaultValue))
+        )
+      : null;
     if (newSelectedItem) {
       setSelectedItem(newSelectedItem);
     }
     if (!newSelectedItem || !value) {
       setSelectedItem(null);
     }
-  }, [options, value, defaultValue]);
+  }, [value, defaultValue]);
   const {
     isOpen,
     getToggleButtonProps,

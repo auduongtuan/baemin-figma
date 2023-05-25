@@ -1,10 +1,9 @@
 {
-  "name": "BM i18n",
-  "id": "1243474106181549610",
+  "name": "BAEMIN - Locale Editor",
+  "id": "1180446958868214960",
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/code.js",
-  "permissions": ["currentuser"],
   "ui": "dist/index.html",
   "menu": [{ "name": "Open", "command": "locale" }]
 }

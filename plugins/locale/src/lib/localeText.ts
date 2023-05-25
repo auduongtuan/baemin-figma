@@ -1,5 +1,5 @@
-import configs from "figma-helpers/configs";
 import { escapeRegExp, isObject } from "lodash-es";
+import { DEFAULT_LANG, LANGUAGES } from "./constant";
 import { compareTime, matchAll, placeholders, stripTags } from "./helpers";
 import parseTagsInText from "./parseTagsInText";
 import { isPlurals } from "./localeItem";
@@ -9,22 +9,14 @@ import {
   LocaleItemContent,
   LocaleTextProps,
   LocaleTextVariables,
-  LocaleText,
 } from "./types";
 import { findItemByKey } from "./localeItem";
 export function applyVariablesToContent(
   localeItemContent: LocaleItemContent,
-  originVariables: LocaleTextVariables
+  variables: LocaleTextVariables
 ): string {
-  const variables = { ...originVariables };
   if (!isPlurals(localeItemContent)) {
     if (variables && localeItemContent) {
-      if (
-        getVariableNamesFromItemContent(localeItemContent).includes("count") &&
-        !("count" in variables)
-      ) {
-        variables.count = 1;
-      }
       return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
@@ -71,7 +63,7 @@ export function getTextPropsByCharacters(
           compareTime(b.createdAt, a.createdAt)
       )
       .find((item) => {
-        return configs.get("languages").some((lang: Lang) => {
+        return Object.keys(LANGUAGES).some((lang: Lang) => {
           const itemContent = item[lang];
           if (!isPlurals(itemContent)) {
             if (isCharactersMatch(characters, itemContent)) {
@@ -104,6 +96,8 @@ export function getTextPropsByCharacters(
         variables: foundVariables,
       };
     }
+    // console.log(item.vi.replace(/\{\{([^}]+)\}\}/g, '(.*)'));
+    // return false;
   }
   return { item: null, lang: null, key: null, variables: {} };
 }
@@ -156,7 +150,7 @@ export function findVariablesInCharacters(
 
 export function getVariableNamesFromItemContent(
   itemContent: LocaleItemContent
-): string[] {
+) {
   const variableNames = [];
   const reg = /\{\{([^}]+)\}\}/g;
   if (itemContent) {
@@ -178,11 +172,8 @@ export function getVariableNamesFromItemContent(
   }
   return variableNames;
 }
-export function getVariableNames(
-  textProps: LocaleTextProps,
-  items: LocaleItem[]
-) {
-  const { formula, item, lang = configs.get("defaultLanguage") } = textProps;
+export function getVariableNames(textProps: LocaleTextProps) {
+  const { formula, item, items, lang = DEFAULT_LANG } = textProps;
   const variableNames = [];
   if (formula) {
     matchFormula(formula, items, (localeItem) => {
@@ -222,12 +213,8 @@ export function matchFormula(
   return matches;
 }
 
-export function parseFormula(props: LocaleTextProps, items: LocaleItem[]) {
-  const {
-    formula,
-    lang = configs.get("defaultLanguage"),
-    variables = {},
-  } = props;
+export function parseFormula(props: LocaleTextProps) {
+  const { formula, items = [], lang = DEFAULT_LANG, variables = {} } = props;
   let newString = formula;
   matchFormula(formula, items, (item, match) => {
     const newLocaleItemContent = lang in item ? item[lang] : undefined;
@@ -241,56 +228,19 @@ export function parseFormula(props: LocaleTextProps, items: LocaleItem[]) {
   return newString;
 }
 
-export function getTextCharactersWithTags(
-  textProps: LocaleTextProps,
-  items: LocaleItem[]
-) {
+export function getTextCharactersWithTags(textProps: LocaleTextProps) {
   if ("formula" in textProps && textProps.formula) {
-    return parseFormula(textProps, items);
+    return parseFormula(textProps);
   } else {
-    if (textProps.item && textProps.lang in textProps.item) {
-      return applyVariablesToContent(
-        textProps.item[textProps.lang],
-        textProps.variables
-      );
-    } else {
-      return "";
-    }
+    return applyVariablesToContent(
+      textProps.item[textProps.lang],
+      textProps.variables
+    );
   }
 }
 
-export function getParseText(textProps: LocaleTextProps, items: LocaleItem[]) {
-  const textCharactersWithTags = getTextCharactersWithTags(textProps, items);
+export function getParsedText(textProps: LocaleTextProps) {
+  const textCharactersWithTags = getTextCharactersWithTags(textProps);
   const parsedText = parseTagsInText(textCharactersWithTags);
   return parsedText;
-}
-
-export function getFullLocaleText(
-  textProps: LocaleTextProps,
-  items: LocaleItem[]
-): LocaleText {
-  const { item: originItem, formula, lang, variables = {}, key } = textProps;
-  const item = originItem
-    ? originItem
-    : items && key
-    ? findItemByKey(key, items)
-    : undefined;
-  const characters = textProps.lang
-    ? getParseText(
-        {
-          formula,
-          item,
-          lang,
-          variables,
-        },
-        items
-      ).characters
-    : undefined;
-  return {
-    key,
-    formula,
-    lang,
-    variables,
-    characters,
-  };
 }

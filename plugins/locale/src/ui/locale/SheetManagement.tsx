@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setLocaleData } from "../state/localeSlice";
 // English.
-import { useLocaleItems } from "../hooks/locale";
+
 import { Button, IconButton, Tooltip } from "ds";
 import { CopyIcon, LinkBreak1Icon } from "@radix-ui/react-icons";
 import { clipWithSelection } from "../../lib/helpers";
@@ -39,7 +39,7 @@ const CopyButton = ({ url }) => {
   );
 };
 const SheetManagement = () => {
-  const localeItems = useLocaleItems();
+  const localeItems = useAppSelector((state) => state.locale.localeItems);
   const modifiedTime = useAppSelector((state) => state.locale.modifiedTime);
   const sheetId = useAppSelector((state) => state.locale.sheetId);
   const sheetName = useAppSelector((state) => state.locale.sheetName);

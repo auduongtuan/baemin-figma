@@ -1,5 +1,5 @@
 import * as h from "figma-helpers";
-import { LANGUAGE_LIST, PREFIX } from "../../lib/constant";
+import { DEFAULT_LANG, PREFIX } from "../../lib/constant";
 import {
   Lang,
   LocaleItem,
@@ -7,13 +7,13 @@ import {
   LocaleTextVariables,
   getTextPropsByCharacters,
 } from "../../lib";
-import configs from "figma-helpers/configs";
+
 export function getLang(node: TextNode): Lang {
   const lang = h.getNodeData(node, `${PREFIX}lang`);
-  if (lang in LANGUAGE_LIST) {
-    return lang as Lang;
+  if (lang == "en" || lang == "vi") {
+    return lang;
   } else {
-    return configs.get("defaultLanguage");
+    return DEFAULT_LANG;
   }
 }
 export function getVariables(node: TextNode): LocaleTextVariables {

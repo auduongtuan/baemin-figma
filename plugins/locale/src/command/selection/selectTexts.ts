@@ -2,6 +2,7 @@ import { getKey } from "../text/textProps";
 import { pluralize } from "@capaj/pluralize";
 function selectTexts(key: string) {
   if (key) {
+    figma.notify(`Finding texts with key ${key}...`);
     const allTextNodes = figma.currentPage.findAllWithCriteria({
       types: ["TEXT"],
     });

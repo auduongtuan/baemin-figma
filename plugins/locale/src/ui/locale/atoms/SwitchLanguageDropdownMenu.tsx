@@ -1,19 +1,17 @@
 import { GlobeIcon } from "@radix-ui/react-icons";
 import { DropdownMenu, DropdownMenuProps, IconButton, Tooltip } from "ds";
 import React from "react";
-import { Lang, LocaleItem, LocaleText } from "../../../lib";
-import { LANGUAGES } from "../../../lib/constant";
+import { LANGUAGE_LIST, LocaleText } from "../../../lib";
 import { updateText } from "../../state/helpers";
+import { useLanguages, useLocaleItems } from "../../hooks/locale";
 const SwitchLanguageDropdownMenu = ({
   text,
-  item,
-  items,
   ...rest
 }: DropdownMenuProps & {
   text: LocaleText;
-  item?: LocaleItem;
-  items?: LocaleItem[];
 }) => {
+  const languages = useLanguages();
+  const items = useLocaleItems();
   return (
     <DropdownMenu {...rest}>
       <Tooltip content="Switch language">
@@ -24,7 +22,7 @@ const SwitchLanguageDropdownMenu = ({
         </DropdownMenu.Trigger>
       </Tooltip>
       <DropdownMenu.Content>
-        {Object.keys(LANGUAGES).map((lang) => {
+        {languages.map((lang) => {
           return (
             <DropdownMenu.Item
               selected={text && text.lang == lang}
@@ -32,13 +30,13 @@ const SwitchLanguageDropdownMenu = ({
                 if (!text) return;
                 updateText(text.id, {
                   formula: text.formula || undefined,
-                  lang: lang as Lang,
-                  item: item,
-                  items: items,
+                  key: text.key,
+                  variables: text.variables,
+                  lang,
                 });
               }}
             >
-              {LANGUAGES[lang]}
+              {LANGUAGE_LIST[lang]}
             </DropdownMenu.Item>
           );
         })}

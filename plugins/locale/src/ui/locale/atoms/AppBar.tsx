@@ -3,14 +3,16 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setLocaleData } from "../../state/localeSlice";
 import { IconButton, Tooltip } from "ds";
 import { useForm } from "react-hook-form";
-import { UploadIcon } from "@radix-ui/react-icons";
+import { GearIcon, UploadIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
+import { useLocaleItems } from "../../hooks/locale";
 import ImportDialog from "../dialogs/ImportDialog";
 import ExportCode from "../app/ExportCode";
+import Settings from "../app/Settings";
 
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const isWorking = useAppSelector((state) => state.localeApp.isWorking);
   const { register, handleSubmit, getValues } = useForm();
   const dispatch = useAppDispatch();
@@ -26,7 +28,6 @@ const AppBar = () => {
       })
     );
   };
-
 
   // console.log("Navigator", navigator.clipboard);
   return (
@@ -46,7 +47,9 @@ const AppBar = () => {
       `}
     >
       <div className="flex-grow-1">
-        <span className="text-secondary">v{import.meta.env.VITE_PLUGIN_VERSION}</span>
+        <span className="text-secondary">
+          v{import.meta.env.VITE_PLUGIN_VERSION}
+        </span>
         {/* {isWorking && <WorkingIcon showText />} */}
         {/* <WorkingIcon /> */}
       </div>
@@ -54,13 +57,14 @@ const AppBar = () => {
         <Tooltip content="Import JSON files">
           <IconButton
             onClick={() => {
-              dispatch(setCurrentDialog({type: "IMPORT", opened: true}));
+              dispatch(setCurrentDialog({ type: "IMPORT", opened: true }));
             }}
           >
             <UploadIcon />
           </IconButton>
         </Tooltip>
         <ExportCode />
+        <Settings />
         {/* {sheetId ? (
           <Dialog>
           <Tooltip content="Google sheet info">

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { get } from "lodash-es";
 
 export function removeVietnameseAccent(str: string) {
@@ -143,22 +144,8 @@ export const compareTime = (a: string, b: string) => {
 function padTo2Digits(num: number) {
   return num.toString().padStart(2, "0");
 }
-export function dateTimeFormat(dateString: Date | string) {
-  const date =
-    typeof dateString === "string" ? new Date(dateString) : dateString;
-  return (
-    [
-      date.getFullYear(),
-      padTo2Digits(date.getMonth() + 1),
-      padTo2Digits(date.getDate()),
-    ].join("-") +
-    " " +
-    [
-      padTo2Digits(date.getHours()),
-      padTo2Digits(date.getMinutes()),
-      padTo2Digits(date.getSeconds()),
-    ].join(":")
-  );
+export function defaultDateTimeFormat(dateString: Date | string) {
+  return dayjs(dateString).format("YYYY/MM/DD HH:mm:ss");
 }
 
 export function stripTags(str: string) {

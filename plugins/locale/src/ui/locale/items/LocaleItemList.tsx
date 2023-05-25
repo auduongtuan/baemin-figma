@@ -1,28 +1,10 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { removeLocaleItem, updateLocaleItems } from "../../state/localeSlice";
-import { useForm } from "react-hook-form";
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
-import {
-  Button,
-  IconButton,
-  Dialog,
-  Collapsible,
-  Tooltip,
-  Select,
-  SelectOption,
-  Divider,
-} from "ds";
-import {
-  Crosshair2Icon,
-  Pencil2Icon,
-  PlusIcon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
-import { runCommand } from "../../uiHelper";
+import { IconButton, Collapsible, Tooltip, Select, Divider } from "ds";
+import { PlusIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib";
 import LocaleItemRecord from "./LocaleItemRecord";
 const LocaleItemList = ({
@@ -34,10 +16,6 @@ const LocaleItemList = ({
   action?: boolean;
   filter?: boolean;
 }) => {
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
-
   const [source, setSource] = useState("all");
   const filterFn = useCallback(
     (item: LocaleItem) => {
@@ -60,33 +38,6 @@ const LocaleItemList = ({
     })
   ).sort((a, b) => a[0].localeCompare(b[0]));
   const dispatch = useAppDispatch();
-  const {
-    register,
-    // handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-    setValue,
-    getValues,
-  } = useForm();
-  // reset when key is change
-  useEffect(() => {
-    const watcher = watch((data) => {
-      // if (matchedItem && data.key) {
-      dispatch(
-        updateLocaleItems(
-          Object.keys(data).map((key) => {
-            return { key: key, en: data[key].en, vi: data[key].vi };
-          })
-        )
-      );
-
-      // }
-    });
-    return () => {
-      watcher.unsubscribe();
-    };
-  }, [watch]);
 
   return (
     <div
@@ -116,7 +67,7 @@ const LocaleItemList = ({
                 <Select
                   inline
                   label="Source"
-                  value="all"
+                  value={source}
                   options={[
                     { value: "all", name: "All" },
                     { value: "local", name: "Local" },

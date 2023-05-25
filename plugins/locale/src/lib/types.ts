@@ -1,4 +1,4 @@
-import { MIXED_VALUE, LANGUAGES } from "./constant";
+import { MIXED_VALUE, LANGUAGE_LIST } from "./constant";
 
 export interface LocaleData {
   sheetName?: string;
@@ -23,8 +23,7 @@ export type LocaleItemPluralContent = {
   other?: "string";
 };
 export type LocaleItemContent = string | LocaleItemPluralContent;
-export type Lang = keyof typeof LANGUAGES;
-
+export type Lang = keyof typeof LANGUAGE_LIST;
 export type LocaleItem = {
   key: string;
   fromLibrary?: boolean | string;
@@ -55,12 +54,10 @@ export interface LocaleText {
   characters?: string;
   variables?: LocaleTextVariables;
 }
-export interface LocaleTextProps
-  extends Omit<LocaleText, "id" | "lang" | "characters"> {
+export interface LocaleTextProps extends Omit<LocaleText, "id" | "characters"> {
   // ids?: string | string[];
   item?: LocaleItem;
-  items?: LocaleItem[];
-  lang?: Lang;
+  // items?: LocaleItem[];
 }
 export interface LocaleSelection {
   summary?: {
@@ -70,3 +67,4 @@ export interface LocaleSelection {
   multiple?: boolean;
   texts?: LocaleText[];
 }
+export type LocaleJsonFormat = "i18n-js" | "i18next";

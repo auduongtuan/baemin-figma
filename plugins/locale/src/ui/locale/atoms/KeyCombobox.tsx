@@ -10,8 +10,10 @@ import {
 } from "../../../lib";
 import { MIXED_VALUE } from "../../../lib/constant";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useLocaleItems } from "../../hooks/locale";
 import { updateText, updateTexts } from "../../state/helpers";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
+import configs from "figma-helpers/configs";
 export interface KeyComboboxProps extends ComboboxProps {
   forSelection?: boolean;
   text?: LocaleText;
@@ -27,8 +29,11 @@ function KeyCombobox({
   const localeSelection = useAppSelector(
     (state) => state.locale.localeSelection
   );
-  const localeItems = useAppSelector((state) => state.locale.localeItems);
+  const localeItems = useLocaleItems();
   const dispatch = useAppDispatch();
+  const languages = configs.get("languages", []);
+  const defaultLanguage = configs.get("defaultLanguage");
+  const altLanguage = languages.find((lang) => lang !== defaultLanguage) || "";
   const localeItemOptions: ComboboxOption[] = [
     ...(localeSelection &&
     localeSelection.summary &&
@@ -50,8 +55,12 @@ function KeyCombobox({
           value: item.key,
           name: item.key,
           disabled: false,
-          content: getStringContent(item.vi),
-          altContent: getStringContent(item.en),
+          content:
+            defaultLanguage in item
+              ? getStringContent(item[defaultLanguage])
+              : "",
+          altContent:
+            altLanguage in item ? getStringContent(item[altLanguage]) : "",
         };
       })),
     ...[

@@ -114,6 +114,7 @@ async function createAnnotation(texts: LocaleText[]) {
         groupNodes.push(keyTextNode, annotateLine);
         // figma.currentPage.appendChild(annotateTextNode);
       });
+    if (groupNodes.length === 0) return;
     const group = figma.group(groupNodes, figma.currentPage);
     group.name = `${textContainer.name} - i18n annotation`;
   });

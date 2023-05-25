@@ -1,11 +1,15 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../hooks/redux";
+import {
+  useLanguages,
+  useLocaleItems,
+  useLocaleSelection,
+} from "../../hooks/locale";
 import { useForm } from "react-hook-form";
-import { LocaleItem } from "../../../lib";
+import { Lang, LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash-es";
-import { LANGUAGES } from "../../../lib/constant";
 function useLocaleForm({
   item,
   quickEdit,
@@ -25,9 +29,8 @@ function useLocaleForm({
   } = useForm();
   const watchHasPlurals = watch("hasPlurals", { en: false, vi: false });
   const isEdit = item ? true : false;
-  const localeSelection = useAppSelector(
-    (state) => state.locale.localeSelection
-  );
+  const localeSelection = useLocaleSelection();
+  const languages = useLanguages();
   // setup values for edit form
   useEffect(() => {
     if (item && item.key) {
@@ -37,7 +40,7 @@ function useLocaleForm({
           setValue("key", item.key);
         }
         // language
-        else if (inputName in LANGUAGES) {
+        else if (languages.includes(inputName as Lang)) {
           const itemContent = item[inputName];
           if (isPlurals(itemContent)) {
             setValue(`hasPlurals.${inputName}`, true);
@@ -55,8 +58,10 @@ function useLocaleForm({
       reset({
         oldKey: "",
         key: "",
-        en: null,
-        vi: null,
+        ...languages.reduce((acc, lang) => {
+          acc[lang] = null;
+          return acc;
+        }, {}),
         hasPlurals: { en: false, vi: false },
         prioritized: undefined,
       });
@@ -70,13 +75,15 @@ function useLocaleForm({
           removeVietnameseAccent(localeSelection.texts[0].characters)
         );
         setValue("key", newKey);
-        setValue("en.one", localeSelection.texts[0].characters);
-        setValue("vi.one", localeSelection.texts[0].characters);
+        languages.forEach((lang) => {
+          setValue(`${lang}.one`, localeSelection.texts[0].characters);
+        });
       }
     }
     if (!localeSelection) {
-      setValue("en.one", "");
-      setValue("vi.one", "");
+      languages.forEach((lang) => {
+        setValue(`${lang}.one`, "");
+      });
     }
   }, [localeSelection]);
 

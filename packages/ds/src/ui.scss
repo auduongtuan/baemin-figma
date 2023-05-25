@@ -174,127 +174,127 @@
 }
 /* Vars */
 :root {
-	/* COLORS */
+  /* COLORS */
 
-    /* Accent */
-    --blue: #18a0fb; 
-    --purple: #7b61ff; 
-    --hot-pink: #ff00ff;
-    --green: #1bc47d;
-    --red: #f24822;
-    --yellow: #ffeb00;
+  /* Accent */
+  --blue: #18a0fb;
+  --purple: #7b61ff;
+  --hot-pink: #ff00ff;
+  --green: #1bc47d;
+  --red: #f24822;
+  --yellow: #ffeb00;
 
-    /* Basic foreground */
-    --black: #000000;
-    --black8: rgba(0, 0, 0, .8); 
-    --black8-opaque: #333333; 
-    --black3: rgba(0, 0, 0, .3);
-    --black3-opaque: #B3B3B3; 
-    --white: #ffffff; 
-    --white8: rgba(255, 255, 255, .8); 
-    --white4: rgba(255, 255, 255, .4); 
+  /* Basic foreground */
+  --black: #000000;
+  --black8: rgba(0, 0, 0, 0.8);
+  --black8-opaque: #333333;
+  --black3: rgba(0, 0, 0, 0.3);
+  --black3-opaque: #b3b3b3;
+  --white: #ffffff;
+  --white8: rgba(255, 255, 255, 0.8);
+  --white4: rgba(255, 255, 255, 0.4);
 
-    /* Basic background */
-    --grey: #f0f0f0; 
-    --silver: #e5e5e5; 
-    --hud: #222222;
-    --toolbar: #2c2c2c;
+  /* Basic background */
+  --grey: #f0f0f0;
+  --silver: #e5e5e5;
+  --hud: #222222;
+  --toolbar: #2c2c2c;
 
-    /* Special */
-    --black1: rgba(0, 0, 0, .1); 
-    --blue3: rgba(24, 145, 251, .3); 
-    --purple4: rgba(123, 97, 255, .4);
-    --hover-fill: rgba(0, 0, 0, .06);
-    --selection-a: #daebf7;
-    --selection-b: #edf5fa;
-    --white2: rgba(255, 255, 255, .2); 
+  /* Special */
+  --black1: rgba(0, 0, 0, 0.1);
+  --blue3: rgba(24, 145, 251, 0.3);
+  --purple4: rgba(123, 97, 255, 0.4);
+  --hover-fill: rgba(0, 0, 0, 0.06);
+  --selection-a: #daebf7;
+  --selection-b: #edf5fa;
+  --white2: rgba(255, 255, 255, 0.2);
 
+  /* TYPOGRAPHY */
+  /* Pos = positive applications (black on white) */
+  /* Neg = negative applications (white on black) */
 
-    /* TYPOGRAPHY */
-    /* Pos = positive applications (black on white) */
-    /* Neg = negative applications (white on black) */
-    
-    /* Font stack */
-    --font-stack: 'Inter', sans-serif;
+  /* Font stack */
+  --font-stack: "Inter", sans-serif;
 
-    /* Font sizes */
-    --font-size-xsmall: 11px;
-    --font-size-small: 12px;
-    --font-size-large: 13px;
-    --font-size-xlarge: 14px;
+  /* Font sizes */
+  --font-size-xsmall: 11px;
+  --font-size-small: 12px;
+  --font-size-large: 13px;
+  --font-size-xlarge: 14px;
 
-    /* Font weights */
-    --font-weight-normal: 400;
-    --font-weight-medium: 500;
-    --font-weight-bold: 600;
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
 
-    /* Lineheight */
-    --font-line-height: 16px; /* Use For xsmall, small font sizes */
-    --font-line-height-large: 24px; /* Use For large, xlarge font sizes */
-    
-    /* Letterspacing */
-    --font-letter-spacing-pos-xsmall: .005em;
-    --font-letter-spacing-neg-xsmall: .01em;
-    --font-letter-spacing-pos-small: 0;
-    --font-letter-spacing-neg-small: .005em;
-    --font-letter-spacing-pos-large: -.0025em;
-    --font-letter-spacing-neg-large: .0025em;
-    --font-letter-spacing-pos-xlarge: -.001em;
-    --font-letter-spacing-neg-xlarge: -.001em;
+  /* Lineheight */
+  --font-line-height: 16px; /* Use For xsmall, small font sizes */
+  --font-line-height-large: 24px; /* Use For large, xlarge font sizes */
 
+  /* Letterspacing */
+  --font-letter-spacing-pos-xsmall: 0.005em;
+  --font-letter-spacing-neg-xsmall: 0.01em;
+  --font-letter-spacing-pos-small: 0;
+  --font-letter-spacing-neg-small: 0.005em;
+  --font-letter-spacing-pos-large: -0.0025em;
+  --font-letter-spacing-neg-large: 0.0025em;
+  --font-letter-spacing-pos-xlarge: -0.001em;
+  --font-letter-spacing-neg-xlarge: -0.001em;
 
-    /* BORDER RADIUS */
-    --border-radius-small: 2px;
-    --border-radius-med: 5px;
-    --border-radius-large: 6px;
+  /* BORDER RADIUS */
+  --border-radius-small: 2px;
+  --border-radius-med: 5px;
+  --border-radius-large: 6px;
 
+  /* SHADOWS */
+  --shadow-hud: 0 5px 17px rgba(0, 0, 0, 0.2), 0 2px 7px rgba(0, 0, 0, 0.15);
+  --shadow-floating-window: 0 2px 14px rgba(0, 0, 0, 0.15);
 
-    /* SHADOWS */
-    --shadow-hud: 0 5px 17px rgba(0, 0, 0, .2), 0 2px 7px rgba(0, 0, 0, .15);
-    --shadow-floating-window: 0 2px 14px rgba(0, 0, 0, .15);
-
-
-    /* SPACING + SIZING */
-    --size-xxxsmall: 4px;
-    --size-xxsmall: 8px;
-    --size-xsmall: 16px;
-    --size-small: 24px;
-    --size-medium: 32px;
-    --size-large: 40px;
-    --size-xlarge: 48px;
-    --size-xxlarge: 64px;
-    --size-xxxlarge: 80px;
+  /* SPACING + SIZING */
+  --size-xxxsmall: 4px;
+  --size-xxsmall: 8px;
+  --size-xsmall: 16px;
+  --size-small: 24px;
+  --size-medium: 32px;
+  --size-large: 40px;
+  --size-xlarge: 48px;
+  --size-xxlarge: 64px;
+  --size-xxxlarge: 80px;
 }
 
 /* Global styles */
 
 * {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
   box-sizing: border-box;
 }
 /* HTML5 display-role reset for older browsers */
 body {
-	line-height: 1;
+  line-height: 1;
 }
-ol, ul {
-	list-style: none;
+ol,
+ul {
+  list-style: none;
 }
-blockquote, q {
-	quotes: none;
+blockquote,
+q {
+  quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 strong {
@@ -303,33 +303,39 @@ strong {
 
 /*  FONTS */
 @font-face {
-	font-family: 'Inter';
-	font-weight: 400;
-	font-style: normal;
-	src: url('https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7') format('woff2'),
-	url('https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7') format('woff');
+  font-family: "Inter";
+  font-weight: 400;
+  font-style: normal;
+  src: url("https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7")
+      format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7")
+      format("woff");
 }
 
 @font-face {
-	font-family: 'Inter';
-	font-weight: 500;
-	font-style: normal;
-	src: url('https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7') format('woff2'),
-	url('https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7') format('woff');
+  font-family: "Inter";
+  font-weight: 500;
+  font-style: normal;
+  src: url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+      format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+      format("woff");
 }
 
 @font-face {
-	font-family: 'Inter';
-	font-weight: 600;
-	font-style: normal;
-	src: url('https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7') format('woff2'),
-	url('https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7') format('woff');
+  font-family: "Inter";
+  font-weight: 600;
+  font-style: normal;
+  src: url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+      format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+      format("woff");
 }
 
 body {
   position: relative;
   box-sizing: border-box;
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   font-size: 12px;
@@ -348,16 +354,16 @@ body {
 }
 
 .text-xsmall {
-  font-size: var(--font-size-xsmall)
+  font-size: var(--font-size-xsmall);
 }
 .text-small {
-  font-size: var(--font-size-small)
+  font-size: var(--font-size-small);
 }
 .text-large {
-  font-size: var(--font-size-large)
+  font-size: var(--font-size-large);
 }
 .text-xlarge {
-  font-size: var(--font-size-xlarge)
+  font-size: var(--font-size-xlarge);
 }
 
 .text-left {
@@ -382,7 +388,12 @@ body {
   text-overflow: ellipsis;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
 }
 
@@ -391,6 +402,7 @@ $increments: (
   2,
   4,
   8,
+  10,
   12,
   16,
   20,
@@ -444,7 +456,7 @@ $sm: "screen and (max-width: 576px)";
   flex-shrink: 1 !important;
 }
 
-.basis-auto	{
+.basis-auto {
   flex-basis: auto;
 }
 .justify-start {
@@ -535,8 +547,6 @@ $sm: "screen and (max-width: 576px)";
   display: inline-flex;
   gap: var(--gap);
 }
-
-
 
 @each $col in (2, 3, 4, 6) {
   .col-#{$col} {
@@ -928,16 +938,17 @@ select.select-menu {
     background-color: var(--white);
     font-size: var(--font-size-xsmall);
 
-
     &:hover {
       border-color: var(--black1);
     }
-    &:focus, &--focus {
+    &:focus,
+    &--focus {
       border: 1px solid var(--blue);
       outline: 1px solid var(--blue);
       outline-offset: -2px;
     }
-    &:disabled:hover, &--disabled:hover {
+    &:disabled:hover,
+    &--disabled:hover {
       // justify-content: flex-start;
       border-color: transparent;
     }
@@ -949,7 +960,7 @@ select.select-menu {
     color: var(--black8);
   }
   &__button:focus &__label--placeholder,
-  &__button--focus &__label--placeholder  {
+  &__button--focus &__label--placeholder {
     color: var(--black8);
   }
   &__button:disabled:hover &__label--placeholder,
@@ -971,7 +982,8 @@ select.select-menu {
   &__button--disabled &__label {
     color: var(--black3);
   }
-  &__button[data-placeholder], &__button::placeholder {
+  &__button[data-placeholder],
+  &__button::placeholder {
     color: var(--black3);
   }
 
@@ -1088,7 +1100,8 @@ select.select-menu {
     flex-direction: column;
     padding: var(--size-xxxsmall) 0;
     width: calc(100% - 16px);
-    .name, .content {
+    .name,
+    .content {
       width: 100%;
       overflow-x: hidden;
       white-space: nowrap;
@@ -1099,7 +1112,7 @@ select.select-menu {
       font-size: var(--font-size-xsmall);
       color: var(--figma-color-text-onbrand-secondary);
     }
-    
+
     // flex-grow: 1;
     // flex-shrink: 0;
   }
@@ -1118,7 +1131,8 @@ select.select-menu {
   &--highlight,
   &__item:hover,
   &__item:focus,
-  &__item[data-highlighted], &__item--highlighted {
+  &__item[data-highlighted],
+  &__item--highlighted {
     background-color: var(--blue);
   }
 

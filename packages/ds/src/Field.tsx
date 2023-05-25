@@ -97,16 +97,6 @@ export const BaseInputStyle = css`
 const StyledTextBox = styled.input<TextBoxProps>`
   ${BaseInputStyle};
 `;
-export const ErrorMessage = styled.p`
-  color: var(--figma-color-text-danger);
-  font-size: var(--font-size-xsmall);
-  margin-top: 8px;
-`;
-export const HelpText = styled.p`
-  color: var(--figma-color-text-secondary);
-  font-size: var(--font-size-xsmall);
-  margin-top: 8px;
-`;
 export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
     {
@@ -116,7 +106,6 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
       value,
       type = "text",
       className = "",
-      placeholder,
       errorText,
       helpText,
       ...rest
@@ -134,7 +123,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
         <StyledTextBox
           id={id}
           placeholder={
-            placeholder || (typeof label == "string" ? label : undefined)
+            typeof label == "string" ? label : renderToString(<>label</>)
           }
           defaultValue={defaultValue}
           value={value}
@@ -143,7 +132,17 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           ref={ref}
           aria-invalid={errorText ? true : false}
         />
-        {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
+        {errorText && (
+          <p
+            css={`
+              color: var(--figma-color-text-danger);
+              font-size: var(--font-size-xsmall);
+              margin-top: 8px;
+            `}
+          >
+            {errorText}
+          </p>
+        )}
         {helpText && (
           <p
             css={`
@@ -166,15 +165,7 @@ const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
 `;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    {
-      label,
-      id,
-      defaultValue = "",
-      placeholder,
-      className = "",
-      helpText,
-      ...rest
-    },
+    { label, id, defaultValue = "", className = "", helpText, ...rest },
     ref
   ) => {
     return (
@@ -187,14 +178,24 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <StyledTextarea
           id={id}
           placeholder={
-            placeholder || (typeof label == "string" ? label : undefined)
+            typeof label == "string" ? label : renderToString(<>label</>)
           }
           defaultValue={defaultValue}
           className="textarea"
           {...rest}
           ref={ref}
         ></StyledTextarea>
-        {helpText && <HelpText>{helpText}</HelpText>}
+        {helpText && (
+          <p
+            css={`
+              color: var(--figma-color-text-secondary);
+              font-size: var(--font-size-xsmall);
+              margin-top: 8px;
+            `}
+          >
+            {helpText}
+          </p>
+        )}
       </div>
     );
   }

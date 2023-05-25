@@ -1,25 +1,15 @@
 import { getNodeData, setNodeData } from "figma-helpers";
 import { hexToFigmaRGB } from "figma-helpers/colors";
-import { LocaleJsonFormat, LocaleLibrary } from "../../lib";
-import dayjs from "dayjs";
-import {
-  CODE_FRAME_NAME,
-  CODE_INFO_FRAME_NAME,
-  LANGUAGE_LIST,
-  PREFIX,
-} from "../../lib/constant";
-import configs from "figma-helpers/configs";
+import { LocaleLibrary } from "../../lib";
+import { CODE_FRAME_NAME, LANGUAGES, PREFIX } from "../../lib/constant";
 const firstPage = figma.root.children[0];
 // async function exportCode(tokensObject: {[key:string]: Array<string | Token>}) {
 async function printCodeBlock(
   library: LocaleLibrary,
-  langJSONs: { [key: string]: string },
-  format: LocaleJsonFormat,
-  scope: "page" | "file" = "file"
+  langJSONs: { [key: string]: string }
 ) {
-  const scopeFind = scope == "file" ? firstPage : figma.currentPage;
   let localeCodeBlock =
-    (scopeFind.findOne(
+    (firstPage.findOne(
       (node) =>
         getNodeData(node, `${PREFIX}code`) == "1" &&
         getNodeData(node, `${PREFIX}library_id`) == library.id
@@ -29,12 +19,13 @@ async function printCodeBlock(
   }
   setNodeData(localeCodeBlock, `${PREFIX}code`, "1");
   setNodeData(localeCodeBlock, `${PREFIX}library_id`, library.id);
-  scopeFind.appendChild(localeCodeBlock);
+  firstPage.appendChild(localeCodeBlock);
   // }
   const paint: SolidPaint = {
     type: "SOLID",
     color: hexToFigmaRGB("#FFF"),
   };
+  console.log("Print code block");
   localeCodeBlock.name = `${library.name} JSON`;
   localeCodeBlock.resize(1400, 800);
   localeCodeBlock.fills = [paint];
@@ -46,21 +37,10 @@ async function printCodeBlock(
   localeCodeBlock.paddingBottom = 24;
   localeCodeBlock.paddingLeft = 24;
   localeCodeBlock.paddingRight = 24;
-  localeCodeBlock.bottomLeftRadius = 8;
-  localeCodeBlock.bottomRightRadius = 8;
-  localeCodeBlock.topLeftRadius = 8;
-  localeCodeBlock.topRightRadius = 8;
   localeCodeBlock.children.forEach((child) => {
     child.remove();
   });
 
-  const namespaceFrame = figma.createFrame();
-  namespaceFrame.name = CODE_INFO_FRAME_NAME;
-  namespaceFrame.layoutMode = "VERTICAL";
-  namespaceFrame.primaryAxisSizingMode = "AUTO";
-  namespaceFrame.counterAxisSizingMode = "AUTO";
-  namespaceFrame.itemSpacing = 8;
-  namespaceFrame.layoutAlign = "STRETCH";
   const namespaceTextNode = figma.createText();
   namespaceTextNode.name = `${library.name}`;
   namespaceTextNode.fontName = { family: "Roboto", style: "Bold" };
@@ -68,19 +48,8 @@ async function printCodeBlock(
   namespaceTextNode.characters = library.name;
   namespaceTextNode.textAutoResize = "HEIGHT";
   namespaceTextNode.layoutAlign = "STRETCH";
-  const namespaceInfoTextNode = figma.createText();
-  namespaceInfoTextNode.name = `${library.name}`;
-  namespaceInfoTextNode.fontName = { family: "Roboto", style: "Regular" };
-  namespaceInfoTextNode.fontSize = 10;
-  namespaceInfoTextNode.opacity = 0.6;
-  namespaceInfoTextNode.characters = `FORMAT: ${format}  —  EXPORT AT: ${dayjs().format(
-    "YYYY-MM-DD HH:mm:ss"
-  )} — BY: ${figma.currentUser.name}`;
-  namespaceInfoTextNode.textAutoResize = "HEIGHT";
-  namespaceInfoTextNode.layoutAlign = "STRETCH";
-  namespaceFrame.appendChild(namespaceTextNode);
-  namespaceFrame.appendChild(namespaceInfoTextNode);
-  localeCodeBlock.appendChild(namespaceFrame);
+
+  localeCodeBlock.appendChild(namespaceTextNode);
 
   const localeCodes = figma.createFrame();
   localeCodes.fills = [paint];
@@ -91,8 +60,7 @@ async function printCodeBlock(
   localeCodes.name = CODE_FRAME_NAME;
 
   localeCodeBlock.appendChild(localeCodes);
-  const languages = configs.get("languages");
-  languages.forEach((lang) => {
+  Object.keys(LANGUAGES).forEach((lang) => {
     const langFrame = figma.createFrame();
     langFrame.fills = [paint];
     langFrame.resize(700, 800);
@@ -100,13 +68,13 @@ async function printCodeBlock(
     langFrame.layoutMode = "VERTICAL";
     langFrame.counterAxisSizingMode = "AUTO";
     langFrame.itemSpacing = 16;
-    langFrame.name = `${LANGUAGE_LIST[lang]}`;
+    langFrame.name = `${LANGUAGES[lang]}`;
 
     const headingTextNode = figma.createText();
     headingTextNode.name = `HEADING ${lang}`;
     headingTextNode.fontName = { family: "Roboto", style: "Bold" };
     headingTextNode.fontSize = 16;
-    headingTextNode.characters = LANGUAGE_LIST[lang];
+    headingTextNode.characters = LANGUAGES[lang];
     headingTextNode.textAutoResize = "HEIGHT";
     headingTextNode.layoutAlign = "STRETCH";
 

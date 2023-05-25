@@ -1,7 +1,6 @@
 import { hexToFigmaRGB } from "figma-helpers/colors";
 import parseTagsInText, { ParsedText } from "../../lib/parseTagsInText";
 import { orderBy, uniqBy } from "lodash-es";
-import { loadFonts } from "figma-helpers/changeText";
 function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -97,71 +96,68 @@ export function setStyles(
       family: fontName.family,
       style: "Regular",
     };
-  const boldFontName = {
-    family: fontName.family,
-    style: settings.bold.fontNameStyle,
-  };
-  const linkFontName = {
-    family: fontName.family,
-    style: settings.link.fontNameStyle,
-  };
-  const fontsToLoad = [regularFontName];
-  if (parsedText.stylePositions.link.length > 0) fontsToLoad.push(linkFontName);
-  if (parsedText.stylePositions.bold.length > 0) fontsToLoad.push(boldFontName);
-  return new Promise((resolve) => {
-    loadFonts(fontsToLoad).then(() => {
-      // reset regular style
-      if (oldStyles.regular) {
-        // textNode.fontName = oldStyles.regular.fontName;
+  // // reset regular style
+  // if (oldStyles.regular) {
+  //   // textNode.fontName = oldStyles.regular.fontName;
+  //   setRangeBulkFields(
+  //     textNode,
+  //     oldStyles.regular,
+  //     0,
+  //     textNode.characters.length
+  //   );
+  // } else {
+  //   textNode.fontName = regularFontName;
+  // }
+  if (parsedText.stylePositions.bold.length > 0) {
+    // default bold style
+    // get first font
+    const boldFontName = {
+      family: fontName.family,
+      style: settings.bold.fontNameStyle,
+    };
+    parsedText.stylePositions.bold.forEach((boldPos, i) => {
+      // console.log("bold pos", boldPos.start, boldPos.end);
+      if (oldStyles.bold[i] && Object.keys(oldStyles.bold[i]).length > 0) {
         setRangeBulkFields(
           textNode,
-          oldStyles.regular,
-          0,
-          textNode.characters.length
+          oldStyles.bold[i],
+          boldPos.start,
+          boldPos.end
         );
       } else {
-        textNode.fontName = regularFontName;
+        textNode.setRangeFontName(boldPos.start, boldPos.end, boldFontName);
       }
-      // default bold style
-      // get first font
-      parsedText.stylePositions.bold.forEach((boldPos, i) => {
-        if (oldStyles.bold[i] && Object.keys(oldStyles.bold[i]).length > 0) {
-          setRangeBulkFields(
-            textNode,
-            oldStyles.bold[i],
-            boldPos.start,
-            boldPos.end
-          );
-        } else {
-          textNode.setRangeFontName(boldPos.start, boldPos.end, boldFontName);
-        }
-      });
-      // default link style
-      // get first font
-      parsedText.stylePositions.link.forEach((linkPos, i) => {
-        if ("href" in linkPos && linkPos["href"]) {
-          textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
-            type: "URL",
-            value: linkPos.href,
-          });
-        }
-        if (oldStyles.link[i] && Object.keys(oldStyles.link[i]).length > 0) {
-          setRangeBulkFields(
-            textNode,
-            oldStyles.link[i],
-            linkPos.start,
-            linkPos.end
-          );
-        } else {
-          textNode.setRangeFontName(linkPos.start, linkPos.end, linkFontName);
-          textNode.setRangeFills(linkPos.start, linkPos.end, [
-            settings.link.paint,
-          ]);
-        }
-      });
-      resolve(true);
     });
-  });
+  }
+  // default link style
+  if (parsedText.stylePositions.link.length > 0) {
+    // get first font
+    const linkFontName = {
+      family: fontName.family,
+      style: settings.link.fontNameStyle,
+    };
+    parsedText.stylePositions.link.forEach((linkPos, i) => {
+      if ("href" in linkPos && linkPos["href"]) {
+        textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
+          type: "URL",
+          value: linkPos.href,
+        });
+      }
+      if (oldStyles.link[i] && Object.keys(oldStyles.link[i]).length > 0) {
+        setRangeBulkFields(
+          textNode,
+          oldStyles.link[i],
+          linkPos.start,
+          linkPos.end
+        );
+      } else {
+        textNode.setRangeFontName(linkPos.start, linkPos.end, linkFontName);
+        textNode.setRangeFills(linkPos.start, linkPos.end, [
+          settings.link.paint,
+        ]);
+      }
+    });
+  }
 }
 export interface TextStyles {
   bold?: Partial<StyledTextSegment>[];

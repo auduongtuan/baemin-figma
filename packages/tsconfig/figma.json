@@ -7,9 +7,15 @@
     "noImplicitAny": false,
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "typeRoots": ["../../node_modules/@types", "../../node_modules/@figma"],
-    "lib": ["es2018", "es2019", "es2020", "dom"]
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../node_modules/@figma"
+    ],
+    "lib": [
+      "es2018",
+      "es2019",
+      "es2020",
+      "dom"
+    ]
   }
 }

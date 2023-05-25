@@ -5,7 +5,7 @@ import {
   TextIcon,
 } from "@radix-ui/react-icons";
 import classNames from "classnames";
-import { IconButton, Switch, Tag, Textarea, Tooltip } from "ds";
+import { IconButton, Switch, Tag, TextBox, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,14 +17,13 @@ import {
 } from "../../../lib";
 import { findItemByKey } from "../../../lib/localeItem";
 import { getVariableNames } from "../../../lib/localeText";
-import { useLocaleItems } from "../../hooks/locale";
-import { useAppDispatch } from "../../hooks/redux";
-import { updateText } from "../../state/helpers";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import EditDialog from "../dialogs/EditDialog";
 import FormulaEditor from "./FormulaEditor";
 import KeyCombobox from "./KeyCombobox";
 import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
+import { updateText } from "../../state/helpers";
 const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
   className,
   children,
@@ -50,7 +49,7 @@ const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
   );
 };
 const TextEditForm = ({ text }: { text: LocaleText }) => {
-  const localeItems = useLocaleItems();
+  const localeItems = useAppSelector((state) => state.locale.localeItems);
   const localeItem =
     text && text.key ? findItemByKey(text.key, localeItems) : null;
   const [useFormula, setUseFormula] = useState(false);
@@ -75,6 +74,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         };
         updateText(text.id, {
           item: localeItem,
+          items: localeItems,
           lang: text.lang as Lang,
           ...textProps,
         });
@@ -94,13 +94,11 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     };
   }, [watch, text, localeItem, localeItems]);
 
-  const variableNames = getVariableNames(
-    {
-      ...text,
-      item: localeItem,
-    },
-    localeItems
-  );
+  const variableNames = getVariableNames({
+    ...text,
+    item: localeItem,
+    items: localeItems,
+  });
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
     <div>
@@ -165,6 +163,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                           opened: true,
                           type: "NEW",
                           onDone: (localeItem: LocaleItem) => {
+                            console.log("NEW ADD", localeItem);
                             updateText(text.id, {
                               key: localeItem.key,
                               item: localeItem,
@@ -194,6 +193,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               {localeItem && (
                 <SwitchLanguageDropdownMenu
                   text={text}
+                  item={localeItem}
                   onOpenChange={(open) => {
                     setIconGroupActivated(open);
                   }}
@@ -221,6 +221,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               >
                 <SwitchLanguageDropdownMenu
                   text={text}
+                  items={localeItems}
                   onOpenChange={(open) => {
                     setIconGroupActivated(open);
                   }}

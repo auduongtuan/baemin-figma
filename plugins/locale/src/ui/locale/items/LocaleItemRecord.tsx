@@ -143,9 +143,6 @@ title={ */}
             <Tooltip content="Select texts with this key">
               <IconButton
                 onClick={(e: React.MouseEvent<HTMLElement>) => {
-                  runCommand("show_figma_notify", {
-                    message: `Finding texts with key ${item.key}...`,
-                  });
                   runCommand("select_texts", { key: item.key });
                   e.stopPropagation();
                 }}

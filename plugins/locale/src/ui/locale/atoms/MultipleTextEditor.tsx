@@ -1,24 +1,15 @@
 import React from "react";
 import { useAppSelector } from "../../hooks/redux";
-import {
-  useLocaleSelection,
-  useLocaleItems,
-  useDefaultLanguage,
-} from "../../hooks/locale";
 import { Tooltip, IconButton } from "ds";
-import {
-  ChatBubbleIcon,
-  MagicWandIcon,
-  UpdateIcon,
-} from "@radix-ui/react-icons";
+import { ChatBubbleIcon, MagicWandIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
 import { pluralize } from "@capaj/pluralize";
 import TextEditForm from "./TextEditForm";
-import { MIXED_VALUE } from "../../../lib";
 const MultipleTextEditor = () => {
-  const localeSelection = useLocaleSelection();
-  const defaultLanguage = useDefaultLanguage();
-  const localeItems = useLocaleItems();
+  const localeSelection = useAppSelector(
+    (state) => state.locale.localeSelection
+  );
+  const localeItems = useAppSelector((state) => state.locale.localeItems);
   return localeSelection && localeSelection.texts ? (
     <div className="p-16">
       <header className="flex items-center">
@@ -27,18 +18,6 @@ const MultipleTextEditor = () => {
           {pluralize("text", localeSelection.texts.length)} in selection
         </h4>
         <div className="flex gap-8 flex-shrink-0">
-          <Tooltip content="Update texts to latest content">
-            <IconButton
-              onClick={() => {
-                runCommand("update_texts", {
-                  items: localeItems,
-                });
-                runCommand("show_figma_notify", { message: "Texts updated" });
-              }}
-            >
-              <UpdateIcon />
-            </IconButton>
-          </Tooltip>
           <Tooltip content="Auto assign key">
             <IconButton
               onClick={() => {

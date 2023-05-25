@@ -1,4 +1,5 @@
 import { isObject } from "lodash-es";
+import { LANGUAGES } from "./constant";
 import { matchAll } from "./helpers";
 import { getTextPropsByCharacters } from "./localeText";
 import {
@@ -6,12 +7,9 @@ import {
   LocaleItemContent,
   LocaleItemPluralContent,
 } from "./types";
-import configs from "figma-helpers/configs";
 
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
-  return localeItems
-    ? localeItems.find((item) => "key" in item && item.key == key)
-    : null;
+  return localeItems ? localeItems.find((item) => item.key == key) : null;
 }
 
 export function findItemByCharacters(
@@ -32,12 +30,10 @@ export function findItemByKeyOrCharacters(
   characters: string,
   localeItems: LocaleItem[]
 ) {
-  const languages = configs.get("languages");
   return localeItems
     ? localeItems.find(
         (item) =>
-          item.key == key ||
-          languages.some((lang) => lang in item && item[lang] == characters)
+          item.key == key || item.en == characters || item.vi == characters
       )
     : null;
 }
@@ -58,8 +54,8 @@ export function getStringContent(content: LocaleItemContent): string {
 export function getUsedTags(localeItem: LocaleItem) {
   if (!localeItem) return [];
   const reg = /\<(b|a|ul|li)\b[^>]*>/;
-  const languages = configs.get("languages");
-  const tags = languages.reduce((acc, lang) => {
+
+  const tags = Object.keys(LANGUAGES).reduce((acc, lang) => {
     const itemContent = localeItem[lang];
     if (itemContent) {
       if (isPlurals(itemContent)) {

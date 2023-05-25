@@ -6,7 +6,7 @@ import {
   LocaleItem,
   LocaleData,
 } from "../../lib";
-import { cloneDeep, pickBy } from "lodash-es";
+import { cloneDeep } from "lodash-es";
 type LocaleState = LocaleData & { localeSelection: LocaleSelection };
 const initialState: LocaleState = {
   sheetName: null,
@@ -35,12 +35,10 @@ function updateSummaryInLocaleSelection(state: LocaleState) {
   );
   state.localeSelection.multiple =
     state.localeSelection.texts.length > 1 ? true : false;
-  state.localeSelection.summary.lang = isSameLang
-    ? state.localeSelection.texts[0]?.lang
-    : MIXED_VALUE;
-  state.localeSelection.summary.key = isSameKey
-    ? state.localeSelection.texts[0]?.key
-    : MIXED_VALUE;
+  state.localeSelection.summary = {
+    lang: isSameLang ? state.localeSelection.texts[0]?.lang : MIXED_VALUE,
+    key: isSameKey ? state.localeSelection.texts[0]?.key : MIXED_VALUE,
+  };
 }
 export const localeSlice = createSlice({
   name: "locale",
@@ -70,9 +68,7 @@ export const localeSlice = createSlice({
     updateTextInLocaleSelection: (state, action: PayloadAction<LocaleText>) => {
       state.localeSelection.texts = [
         ...state.localeSelection.texts.map((text) =>
-          text.id != action.payload.id
-            ? text
-            : { ...text, ...pickBy(action.payload, (v) => v !== undefined) }
+          text.id != action.payload.id ? text : { ...text, ...action.payload }
         ),
       ];
       updateSummaryInLocaleSelection(state);
@@ -86,15 +82,12 @@ export const localeSlice = createSlice({
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
           text.id != action.payload[0].id
             ? text
-            : {
-                ...cloneDeep(text),
-                ...pickBy(action.payload[0], (v) => v !== undefined),
-              }
+            : { ...text, ...action.payload[0] }
         );
       } else {
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
           Object.assign(
-            cloneDeep(text),
+            text,
             action.payload.find((updatedText) => updatedText.id === text.id)
           )
         );

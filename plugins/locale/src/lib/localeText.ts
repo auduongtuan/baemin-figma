@@ -1,6 +1,12 @@
 import configs from "figma-helpers/configs";
 import { escapeRegExp, isObject } from "lodash-es";
-import { compareTime, matchAll, placeholders, stripTags } from "./helpers";
+import {
+  compareTime,
+  isNumeric,
+  matchAll,
+  placeholders,
+  stripTags,
+} from "./helpers";
 import parseTagsInText from "./parseTagsInText";
 import { isPlurals } from "./localeItem";
 import {
@@ -80,6 +86,12 @@ export function getTextPropsByCharacters(
                 characters,
                 itemContent
               );
+              if (
+                "count" in foundVariables &&
+                !isNumeric(foundVariables.count)
+              ) {
+                return false;
+              }
               return true;
             }
           } else {
@@ -90,6 +102,12 @@ export function getTextPropsByCharacters(
                   characters,
                   itemContent[quantity]
                 );
+                if (
+                  "count" in foundVariables &&
+                  !isNumeric(foundVariables.count)
+                ) {
+                  return false;
+                }
                 return true;
               }
             });

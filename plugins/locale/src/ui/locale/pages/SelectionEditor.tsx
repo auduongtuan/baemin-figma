@@ -36,12 +36,12 @@ const SelectionEditor = () => {
       item: findItemByKey(key, localeItems),
     });
   };
-  const showAutoAssign =
+  const showForm =
     !matchedItem &&
     !suggestedText &&
     localeSelection &&
     localeSelection.texts.length == 1;
-  const showForm =
+  const showAutoAssign =
     suggestedText &&
     suggestedText.key &&
     localeSelection &&

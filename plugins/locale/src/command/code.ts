@@ -23,7 +23,6 @@ io.on("update_texts", (msg) => {
   const { ids, items, ...rest } = msg;
   // updateTextsByIds(ids, rest);
   updateTextsAsync(rest, items, ids).then(() => {
-    console.log("updated");
     io.send("update_texts", { success: true });
   });
 });

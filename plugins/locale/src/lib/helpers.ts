@@ -141,13 +141,16 @@ export const compareTime = (a: string, b: string) => {
   const date2 = b ? new Date(b).getTime() : 0;
   return date1 - date2;
 };
-function padTo2Digits(num: number) {
-  return num.toString().padStart(2, "0");
-}
+
 export function defaultDateTimeFormat(dateString: Date | string) {
   return dayjs(dateString).format("YYYY/MM/DD HH:mm:ss");
 }
 
 export function stripTags(str: string) {
   return str.replace(/(<([^>]+)>)/gi, "");
+}
+export function isNumeric(str: string | number) {
+  if (typeof str === "number") return true;
+  if (typeof str !== "string") return false;
+  return /^\d+$/.test(str);
 }

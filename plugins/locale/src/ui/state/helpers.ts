@@ -11,7 +11,6 @@ export function updateText(id: string, textProps: LocaleTextProps) {
   const { characters, ...rest } = getFullLocaleText(textProps, items);
   runCommand("update_texts", {
     ids: id,
-    // items: textProps.items,
     ...rest,
   });
   store.dispatch(
@@ -23,10 +22,8 @@ export function updateText(id: string, textProps: LocaleTextProps) {
   );
 }
 export function updateTexts(ids: string[], textProps: LocaleTextProps) {
-  console.log(textProps);
   runCommand("update_texts", {
     ids,
-    // items: textProps.items,
     ...textProps,
   });
   const items = store.getState().locale.localeItems;
@@ -57,7 +54,6 @@ export function updateTexts(ids: string[], textProps: LocaleTextProps) {
 
 export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
   // newKey
-  // update selected text also
   const { localeItems, localeSelection } = store.getState().locale;
 
   const texts = localeSelection.texts.filter(
@@ -71,7 +67,6 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
       ids: text.id,
       ...text,
       item: item,
-      items: localeItems,
     });
   });
   store.dispatch(

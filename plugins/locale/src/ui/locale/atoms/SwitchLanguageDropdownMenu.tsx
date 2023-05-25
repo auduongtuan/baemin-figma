@@ -1,26 +1,17 @@
 import { GlobeIcon } from "@radix-ui/react-icons";
 import { DropdownMenu, DropdownMenuProps, IconButton, Tooltip } from "ds";
 import React from "react";
-import { LANGUAGE_LIST, Lang, LocaleItem, LocaleText } from "../../../lib";
+import { LANGUAGE_LIST, LocaleText } from "../../../lib";
 import { updateText } from "../../state/helpers";
-import {
-  useLanguages,
-  useLocaleItems,
-  useLocaleSelection,
-} from "../../hooks/locale";
-import { useAppSelector } from "../../hooks/redux";
-import configs from "figma-helpers/configs";
+import { useLanguages, useLocaleItems } from "../../hooks/locale";
 const SwitchLanguageDropdownMenu = ({
   text,
-  item,
-  items,
   ...rest
 }: DropdownMenuProps & {
   text: LocaleText;
-  item?: LocaleItem;
-  items?: LocaleItem[];
 }) => {
   const languages = useLanguages();
+  const items = useLocaleItems();
   return (
     <DropdownMenu {...rest}>
       <Tooltip content="Switch language">
@@ -40,9 +31,9 @@ const SwitchLanguageDropdownMenu = ({
                 updateText(text.id, {
                   formula: text.formula || undefined,
                   key: text.key,
-                  lang: lang as Lang,
-                  item: item,
-                  items: items,
+                  variables: text.variables,
+                  lang,
+                  items,
                 });
               }}
             >

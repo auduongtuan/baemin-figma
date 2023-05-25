@@ -1,36 +1,34 @@
-export function loadFonts(fontNames: FontName[], callback: Function = null) {
-  Promise.allSettled(
+export function loadFonts(fontNames: FontName[]) {
+  return Promise.allSettled(
     fontNames.map((fontName: FontName) => figma.loadFontAsync(fontName))
-  ).then(() => {
-    if (callback) callback();
-  });
+  );
 }
 const changeText = (function () {
   let loadedFonts = new Set<FontName>();
-  function loadFontsToSet(fontNames: FontName[], callback: Function = null) {
-    loadFonts(fontNames, () => {
-      fontNames.forEach((fontName) => loadedFonts.add(fontName));
-      if (callback) callback();
+  function loadFontsToSet(fontNames: FontName[]) {
+    return new Promise((resolve) => {
+      loadFonts(fontNames).then(() => {
+        fontNames.forEach((fontName) => loadedFonts.add(fontName));
+        resolve(true);
+      });
     });
   }
-  function change(
-    text: TextNode,
-    characters: string,
-    callback = (Function = null)
-  ) {
+  function change(text: TextNode, characters: string) {
     if (typeof characters != "string") return;
     const fontNames = text.getRangeAllFontNames(0, text.characters.length);
     const unloadedFontNames = fontNames.filter(
       (fontName) => !loadedFonts.has(fontName)
     );
-    if (unloadedFontNames.length) {
-      loadFontsToSet(unloadedFontNames, () => {
+    return new Promise((resolve) => {
+      if (unloadedFontNames.length) {
+        loadFontsToSet(unloadedFontNames).then(() => {
+          text.characters = characters;
+        });
+      } else {
         text.characters = characters;
-        if (callback) callback();
-      });
-    } else {
-      text.characters = characters;
-    }
+      }
+      resolve(true);
+    });
   }
   return Object.assign(change, {
     loadFonts: loadFontsToSet,

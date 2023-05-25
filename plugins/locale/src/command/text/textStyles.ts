@@ -108,7 +108,7 @@ export function setStyles(
   const fontsToLoad = [regularFontName];
   if (parsedText.stylePositions.link.length > 0) fontsToLoad.push(linkFontName);
   if (parsedText.stylePositions.bold.length > 0) fontsToLoad.push(boldFontName);
-  loadFonts(fontsToLoad, () => {
+  loadFonts(fontsToLoad).then(() => {
     // reset regular style
     if (oldStyles.regular) {
       // textNode.fontName = oldStyles.regular.fontName;

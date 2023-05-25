@@ -4,6 +4,7 @@
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/code.js",
+  "permissions": ["currentuser"],
   "ui": "dist/index.html",
   "menu": [{ "name": "Open", "command": "locale" }]
 }

@@ -6,7 +6,13 @@ import {
 import { Button, IconButton, Popover, Select, Tooltip } from "ds";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Lang, LocaleItem, LocaleLibrary, isPlurals } from "../../../lib";
+import {
+  Lang,
+  LocaleItem,
+  LocaleJsonFormat,
+  LocaleLibrary,
+  isPlurals,
+} from "../../../lib";
 import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
 import { useAppSelector } from "../../hooks/redux";
 import { runCommand } from "../../uiHelper";
@@ -21,7 +27,6 @@ import { js_beautify } from "js-beautify";
 import { set } from "lodash-es";
 import { LocaleText } from "../../../lib";
 import { compareTime } from "../../../lib/helpers";
-type JsonFormat = "i18n-js" | "i18next";
 const filterItemsByLibrary = (
   localeItems: LocaleItem[],
   library: LocaleLibrary
@@ -42,7 +47,7 @@ const filterItemsByLibrary = (
 const printCodeBlock = (
   localeItems: LocaleItem[],
   library: LocaleLibrary,
-  format: JsonFormat = "i18next",
+  format: LocaleJsonFormat = "i18next",
   scope: "file" | "page" = "file",
   texts: LocaleText[] = null
 ) => {
@@ -97,7 +102,7 @@ const printCodeBlock = (
     // );
   });
 
-  runCommand("print_code_block", { library, langJSONs, scope });
+  runCommand("print_code_block", { library, langJSONs, format, scope });
 };
 const ExportCode = () => {
   const localeItems = useLocaleItems();
@@ -243,12 +248,12 @@ const ExportCode = () => {
                   {
                     name: "i18n-js",
                     value: "i18n-js",
-                    content: "Current format in Swing",
+                    content: "Format used by i18n-js",
                   },
                   {
                     name: "i18next",
                     value: "i18next",
-                    content: "New format might be used",
+                    content: "Format used by i18next",
                   },
                 ]}
                 // disabled={localeSelection ? false : true}

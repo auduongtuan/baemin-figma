@@ -1,6 +1,11 @@
-import { LANGUAGE_LIST } from "./../lib/constant";
+import {
+  PLUGIN_NAME,
+  INITIAL_DEFAULT_LANGUAGE,
+  INITIAL_LANGUAGES,
+  DEFAULT_FONTS,
+} from "./../lib/constant";
 import switchLang from "./selection/switchLang";
-import { updateTextsByIds } from "./text/updateText";
+import { updateTextsAsync } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./general/localeData";
 import printCodeBlock from "./general/printCodeBlock";
@@ -11,22 +16,17 @@ import io from "figma-helpers/io";
 import { getTexts } from "./text/textNodes";
 import changeText from "figma-helpers/changeText";
 import configs from "figma-helpers/configs";
-const dsFonts = [
-  { family: "Roboto", style: "Regular" },
-  { family: "Roboto", style: "Medium" },
-  { family: "Roboto", style: "SemiBold" },
-  { family: "Roboto", style: "Bold" },
-  { family: "Roboto Mono", style: "Regular" },
-  { family: "Roboto Mono", style: "Medium" },
-  { family: "Roboto Mono", style: "SemiBold" },
-  { family: "Roboto Mono", style: "Bold" },
-];
+
 figma.skipInvisibleInstanceChildren = true;
 io.on("select_texts", (msg) => selectTexts(msg.key));
 io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
 io.on("update_texts", (msg) => {
   const { ids, ...rest } = msg;
-  updateTextsByIds(ids, rest);
+  // updateTextsByIds(ids, rest);
+  updateTextsAsync(rest, ids).then(() => {
+    console.log("updated");
+    io.send("update_texts", { success: true });
+  });
 });
 io.on("switch_lang", (msg) => switchLang(msg.lang, msg.localeItems));
 io.on("get_locale_data", () => {
@@ -35,7 +35,8 @@ io.on("get_locale_data", () => {
 io.on("save_locale_data", (msg) => saveLocaleData(msg.localeData));
 io.on(
   "print_code_block",
-  async (msg) => await printCodeBlock(msg.library, msg.langJSONs, msg.scope)
+  async (msg) =>
+    await printCodeBlock(msg.library, msg.langJSONs, msg.format, msg.scope)
 );
 io.on(
   "create_annotation",
@@ -46,7 +47,15 @@ io.on("get_texts_in_page", () => {
   io.send("get_texts_in_page", { texts: getTexts() });
 });
 io.on("get_configs", (msg) => {
-  io.send("get_configs", { configs: configs.getAll() });
+  configs
+    .fetch({
+      languages: INITIAL_LANGUAGES,
+      defaultLanguage: INITIAL_DEFAULT_LANGUAGE,
+    })
+    .then((data) => {
+      configs.setAll(data);
+      io.send("get_configs", { configs: configs.getAll() });
+    });
 });
 io.on("set_configs", async (msg) => {
   configs.setAll(msg.configs);
@@ -56,16 +65,19 @@ io.on("set_configs", async (msg) => {
   }
 });
 figma.on("run", ({ command, parameters }: RunEvent) => {
+  figma.showUI(__html__, {
+    title: PLUGIN_NAME,
+    width: 360,
+    height: 640,
+  });
   configs
-    .fetch({ languages: ["en", "vi"], defaultLanguage: "vi" })
+    .fetch({
+      languages: INITIAL_LANGUAGES,
+      defaultLanguage: INITIAL_DEFAULT_LANGUAGE,
+    })
     .then((data) => {
       configs.setAll(data);
-      changeText.loadFonts(dsFonts, () => {
-        figma.showUI(__html__, {
-          title: "Locale editor",
-          width: 360,
-          height: 640,
-        });
+      changeText.loadFonts(DEFAULT_FONTS).then(() => {
         updateSelection();
       });
     });
@@ -73,15 +85,3 @@ figma.on("run", ({ command, parameters }: RunEvent) => {
 figma.on("selectionchange", async () => {
   updateSelection();
 });
-
-// // figma.parameters.on('input', ({ parameters, key, query, result }: ParameterInputEvent) => {
-// //   switch (key) {
-// //     case 'truncate_type':
-// //       const truncateTypes = ['end', 'middle']
-// //       result.setSuggestions(truncateTypes.filter(s => s.includes(query)))
-// //       break
-
-// //     default:
-// //       return
-// //   }
-// // })

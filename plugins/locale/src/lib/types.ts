@@ -69,3 +69,4 @@ export interface LocaleSelection {
   multiple?: boolean;
   texts?: LocaleText[];
 }
+export type LocaleJsonFormat = "i18n-js" | "i18next";

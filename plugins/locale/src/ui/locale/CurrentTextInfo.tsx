@@ -1,3 +1,4 @@
+import { Divider, Select } from "ds";
 import React from "react";
 import { LANGUAGE_LIST, MIXED_VALUE } from "../../lib/constant";
 import {
@@ -6,16 +7,12 @@ import {
   useLocaleSelection,
 } from "../hooks/locale";
 import { runCommand } from "../uiHelper";
-import { Select, Divider } from "ds";
-
 import KeyCombobox from "./atoms/KeyCombobox";
-import configs from "figma-helpers/configs";
 
 const CurrentTextInfo = () => {
   const localeSelection = useLocaleSelection();
   const localeItems = useLocaleItems();
   const languages = useLanguages();
-  console.log(localeSelection.summary);
   return (
     languages &&
     localeSelection && (
@@ -69,7 +66,11 @@ const CurrentTextInfo = () => {
                 };
               }),
             ]}
-            disabled={localeSelection ? false : true}
+            disabled={
+              localeSelection && localeSelection.summary.key !== undefined
+                ? false
+                : true
+            }
           ></Select>
         </div>
         <Divider />

@@ -34,6 +34,7 @@
     "axios": "^1.2.1",
     "babel-plugin-styled-components": "^2.0.7",
     "classnames": "^2.3.2",
+    "dayjs": "^1.11.7",
     "downshift": "^7.0.5",
     "figma-plugin-ds": "^1.0.1",
     "i18next": "^22.4.14",

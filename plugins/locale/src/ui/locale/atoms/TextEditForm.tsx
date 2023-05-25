@@ -193,7 +193,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               {localeItem && (
                 <SwitchLanguageDropdownMenu
                   text={text}
-                  item={localeItem}
                   onOpenChange={(open) => {
                     setIconGroupActivated(open);
                   }}
@@ -221,7 +220,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               >
                 <SwitchLanguageDropdownMenu
                   text={text}
-                  items={localeItems}
                   onOpenChange={(open) => {
                     setIconGroupActivated(open);
                   }}

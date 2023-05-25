@@ -9,7 +9,6 @@ import NewDialog from "./dialogs/NewDialog";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import io from "figma-helpers/io";
-import configsObj from "figma-helpers/configs";
 import { useLocaleSelection } from "../hooks/locale";
 import MainSekeleton from "./atoms/MainSkeleton";
 import { setConfigs } from "../state/localeAppSlice";
@@ -17,7 +16,7 @@ TimeAgo.addDefaultLocale(en);
 const Locale = ({}) => {
   const localeSelection = useLocaleSelection();
   const dispatch = useAppDispatch();
-  const [isReady, setIsReady] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   useEffect(() => {
     Promise.all([
       io.sendAndReceive("get_configs"),
@@ -32,11 +31,15 @@ const Locale = ({}) => {
       }
       setIsReady(true);
     });
+  }, []);
+  useEffect(() => {
     io.on("change_locale_selection", (data) => {
       dispatch(setTextsInLocaleSelection(data.texts));
     });
   }, []);
-  return isReady ? (
+  return !isReady ? (
+    <MainSekeleton />
+  ) : (
     <div
       css={`
         background: var(--white);
@@ -63,8 +66,6 @@ const Locale = ({}) => {
       </section>
       <AppBar />
     </div>
-  ) : (
-    <MainSekeleton />
   );
 };
 

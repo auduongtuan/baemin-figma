@@ -46,7 +46,7 @@ const Select = ({
   useEffect(() => {
     const newSelectedItem = options.find(
       (option) =>
-        option.value == value || (defaultValue && option.value == defaultValue)
+        isEqual(option.value, value) || isEqual(option.value, defaultValue)
     );
     if (newSelectedItem) {
       setSelectedItem(newSelectedItem);

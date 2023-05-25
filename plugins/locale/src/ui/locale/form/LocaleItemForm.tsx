@@ -11,7 +11,7 @@ import {
   IconButton,
   Tooltip,
 } from "ds";
-import { dateTimeFormat } from "../../../lib/helpers";
+import { defaultDateTimeFormat } from "../../../lib/helpers";
 import { debounce, get, has, isString } from "lodash-es";
 import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
@@ -37,13 +37,17 @@ const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
             {localeItem.createdAt && (
               <div>
                 <p className="font-medium">Created at:</p>
-                <p className="mt-2">{dateTimeFormat(localeItem.createdAt)}</p>
+                <p className="mt-2">
+                  {defaultDateTimeFormat(localeItem.createdAt)}
+                </p>
               </div>
             )}
             {localeItem.updatedAt && (
               <div>
                 <p className="font-medium">Updated at:</p>
-                <p className="mt-2">{dateTimeFormat(localeItem.updatedAt)}</p>
+                <p className="mt-2">
+                  {defaultDateTimeFormat(localeItem.updatedAt)}
+                </p>
               </div>
             )}
           </div>

@@ -8,6 +8,7 @@ import {
 } from "../hooks/locale";
 import { runCommand } from "../uiHelper";
 import KeyCombobox from "./atoms/KeyCombobox";
+import { updateTexts } from "../state/helpers";
 
 const CurrentTextInfo = () => {
   const localeSelection = useLocaleSelection();
@@ -44,7 +45,11 @@ const CurrentTextInfo = () => {
             value={localeSelection.summary.lang}
             // key={localeSelection ? localeSelection.id : 'select-lang-no-text'}
             onChange={(value) => {
-              runCommand("switch_lang", { lang: value, localeItems });
+              // runCommand("switch_lang", { lang: value, localeItems });
+              updateTexts(
+                localeSelection.texts.map((text) => text.id),
+                { lang: value }
+              );
             }}
             options={[
               ...(localeSelection.summary.lang === MIXED_VALUE

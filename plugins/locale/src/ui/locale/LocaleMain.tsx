@@ -34,6 +34,7 @@ const Locale = ({}) => {
   }, []);
   useEffect(() => {
     io.on("change_locale_selection", (data) => {
+      console.log("UPDATE SELECTION", data.texts);
       dispatch(setTextsInLocaleSelection(data.texts));
     });
   }, []);

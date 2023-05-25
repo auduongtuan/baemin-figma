@@ -10,7 +10,7 @@ import {
 } from "../../../lib";
 import { MIXED_VALUE } from "../../../lib/constant";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import { useLocaleItems } from "../../hooks/locale";
 import { updateText, updateTexts } from "../../state/helpers";
 import { setCurrentDialog, setIsWorking } from "../../state/localeAppSlice";
 import configs from "figma-helpers/configs";

@@ -1,9 +1,9 @@
 import { LocaleTextProps } from "../lib";
 import io from "figma-helpers/io";
+import { store } from "./state/store";
 
 export const commands = [
   "select_texts",
-  "switch_lang",
   "update_texts",
   "get_locale_data",
   "save_locale_data",
@@ -32,5 +32,12 @@ export function runCommand(
   type: string,
   data: { [key: string]: any } = {}
 ): void {
-  io.send(type, data);
+  const sentData = { ...data };
+  if (type == "update_texts") {
+    sentData.items = store.getState().locale.localeItems;
+  }
+  io.send(type, sentData);
+}
+export function notify(msg: string) {
+  io.send("show_figma_notify", { message: msg });
 }

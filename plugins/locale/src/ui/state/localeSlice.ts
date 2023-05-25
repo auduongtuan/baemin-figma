@@ -86,12 +86,15 @@ export const localeSlice = createSlice({
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
           text.id != action.payload[0].id
             ? text
-            : { ...text, ...pickBy(action.payload[0], (v) => v !== undefined) }
+            : {
+                ...cloneDeep(text),
+                ...pickBy(action.payload[0], (v) => v !== undefined),
+              }
         );
       } else {
         state.localeSelection.texts = state.localeSelection.texts.map((text) =>
           Object.assign(
-            text,
+            cloneDeep(text),
             action.payload.find((updatedText) => updatedText.id === text.id)
           )
         );

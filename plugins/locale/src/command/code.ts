@@ -4,7 +4,6 @@ import {
   INITIAL_LANGUAGES,
   DEFAULT_FONTS,
 } from "./../lib/constant";
-import switchLang from "./selection/switchLang";
 import { updateTextsAsync } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
 import { getLocaleData, saveLocaleData } from "./general/localeData";
@@ -21,14 +20,13 @@ figma.skipInvisibleInstanceChildren = true;
 io.on("select_texts", (msg) => selectTexts(msg.key));
 io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
 io.on("update_texts", (msg) => {
-  const { ids, ...rest } = msg;
+  const { ids, items, ...rest } = msg;
   // updateTextsByIds(ids, rest);
-  updateTextsAsync(rest, ids).then(() => {
+  updateTextsAsync(rest, items, ids).then(() => {
     console.log("updated");
     io.send("update_texts", { success: true });
   });
 });
-io.on("switch_lang", (msg) => switchLang(msg.lang, msg.localeItems));
 io.on("get_locale_data", () => {
   io.send("get_locale_data", { localeData: getLocaleData() });
 });

@@ -75,7 +75,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         };
         updateText(text.id, {
           item: localeItem,
-          items: localeItems,
           lang: text.lang as Lang,
           ...textProps,
         });
@@ -95,11 +94,13 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     };
   }, [watch, text, localeItem, localeItems]);
 
-  const variableNames = getVariableNames({
-    ...text,
-    item: localeItem,
-    items: localeItems,
-  });
+  const variableNames = getVariableNames(
+    {
+      ...text,
+      item: localeItem,
+    },
+    localeItems
+  );
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
     <div>

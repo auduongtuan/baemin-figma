@@ -108,55 +108,58 @@ export function setStyles(
   const fontsToLoad = [regularFontName];
   if (parsedText.stylePositions.link.length > 0) fontsToLoad.push(linkFontName);
   if (parsedText.stylePositions.bold.length > 0) fontsToLoad.push(boldFontName);
-  loadFonts(fontsToLoad).then(() => {
-    // reset regular style
-    if (oldStyles.regular) {
-      // textNode.fontName = oldStyles.regular.fontName;
-      setRangeBulkFields(
-        textNode,
-        oldStyles.regular,
-        0,
-        textNode.characters.length
-      );
-    } else {
-      textNode.fontName = regularFontName;
-    }
-    // default bold style
-    // get first font
-    parsedText.stylePositions.bold.forEach((boldPos, i) => {
-      if (oldStyles.bold[i] && Object.keys(oldStyles.bold[i]).length > 0) {
+  return new Promise((resolve) => {
+    loadFonts(fontsToLoad).then(() => {
+      // reset regular style
+      if (oldStyles.regular) {
+        // textNode.fontName = oldStyles.regular.fontName;
         setRangeBulkFields(
           textNode,
-          oldStyles.bold[i],
-          boldPos.start,
-          boldPos.end
+          oldStyles.regular,
+          0,
+          textNode.characters.length
         );
       } else {
-        textNode.setRangeFontName(boldPos.start, boldPos.end, boldFontName);
+        textNode.fontName = regularFontName;
       }
-    });
-    // default link style
-    // get first font
-    parsedText.stylePositions.link.forEach((linkPos, i) => {
-      if ("href" in linkPos && linkPos["href"]) {
-        textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
-          type: "URL",
-          value: linkPos.href,
-        });
-      }
-      if (oldStyles.link[i] && Object.keys(oldStyles.link[i]).length > 0) {
-        setRangeBulkFields(
-          textNode,
-          oldStyles.link[i],
-          linkPos.start,
-          linkPos.end
-        );
-      } else {
-        textNode.setRangeFontName(linkPos.start, linkPos.end, linkFontName);
-        textNode.setRangeFills(linkPos.start, linkPos.end, [
-          settings.link.paint,
-        ]);
-      }
+      // default bold style
+      // get first font
+      parsedText.stylePositions.bold.forEach((boldPos, i) => {
+        if (oldStyles.bold[i] && Object.keys(oldStyles.bold[i]).length > 0) {
+          setRangeBulkFields(
+            textNode,
+            oldStyles.bold[i],
+            boldPos.start,
+            boldPos.end
+          );
+        } else {
+          textNode.setRangeFontName(boldPos.start, boldPos.end, boldFontName);
+        }
+      });
+      // default link style
+      // get first font
+      parsedText.stylePositions.link.forEach((linkPos, i) => {
+        if ("href" in linkPos && linkPos["href"]) {
+          textNode.setRangeHyperlink(linkPos.start, linkPos.end, {
+            type: "URL",
+            value: linkPos.href,
+          });
+        }
+        if (oldStyles.link[i] && Object.keys(oldStyles.link[i]).length > 0) {
+          setRangeBulkFields(
+            textNode,
+            oldStyles.link[i],
+            linkPos.start,
+            linkPos.end
+          );
+        } else {
+          textNode.setRangeFontName(linkPos.start, linkPos.end, linkFontName);
+          textNode.setRangeFills(linkPos.start, linkPos.end, [
+            settings.link.paint,
+          ]);
+        }
+      });
+      resolve(true);
     });
   });
 }

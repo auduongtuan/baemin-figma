@@ -137,8 +137,7 @@ function LocaleItemForm({
     const oldKey = getValues("oldKey");
     const localeItemData = getContent("update");
     dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
-    if (localeSelection)
-      updateTextsOfItem(oldKey, localeItemData, localeSelection, localeItems);
+    if (localeSelection) updateTextsOfItem(oldKey, localeItemData);
     dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
     runCommand("show_figma_notify", { message: "Item updated" });
   }, [localeSelection, localeItems]);
@@ -148,8 +147,7 @@ function LocaleItemForm({
       debounce((data) => {
         dispatch(updateLocaleItem(data));
         // update selected text also
-        if (localeSelection)
-          updateTextsOfItem(null, data, localeSelection, localeItems);
+        if (localeSelection) updateTextsOfItem(null, data);
       }, 300),
     [localeSelection, localeItems]
   );

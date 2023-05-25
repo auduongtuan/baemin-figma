@@ -54,12 +54,10 @@ export interface LocaleText {
   characters?: string;
   variables?: LocaleTextVariables;
 }
-export interface LocaleTextProps
-  extends Omit<LocaleText, "id" | "lang" | "characters"> {
+export interface LocaleTextProps extends Omit<LocaleText, "id" | "characters"> {
   // ids?: string | string[];
   item?: LocaleItem;
-  items?: LocaleItem[];
-  lang?: Lang;
+  // items?: LocaleItem[];
 }
 export interface LocaleSelection {
   summary?: {

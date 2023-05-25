@@ -33,7 +33,6 @@ const SwitchLanguageDropdownMenu = ({
                   key: text.key,
                   variables: text.variables,
                   lang,
-                  items,
                 });
               }}
             >

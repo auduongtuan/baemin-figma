@@ -9,7 +9,9 @@ import {
 import configs from "figma-helpers/configs";
 
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
-  return localeItems ? localeItems.find((item) => item.key == key) : null;
+  return localeItems
+    ? localeItems.find((item) => "key" in item && item.key == key)
+    : null;
 }
 
 export function findItemByCharacters(

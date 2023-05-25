@@ -3,8 +3,9 @@ import { isString } from "lodash-es";
 import {
   LocaleTextProps,
   findItemByKey,
-  getParsedText,
+  getParseText,
   getTextCharactersWithTags,
+  LocaleItem,
   isPlurals,
 } from "../../lib";
 import changeText from "figma-helpers/changeText";
@@ -25,7 +26,7 @@ import configs from "figma-helpers/configs";
 export function updateTextNode(
   textNode: TextNode,
   textProps: LocaleTextProps,
-  callback: Function = undefined
+  items: LocaleItem[]
 ) {
   if (!textProps) return;
   // setup key
@@ -44,45 +45,46 @@ export function updateTextNode(
   }
   const formula = getFormula(textNode);
   // setup item
-  const item =
-    textProps.item || findItemByKey(getKey(textNode), textProps.items);
+  const item = textProps.item || findItemByKey(getKey(textNode), items);
   // setup variables
   if (textProps.variables) setVariables(textNode, textProps.variables);
-  const variables = getVariables(textNode);
+  const variables = { ...getVariables(textNode) };
   // update text content
-  const isFormula = formula && textProps.items;
+  const isFormula = formula && items;
   if (item || isFormula) {
     const props = {
       formula: formula,
-      items: textProps.items,
       item,
       variables,
     };
-    const oldTextCharactersWithTags = getTextCharactersWithTags({
-      ...props,
-      lang: oldLang,
-    });
+    const oldTextCharactersWithTags = getTextCharactersWithTags(
+      {
+        ...props,
+        lang: oldLang,
+      },
+      items
+    );
 
     const oldStyles = textNode.characters
       ? getStyles(textNode, oldTextCharactersWithTags)
       : { bold: [], link: [] };
-    if (
-      textProps.item &&
-      isPlurals(textProps.item[newLang]) &&
-      !variables.count
-    ) {
-      setVariable(textNode, "count", 1);
-      variables.count = 1;
-    }
-    const parsedText = getParsedText({
-      ...props,
-      lang: newLang,
-    });
-    changeText(textNode, parsedText.characters).then(() => {
-      if (parsedText.hasTags) {
-        setStyles(textNode, parsedText, oldStyles);
-      }
-      callback && callback();
+    const parsedText = getParseText(
+      {
+        ...props,
+        lang: newLang,
+      },
+      items
+    );
+    return new Promise((resolve) => {
+      changeText(textNode, parsedText.characters).then(() => {
+        if (parsedText.hasTags) {
+          setStyles(textNode, parsedText, oldStyles).then(() => {
+            resolve(true);
+          });
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
 }
@@ -104,6 +106,7 @@ export function getTextNodesInScope(scope?: SceneNode | BaseNode) {
 
 export function updateTextsAsync(
   textProps: LocaleTextProps,
+  items: LocaleItem[],
   ids?: string | string[] | null,
   scope?: SceneNode | BaseNode
 ) {
@@ -112,13 +115,8 @@ export function updateTextsAsync(
   const textNodes = ids
     ? getTextNodesInScope(scope).filter(filterFunction)
     : getTextNodesInScope(scope);
-  const promiseList = textNodes.map(
-    (textNode) =>
-      new Promise((resolve) => {
-        updateTextNode(textNode, textProps, () => {
-          resolve(true);
-        });
-      })
+  const promiseList = textNodes.map((textNode) =>
+    updateTextNode(textNode, textProps, items)
   );
   return Promise.allSettled(promiseList);
 }

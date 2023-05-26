@@ -82,23 +82,15 @@ export const localeSlice = createSlice({
       state,
       action: PayloadAction<LocaleText[]>
     ) => {
-      if (action.payload.length == 1) {
-        state.localeSelection.texts = state.localeSelection.texts.map((text) =>
-          text.id != action.payload[0].id
-            ? text
-            : {
-                ...cloneDeep(text),
-                ...pickBy(action.payload[0], (v) => v !== undefined),
-              }
-        );
-      } else {
-        state.localeSelection.texts = state.localeSelection.texts.map((text) =>
-          Object.assign(
-            cloneDeep(text),
-            action.payload.find((updatedText) => updatedText.id === text.id)
+      state.localeSelection.texts = state.localeSelection.texts.map((text) =>
+        Object.assign(
+          cloneDeep(text),
+          pickBy(
+            action.payload.find((updatedText) => updatedText.id === text.id),
+            (v) => v !== undefined
           )
-        );
-      }
+        )
+      );
       updateSummaryInLocaleSelection(state);
     },
 

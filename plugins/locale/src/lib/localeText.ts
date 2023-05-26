@@ -1,7 +1,7 @@
 import configs from "figma-helpers/configs";
 import { escapeRegExp, isObject } from "lodash-es";
 import {
-  compareTime,
+  compareTimeDesc,
   isNumeric,
   matchAll,
   placeholders,
@@ -23,41 +23,31 @@ export function applyVariablesToContent(
   originVariables: LocaleTextVariables
 ): string {
   const variables = { ...originVariables };
-  if (!isPlurals(localeItemContent)) {
-    if (variables && localeItemContent) {
-      if (
-        getVariableNamesFromItemContent(localeItemContent).includes("count") &&
-        !("count" in variables)
-      ) {
-        variables.count = 1;
-      }
-      return placeholders(localeItemContent, variables);
-    } else {
-      return localeItemContent;
+  function addDefaultCount() {
+    if (!("count" in variables) || !variables.count) {
+      variables.count = 1;
+    }
+    if (typeof variables.count == "string") {
+      variables.count = parseInt(variables.count);
     }
   }
   // PLURAL FORM
-  else {
-    if (!("count" in variables)) {
-      variables.count = 1;
-    }
-    const count =
-      typeof variables.count == "string"
-        ? parseInt(variables.count)
-        : variables.count;
-    if (
-      count == 1 &&
-      isObject(localeItemContent) &&
-      "one" in localeItemContent
-    ) {
+  if (isPlurals(localeItemContent)) {
+    addDefaultCount();
+    if (variables.count == 1 && "one" in localeItemContent) {
       return placeholders(localeItemContent.one || "", variables);
     }
-    if (
-      count != 1 &&
-      isObject(localeItemContent) &&
-      "other" in localeItemContent
-    ) {
+    if (variables.count != 1 && "other" in localeItemContent) {
       return placeholders(localeItemContent.other || "", variables);
+    }
+  } else {
+    // Non plurals
+    if (variables && localeItemContent) {
+      const variableNames = getVariableNamesFromItemContent(localeItemContent);
+      if (variableNames.includes("count")) addDefaultCount();
+      return placeholders(localeItemContent, variables);
+    } else {
+      return localeItemContent;
     }
   }
 }
@@ -73,8 +63,8 @@ export function getTextPropsByCharacters(
       .sort(
         (a, b) =>
           Number(b.prioritized) - Number(a.prioritized) ||
-          compareTime(b.updatedAt, a.updatedAt) ||
-          compareTime(b.createdAt, a.createdAt)
+          compareTimeDesc(a.updatedAt, b.updatedAt) ||
+          compareTimeDesc(a.createdAt, b.createdAt)
       )
       .find((item) => {
         return configs.get("languages").some((lang: Lang) => {
@@ -201,24 +191,25 @@ export function getVariableNames(
   items: LocaleItem[]
 ) {
   const { formula, item, lang = configs.get("defaultLanguage") } = textProps;
-  const variableNames = [];
+  const variableNames = new Set<string>();
   if (formula) {
     matchFormula(formula, items, (localeItem) => {
       const newLocaleItemContent =
         lang in localeItem ? localeItem[lang] : undefined;
       if (newLocaleItemContent)
-        variableNames.push(
-          ...getVariableNamesFromItemContent(newLocaleItemContent)
+        getVariableNamesFromItemContent(newLocaleItemContent).forEach((name) =>
+          variableNames.add(name)
         );
     });
-    return variableNames;
   }
   if (item) {
     const itemContent = lang in item ? item[lang] : undefined;
     if (itemContent)
-      variableNames.push(...getVariableNamesFromItemContent(itemContent));
+      getVariableNamesFromItemContent(itemContent).forEach((name) =>
+        variableNames.add(name)
+      );
   }
-  return variableNames;
+  return [...variableNames];
 }
 
 export function matchFormula(
@@ -272,13 +263,14 @@ export function getTextCharactersWithTags(
         textProps.variables
       );
     } else {
-      return "";
+      return undefined;
     }
   }
 }
 
 export function getParseText(textProps: LocaleTextProps, items: LocaleItem[]) {
   const textCharactersWithTags = getTextCharactersWithTags(textProps, items);
+  if (!textCharactersWithTags) return undefined;
   const parsedText = parseTagsInText(textCharactersWithTags);
   return parsedText;
 }
@@ -293,17 +285,8 @@ export function getFullLocaleText(
     : items && key
     ? findItemByKey(key, items)
     : undefined;
-  const characters = textProps.lang
-    ? getParseText(
-        {
-          formula,
-          item,
-          lang,
-          variables,
-        },
-        items
-      ).characters
-    : undefined;
+  const parsedText = getParseText({ item, formula, lang, variables }, items);
+  const characters = parsedText ? parsedText.characters : undefined;
   return {
     key,
     formula,

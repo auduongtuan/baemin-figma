@@ -1,6 +1,5 @@
-import dayjs from "dayjs";
 import { get } from "lodash-es";
-
+import { format, compareDesc, compareAsc } from "date-fns";
 export function removeVietnameseAccent(str: string) {
   // remove accents
   var from =
@@ -67,7 +66,7 @@ export function copyToClipboardAsync(value: string): Promise<void> {
   return Promise.reject(`Clipboard API is NOT supported in the browser`);
 }
 
-/*!
+/*
  * Replaces placeholders with real content
  * Requires get() - https://vanillajstoolkit.com/helpers/get/
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
@@ -136,14 +135,15 @@ export const flat = (object: Object) => {
   return res;
 };
 
-export const compareTime = (a: string, b: string) => {
-  const date1 = a ? new Date(a).getTime() : 0;
-  const date2 = b ? new Date(b).getTime() : 0;
-  return date1 - date2;
+export const compareTimeDesc = (a: string, b: string) => {
+  return compareDesc(new Date(a), new Date(b));
 };
-
-export function defaultDateTimeFormat(dateString: Date | string) {
-  return dayjs(dateString).format("YYYY/MM/DD HH:mm:ss");
+export const compareTimeAsc = (a: string, b: string) => {
+  return compareAsc(new Date(a), new Date(b));
+};
+export function defaultDateTimeFormat(dateString?: Date | string) {
+  const date = dateString ? new Date(dateString) : new Date();
+  return format(date, "yyyy/MM/dd HH:mm:ss");
 }
 
 export function stripTags(str: string) {

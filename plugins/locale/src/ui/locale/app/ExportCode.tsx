@@ -26,7 +26,7 @@ import io from "figma-helpers/io";
 import { js_beautify } from "js-beautify";
 import { set } from "lodash-es";
 import { LocaleText } from "../../../lib";
-import { compareTime } from "../../../lib/helpers";
+import { compareTimeAsc } from "../../../lib/helpers";
 const filterItemsByLibrary = (
   localeItems: LocaleItem[],
   library: LocaleLibrary
@@ -70,8 +70,8 @@ const printCodeBlock = (
         filterItemsByLibrary(filteredLocaleItems, library)
           .sort(
             (a, b) =>
-              compareTime(a.updatedAt, b.updatedAt) ||
-              compareTime(a.createdAt, b.createdAt)
+              compareTimeAsc(a.updatedAt, b.updatedAt) ||
+              compareTimeAsc(a.createdAt, b.createdAt)
             // cu truoc moi sau
           )
           .reduce((acc, item) => {

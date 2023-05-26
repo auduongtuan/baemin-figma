@@ -6,13 +6,10 @@ import AppBar from "./atoms/AppBar";
 import LocaleItemList from "./items/LocaleItemList";
 import SelectionEditor from "./pages/SelectionEditor";
 import NewDialog from "./dialogs/NewDialog";
-import TimeAgo from "javascript-time-ago";
-import en from "javascript-time-ago/locale/en";
 import io from "figma-helpers/io";
 import { useLocaleSelection } from "../hooks/locale";
 import MainSekeleton from "./atoms/MainSkeleton";
 import { setConfigs } from "../state/localeAppSlice";
-TimeAgo.addDefaultLocale(en);
 const Locale = ({}) => {
   const localeSelection = useLocaleSelection();
   const dispatch = useAppDispatch();

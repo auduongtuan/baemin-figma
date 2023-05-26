@@ -74,7 +74,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
           formula: formula,
         };
         updateText(text.id, {
-          item: localeItem,
           lang: text.lang as Lang,
           ...textProps,
         });

@@ -66,7 +66,7 @@ export function copyToClipboardAsync(value: string): Promise<void> {
   return Promise.reject(`Clipboard API is NOT supported in the browser`);
 }
 
-/*!
+/*
  * Replaces placeholders with real content
  * Requires get() - https://vanillajstoolkit.com/helpers/get/
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
-import classNames from "classnames";
+import clsx from "clsx";
 import { useSelect } from "downshift";
 import { eq, isEqual } from "lodash-es";
 import Menu, { MenuItemProps } from "./Menu";
@@ -90,7 +90,7 @@ const Select = ({
         <Popper.Anchor asChild>
           <button
             type="button"
-            className={classNames("select-menu__button", {
+            className={clsx("select-menu__button", {
               "flex-shrink-1": inline,
             })}
             {...getToggleButtonProps()}

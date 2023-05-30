@@ -38,7 +38,7 @@ const SelectionEditor = () => {
   };
   const showForm =
     !matchedItem &&
-    !suggestedText &&
+    (!suggestedText || !suggestedText.key) &&
     localeSelection &&
     localeSelection.texts.length == 1;
   const showAutoAssign =

@@ -4,7 +4,7 @@ import {
   UseComboboxStateChangeOptions,
   useCombobox,
 } from "downshift";
-import classnames from "classnames";
+import clsx from "clsx";
 import Menu from "./Menu";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
@@ -186,14 +186,14 @@ const Combobox = ({
       <Popper.Root>
         <Popper.Anchor asChild>
           <div
-            className={classnames("select-menu__button", {
+            className={clsx("select-menu__button", {
               "select-menu__button--focus": isFocus,
               "select-menu__button--disabled": disabled,
               "flex-shrink-1": inline,
             })}
           >
             <input
-              className={classnames("select-menu__label flex-grow-1", {
+              className={clsx("select-menu__label flex-grow-1", {
                 // "select-menu__label--placeholder": !inputValue ? true : false,
               })}
               placeholder={placeholder}

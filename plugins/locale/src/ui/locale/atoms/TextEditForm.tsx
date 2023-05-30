@@ -4,7 +4,7 @@ import {
   PlusCircledIcon,
   TextIcon,
 } from "@radix-ui/react-icons";
-import classNames from "classnames";
+import clsx from "clsx";
 import { IconButton, Switch, Tag, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
 import React, { useEffect, useMemo, useState } from "react";
@@ -31,7 +31,7 @@ const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
 }) => {
   return (
     <div
-      className={classNames("flex items-center gap-8", className)}
+      className={clsx("flex items-center gap-8", className)}
       css={`
         & > .icon-group {
           transition: opacity 0.1s;

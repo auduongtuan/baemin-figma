@@ -7,6 +7,7 @@ import {
 import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
 import { LocaleData, LocaleItem } from "../../lib";
 import { isFrame } from "figma-helpers";
+import { createDataBlock } from "./dataBlock";
 import { unionWith, isArray } from "lodash-es";
 const firstPage = figma.root.children[0];
 function getData(node: BaseNode) {
@@ -108,8 +109,7 @@ export function saveLocaleData(localeData: LocaleData) {
     );
     const localeDataString = JSON.stringify(filterLocaleData);
     if (!mainLocaleDataFrame) {
-      mainLocaleDataFrame = figma.createFrame();
-      mainLocaleDataFrame.resize(100, 100);
+      mainLocaleDataFrame = createDataBlock();
       mainLocaleDataFrame.name = DATA_FRAME_NAME;
       firstPage.appendChild(mainLocaleDataFrame);
     }

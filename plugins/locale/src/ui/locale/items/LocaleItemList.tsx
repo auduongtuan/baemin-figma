@@ -2,11 +2,12 @@ import React, { useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
-import { IconButton, Collapsible, Tooltip, Select, Divider } from "ds";
+import { IconButton, Collapsible, Tooltip, Select, Divider, Empty } from "ds";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { LocaleItem } from "../../../lib";
 import LocaleItemRecord from "./LocaleItemRecord";
+
 const LocaleItemList = ({
   action = true,
   filter = true,
@@ -94,7 +95,19 @@ const LocaleItemList = ({
         </div>
         <Divider />
       </header>
-      <div className="p-16 flex gap-8 flex-column">
+      <div
+        className="p-16 flex gap-8 flex-column"
+        css={`
+          min-height: calc(100% - 41px);
+        `}
+      >
+        {localeItems && localeItems.length == 0 && (
+          <Empty
+            className="flex-grow-1 h-full"
+            title={"No items yet"}
+            description={"Import or add your i18n items to use the plugin."}
+          ></Empty>
+        )}
         {localeItems &&
           groupedLocaleItems &&
           groupedLocaleItems.map(([name, items]) => (

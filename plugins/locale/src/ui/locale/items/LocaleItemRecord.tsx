@@ -7,6 +7,7 @@ import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { LocaleItem } from "../../../lib";
+import { getLibraryName } from "../../state/helpers";
 const LocaleItemRecord = ({
   item,
   action = true,
@@ -56,16 +57,26 @@ title={ */}
             {group ? item.key.replace(new RegExp(`^${group}\.`), "") : item.key}
           </div>
           <div className="flex-grow-0 flex-shrink-0">
-            {item.fromLibrary && (
-              <Tooltip content="This item is from a library. To edit it, open the original file.">
-                <Tag className="ml-4">LIB</Tag>
+            {!item.isLocal && (
+              <Tooltip
+                content={
+                  <>
+                    {`This item is from a external library (${getLibraryName(
+                      item.fromLibrary as string
+                    )}).`}
+                    <br />
+                    {`To edit it, open the original file.`}
+                  </>
+                }
+              >
+                <Tag className="ml-4">EXT</Tag>
               </Tooltip>
             )}
           </div>
         </div>
         {action && (
           <div className="actions flex gap-12 flex-grow-0 flex-shrink-0">
-            {!item.fromLibrary && (
+            {item.isLocal && (
               <>
                 <Dialog
                   open={

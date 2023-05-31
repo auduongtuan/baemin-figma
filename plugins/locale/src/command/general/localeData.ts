@@ -5,7 +5,7 @@ import {
   isInstance,
 } from "figma-helpers";
 import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
-import { LocaleData, LocaleItem } from "../../lib";
+import { SavedLocaleData, LocaleData, LocaleItem } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
 import { unionWith, isArray } from "lodash-es";
@@ -16,6 +16,9 @@ function getData(node: BaseNode) {
 function isMain(node: BaseNode) {
   return getNodeData(node, `${PREFIX}main_document_id`) === figma.root.id;
 }
+const isLocal = (node: SceneNode) => {
+  return isFrame(node) || isComponent(node);
+};
 const localeDataNodes = firstPage
   .findAll(
     (node) =>
@@ -25,15 +28,16 @@ const localeDataNodes = firstPage
   .sort((a, b) => {
     // console.log(isMain(b), isMain(a));
     return (
-      Number(isFrame(b)) - Number(isFrame(a)) || b.name.localeCompare(a.name)
+      Number(isLocal(b)) - Number(isLocal(a)) || b.name.localeCompare(a.name)
     );
   });
-let mainLocaleDataFrame = localeDataNodes[0];
+// first local node
+let mainLocaleDataFrame = localeDataNodes.find((node) => isLocal(node));
 export function getLocaleData() {
   // const localeData = await figma.clientStorage.getAsync('localeData');
   // setNodeData(mainLocaleDataFrame, `${PREFIX}main_document_id`, figma.root.id);
 
-  let combinedLocaleData: LocaleData = {
+  let combinedLocaleData: SavedLocaleData = {
     localeItems: [],
   };
 
@@ -47,10 +51,11 @@ export function getLocaleData() {
       if (!("localeLibraries" in combinedLocaleData)) {
         combinedLocaleData.localeLibraries = [];
       }
-      combinedLocaleData.localeLibraries.push({
+      combinedLocaleData.localeLibraries.unshift({
         id: localeDataNode.id,
         name: localeDataNode.name,
-        local: i == localeDataNodes.length - 1,
+        local: isLocal(localeDataNode),
+        main: localeDataNode.id === mainLocaleDataFrame.id,
       });
 
       // migrate to new typed system
@@ -74,45 +79,63 @@ export function getLocaleData() {
       // end migrate
 
       // if main node
-      if (i == localeDataNodes.length - 1) {
+      console.log(
+        localeDataNode.name,
+        localeDataNode.id === mainLocaleDataFrame.id
+      );
+      const isLocalNode = isLocal(localeDataNode);
+      if (localeDataNode.id === mainLocaleDataFrame.id) {
         combinedLocaleData.sheetId = localeData.sheetId;
         combinedLocaleData.sheetName = localeData.sheetName;
         combinedLocaleData.modifiedTime = localeData.modifiedTime;
-        combinedLocaleData.localeItems = unionWith(
-          localeData.localeItems,
-          combinedLocaleData.localeItems,
-          (a, b) => a.key == b.key
-        );
-      } else {
-        combinedLocaleData.localeItems = unionWith(
-          localeData.localeItems.map((item: LocaleItem) => ({
-            ...item,
-            fromLibrary: localeDataNode.id,
-          })),
-          combinedLocaleData.localeItems,
-          (a, b) => a.key == b.key
-        );
+        console.log("MAIN LA", localeDataNode);
+        // combinedLocaleData.localeItems = unionWith(
+        //   localeData.localeItems,
+        //   combinedLocaleData.localeItems,
+        //   (a, b) => a.key == b.key
+        // );
       }
+      combinedLocaleData.localeItems = unionWith(
+        localeData.localeItems.map((item: LocaleItem) => ({
+          ...item,
+          fromLibrary: localeDataNode.id,
+          isLocal: isLocalNode,
+        })),
+        combinedLocaleData.localeItems,
+        (a, b) => a.key == b.key
+      );
     } catch (e) {
       console.log(e);
     }
   });
   // console.log(localeItems);
+  console.log(combinedLocaleData);
   return combinedLocaleData;
 }
 export function saveLocaleData(localeData: LocaleData) {
   // only save locale file
   if (localeData) {
-    const filterLocaleData = localeData;
-    filterLocaleData.localeItems = filterLocaleData.localeItems.filter(
-      (localeItem) => !("fromLibrary" in localeItem) || !localeItem.fromLibrary
-    );
-    const localeDataString = JSON.stringify(filterLocaleData);
     if (!mainLocaleDataFrame) {
       mainLocaleDataFrame = createDataBlock();
       mainLocaleDataFrame.name = DATA_FRAME_NAME;
       firstPage.appendChild(mainLocaleDataFrame);
     }
+    const filterLocaleData: SavedLocaleData = {
+      ...localeData,
+      localeItems: localeData.localeItems
+        .filter(
+          (localeItem) =>
+            !("fromLibrary" in localeItem) ||
+            localeItem.fromLibrary == mainLocaleDataFrame.id
+        )
+        .map((localeItem) => {
+          const { fromLibrary, isLocal: isLocal, ...rest } = localeItem;
+          return rest;
+        }),
+    };
+    console.log(filterLocaleData);
+    const localeDataString = JSON.stringify(filterLocaleData);
+
     // setNodeData(mainLocaleDataFrame, `${PREFIX}main_data`, '1');
     setNodeData(mainLocaleDataFrame, `${PREFIX}data`, localeDataString);
   }

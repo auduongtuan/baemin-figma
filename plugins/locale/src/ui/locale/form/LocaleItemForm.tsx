@@ -2,62 +2,25 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { updateLocaleItem } from "../../state/localeSlice";
 import { Controller } from "react-hook-form";
-import {
-  TextBox,
-  Textarea,
-  Button,
-  Switch,
-  Checkbox,
-  IconButton,
-  Tooltip,
-} from "ds";
-import { defaultDateTimeFormat } from "../../../lib/helpers";
-import { debounce, get, has, isString } from "lodash-es";
+import { TextBox, Textarea, Button, Switch, Checkbox, Select } from "ds";
+import { debounce, get, isString } from "lodash-es";
 import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
-import { updateTextsOfItem } from "../../state/helpers";
+import {
+  getDefaultLocalLibraryId,
+  getLibraryOptions,
+  updateTextsOfItem,
+} from "../../state/helpers";
 import { addLocaleItem } from "../../state/localeSlice";
 import {
   useLanguages,
   useLocaleItems,
   useLocaleSelection,
 } from "../../hooks/locale";
-import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
-const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
-  return (
-    localeItem &&
-    ("createdAt" in localeItem || "updatedAt" in localeItem) && (
-      <Tooltip
-        content={
-          <div className="flex flex-column gap-4">
-            {localeItem.createdAt && (
-              <div>
-                <p className="font-medium">Created at:</p>
-                <p className="mt-2">
-                  {defaultDateTimeFormat(localeItem.createdAt)}
-                </p>
-              </div>
-            )}
-            {localeItem.updatedAt && (
-              <div>
-                <p className="font-medium">Updated at:</p>
-                <p className="mt-2">
-                  {defaultDateTimeFormat(localeItem.updatedAt)}
-                </p>
-              </div>
-            )}
-          </div>
-        }
-      >
-        <IconButton>
-          <CounterClockwiseClockIcon />
-        </IconButton>
-      </Tooltip>
-    )
-  );
-};
+import EditInfo from "./../atoms/EditInfo";
+
 function LocaleItemForm({
   item,
   showTitle = false,
@@ -82,9 +45,7 @@ function LocaleItemForm({
     handleSubmit,
     control,
     watch,
-    reset,
     formState: { errors },
-    setValue,
     getValues,
     watchHasPlurals,
   } = useLocaleForm({ item: localeItem, quickEdit: saveOnChange });
@@ -92,8 +53,7 @@ function LocaleItemForm({
   const isKeyAvailable = useCallback(
     (key) => {
       const foundItem = localeItems.find(
-        (item) =>
-          item.key === key && (!("fromLibrary" in item) || !item.fromLibrary)
+        (item) => item.key === key && item.isLocal
       );
       if (!foundItem) {
         return true;
@@ -107,7 +67,8 @@ function LocaleItemForm({
     type: "create" | "update" | "quick-update" = "create",
     data = null
   ): LocaleItem => {
-    const { key, hasPlurals, prioritized, ...content } = data || getValues();
+    const { key, hasPlurals, prioritized, fromLibrary, ...content } =
+      data || getValues();
     const currentDate = new Date();
     return languages.reduce(
       (acc, lang: string) => {
@@ -121,6 +82,8 @@ function LocaleItemForm({
         ...(type == "create"
           ? {
               createdAt: currentDate.toJSON(),
+              fromLibrary: fromLibrary || getDefaultLocalLibraryId(),
+              isLocal: true,
             }
           : {}),
         updatedAt: currentDate.toJSON(),
@@ -178,6 +141,9 @@ function LocaleItemForm({
     runCommand("show_figma_notify", { message: "Item created" });
   }, [localeSelection]);
 
+  const localeLibraries = useAppSelector(
+    (state) => state.locale.localeLibraries
+  );
   return (
     <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
       {showTitle && item && saveOnChange && (
@@ -304,9 +270,25 @@ function LocaleItemForm({
         )}
         {!saveOnChange && (
           <footer className="flex justify-between items-center mt-16">
-            <Button type="submit">{item ? "Update item" : "Add item"}</Button>
+            <Button type="submit">
+              {localeItem ? "Update item" : "Add item"}
+            </Button>
 
-            {localeItem && <EditInfo localeItem={localeItem} />}
+            {localeItem ? (
+              <EditInfo localeItem={localeItem} />
+            ) : (
+              <Controller
+                name={`fromLibrary`}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onChange={field.onChange}
+                    options={getLibraryOptions()}
+                  />
+                )}
+              />
+            )}
           </footer>
         )}
       </div>

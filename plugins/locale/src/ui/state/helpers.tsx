@@ -1,3 +1,4 @@
+import React from "react";
 import { LocaleTextProps, LocaleItem, getParseText } from "../../lib";
 import { runCommand } from "../uiHelper";
 import { store } from "./store";
@@ -5,7 +6,9 @@ import {
   updateTextsInLocaleSelection,
   updateTextInLocaleSelection,
 } from "./localeSlice";
-import { getFullLocaleText } from "../../lib";
+import { getFullLocaleText, filterItemsByLibrary } from "../../lib";
+import { pluralize } from "@capaj/pluralize";
+import { FrameIcon, ComponentInstanceIcon } from "@radix-ui/react-icons";
 export function updateText(id: string, textProps: LocaleTextProps) {
   const items = store.getState().locale.localeItems;
   const { characters, ...rest } = getFullLocaleText(textProps, items);
@@ -90,4 +93,26 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
       })
     )
   );
+}
+export function getDefaultLocalLibraryId() {
+  const { localeLibraries } = store.getState().locale;
+  return localeLibraries.find((library) => library.local)?.id;
+}
+export function getLibraryName(id: string) {
+  const { localeLibraries } = store.getState().locale;
+  return localeLibraries.find((library) => library.id == id)?.name;
+}
+export function getLibraryOptions(local: boolean = true) {
+  const { localeLibraries, localeItems } = store.getState().locale;
+  return localeLibraries
+    .filter((library) => (local && library.local) || !local)
+    .map((library) => {
+      const itemQuantity = filterItemsByLibrary(localeItems, library).length;
+      return {
+        name: library.name,
+        value: library.id,
+        icon: library.local ? <FrameIcon /> : <ComponentInstanceIcon />,
+        content: `${itemQuantity} ${pluralize("item", itemQuantity)}`,
+      };
+    });
 }

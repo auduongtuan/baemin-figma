@@ -13,7 +13,11 @@ import {
   LocaleLibrary,
   isPlurals,
 } from "../../../lib";
-import { useLocaleItems, useLocaleSelection } from "../../hooks/locale";
+import {
+  useLocaleItems,
+  useLocaleLibraries,
+  useLocaleSelection,
+} from "../../hooks/locale";
 import { useAppSelector } from "../../hooks/redux";
 import { runCommand } from "../../uiHelper";
 import configs from "figma-helpers/configs";
@@ -27,23 +31,8 @@ import { js_beautify } from "js-beautify";
 import { set } from "lodash-es";
 import { LocaleText } from "../../../lib";
 import { compareTimeAsc } from "../../../lib/helpers";
-const filterItemsByLibrary = (
-  localeItems: LocaleItem[],
-  library: LocaleLibrary
-) => {
-  if (!localeItems) return [];
-  let filteredLocaleItems: LocaleItem[];
-  if (library.local) {
-    filteredLocaleItems = localeItems.filter(
-      (item) => !("fromLibrary" in item) || !item.fromLibrary
-    );
-  } else {
-    filteredLocaleItems = localeItems.filter(
-      (item) => "fromLibrary" in item && item.fromLibrary == library.id
-    );
-  }
-  return filteredLocaleItems;
-};
+import { filterItemsByLibrary } from "../../../lib";
+import { getLibraryOptions } from "../../state/helpers";
 const printCodeBlock = (
   localeItems: LocaleItem[],
   library: LocaleLibrary,
@@ -106,27 +95,13 @@ const printCodeBlock = (
 };
 const ExportCode = () => {
   const localeItems = useLocaleItems();
-  const localeLibraries = useAppSelector(
-    (state) => state.locale.localeLibraries
-  );
+  const localeLibraries = useLocaleLibraries();
   const localeSelection = useLocaleSelection();
-  const libraryOptions =
-    localeLibraries &&
-    [...localeLibraries].reverse().map((library) => {
-      const itemQuantity = filterItemsByLibrary(localeItems, library).length;
-      return {
-        id: library.id,
-        name: library.name,
-        value: library,
-        icon: library.local ? <FrameIcon /> : <ComponentInstanceIcon />,
-        content: `${itemQuantity} ${pluralize("item", itemQuantity)}`,
-      };
-    });
-
+  const libraryOptions = getLibraryOptions(false);
   const { register, handleSubmit, getValues, control, setValue } = useForm();
   useEffect(() => {
     if (libraryOptions) {
-      setValue("library", { ...libraryOptions[0].value });
+      setValue("libraryId", libraryOptions[0].value);
       setValue("format", "i18n-js");
       if (localeSelection && localeSelection.texts.length > 0) {
         setValue("scope", "selection");
@@ -137,8 +112,10 @@ const ExportCode = () => {
   }, [libraryOptions, localeSelection]);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+
   const formSubmit = () => {
-    const { library, format, scope } = getValues();
+    const { libraryId, format, scope } = getValues();
+    const library = localeLibraries.find((lib) => lib.id == libraryId);
     if (scope == "file") {
       printCodeBlock(localeItems, library, format, scope);
     }
@@ -172,7 +149,7 @@ const ExportCode = () => {
         <form onSubmit={handleSubmit(formSubmit)}>
           <Controller
             control={control}
-            name="library"
+            name="libraryId"
             render={({
               field: { onChange, onBlur, value, name, ref },
               fieldState: { invalid, isTouched, isDirty, error },
@@ -181,7 +158,7 @@ const ExportCode = () => {
               <Select
                 label={`Library`}
                 placeholder="Select library"
-                id="library"
+                id="libraryId"
                 value={value}
                 // key={localeSelection ? localeSelection.id : 'select-lang-no-text'}
                 onChange={onChange}

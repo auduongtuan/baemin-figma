@@ -153,6 +153,7 @@ const Select = ({
               align="start"
               collisionPadding={4}
               avoidCollisions={true}
+              style={{ zIndex: 80 }}
             >
               <Menu
                 style={{

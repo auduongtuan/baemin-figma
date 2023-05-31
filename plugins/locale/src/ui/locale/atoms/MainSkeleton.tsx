@@ -15,10 +15,14 @@ const MainSekeleton = memo(() => {
     >
       <div className="py-10 px-16 flex align-content-between justify-between w-full">
         <Skeleton width="80px" height="20px" />
-        <Skeleton width="100px" height="20px" />
+        <div className="flex gap-8">
+          <Skeleton width="20px" height="20px" />
+          <Skeleton width="20px" height="20px" />
+        </div>
       </div>
       <Divider />
       <div className="py-24 p-16 flex flex-column h-full gap-24 flex-grow-1">
+        <Skeleton height="20px" width="100px" />
         {[...Array(8)].map((_, i) => (
           <Skeleton
             height="20px"
@@ -29,7 +33,11 @@ const MainSekeleton = memo(() => {
       <Divider />
       <div className="py-10 px-16 flex align-content-between justify-between w-full flex-grow-0 flex-shrink-0">
         <Skeleton width="40px" height="20px" />
-        <Skeleton width="80px" height="20px" />
+        <div className="flex gap-8">
+          <Skeleton width="20px" height="20px" />
+          <Skeleton width="20px" height="20px" />
+          <Skeleton width="20px" height="20px" />
+        </div>
       </div>
     </div>
   );

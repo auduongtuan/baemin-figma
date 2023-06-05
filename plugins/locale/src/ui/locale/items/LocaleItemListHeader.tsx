@@ -7,7 +7,6 @@ import { useLocaleLibraries } from "../../hooks/locale";
 import { getLibraryOptions } from "../../state/helpers";
 import { LocaleLibrary } from "../../../lib";
 const LocaleItemListHeader = ({ source, setSource }) => {
-  const localeLibraries = useLocaleLibraries();
   const dispatch = useAppDispatch();
   return (
     <header
@@ -23,7 +22,7 @@ const LocaleItemListHeader = ({ source, setSource }) => {
           <div className="items-center flex-grow-1">
             <Select
               inline
-              label="Source"
+              label="Library"
               value={source}
               options={[
                 { value: "all", name: "All" },
@@ -32,6 +31,7 @@ const LocaleItemListHeader = ({ source, setSource }) => {
               onChange={(value: LocaleLibrary) => {
                 setSource(value);
               }}
+              maxWidth="240px"
             />
           </div>
           <div className="inline-flex justify-center items-center">

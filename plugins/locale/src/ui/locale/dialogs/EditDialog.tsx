@@ -5,6 +5,7 @@ import LocaleItemForm from "../form/LocaleItemForm";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useAppSelector, useAppDispatch } from "../../hooks/redux";
 import { LocaleItem, LocaleText } from "../../../lib";
+import EditInfo from "../atoms/EditInfo";
 const EditDialog = ({ item, text }: { item: LocaleItem; text: LocaleText }) => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
@@ -36,7 +37,7 @@ const EditDialog = ({ item, text }: { item: LocaleItem; text: LocaleText }) => {
           </IconButton>
         </Dialog.Trigger>
       </Tooltip>
-      <Dialog.Panel title="Edit locale item">
+      <Dialog.Panel title="Edit locale item" buttons={"zzzz"}>
         <Dialog.Content>
           <LocaleItemForm
             key={item.key + "_edit"}
@@ -44,6 +45,7 @@ const EditDialog = ({ item, text }: { item: LocaleItem; text: LocaleText }) => {
             showTitle={false}
             saveOnChange={false}
           />
+          <EditInfo localeItem={item} />
         </Dialog.Content>
       </Dialog.Panel>
     </Dialog>

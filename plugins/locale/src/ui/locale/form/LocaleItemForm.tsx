@@ -2,7 +2,16 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { updateLocaleItem } from "../../state/localeSlice";
 import { Controller } from "react-hook-form";
-import { TextBox, Textarea, Button, Switch, Checkbox, Select } from "ds";
+import {
+  TextBox,
+  Textarea,
+  Button,
+  Switch,
+  Checkbox,
+  Select,
+  Tooltip,
+  IconButton,
+} from "ds";
 import { debounce, get, isString } from "lodash-es";
 import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
 import { runCommand } from "../../uiHelper";
@@ -10,6 +19,7 @@ import { setCurrentDialog } from "../../state/localeAppSlice";
 import useLocaleForm from "./useLocaleForm";
 import {
   getDefaultLocalLibraryId,
+  getLibrary,
   getLibraryOptions,
   updateTextsOfItem,
 } from "../../state/helpers";
@@ -20,6 +30,7 @@ import {
   useLocaleSelection,
 } from "../../hooks/locale";
 import EditInfo from "./../atoms/EditInfo";
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 
 function LocaleItemForm({
   item,
@@ -63,6 +74,7 @@ function LocaleItemForm({
     },
     [localeItems]
   );
+  const defaultLocalLibraryId = getDefaultLocalLibraryId();
   const getContent = (
     type: "create" | "update" | "quick-update" = "create",
     data = null
@@ -79,11 +91,11 @@ function LocaleItemForm({
       },
       {
         key: key,
+        fromLibrary: fromLibrary || defaultLocalLibraryId,
+        isLocal: getLibrary(fromLibrary)?.local || false,
         ...(type == "create"
           ? {
               createdAt: currentDate.toJSON(),
-              fromLibrary: fromLibrary || getDefaultLocalLibraryId(),
-              isLocal: true,
             }
           : {}),
         updatedAt: currentDate.toJSON(),
@@ -178,6 +190,7 @@ function LocaleItemForm({
         {!saveOnChange && (
           <TextBox
             label="Key"
+            labelClass="font-medium"
             id="key"
             className="mt-0"
             {...register("key", {
@@ -187,7 +200,16 @@ function LocaleItemForm({
                   (localeItem && v == localeItem.key) || isKeyAvailable(v),
               },
             })}
-            helpText={`Tip: Use "." for groupping, e.g: feature_a.message`}
+            afterLabel={
+              <Tooltip
+                content={'Tip: Use "." for groupping, e.g: feature_a.message'}
+              >
+                <IconButton>
+                  <QuestionMarkCircledIcon />
+                </IconButton>
+              </Tooltip>
+            }
+            helpText={``}
             errorText={
               errors.key &&
               `${
@@ -198,10 +220,23 @@ function LocaleItemForm({
             }
           />
         )}
-        {!saveOnChange && <h4 className="mt-16 font-medium">Translation</h4>}
-        <p className="text-secondary text-xsmall mt-4">
-          {`Tip: <b>, <a>, <ul>, <ol>, <li> HTML tags could be used to style texts.`}
-        </p>
+        {!saveOnChange && (
+          <div className="flex mt-24">
+            <h4 className="font-medium flex-grow-1">Translation</h4>
+            <div className="flex-grow-0 flex-shrink-0">
+              <Tooltip
+                content={
+                  "Tip: <b>, <a>, <ul>, <ol>, <li> HTML tags could be used to style texts."
+                }
+              >
+                <IconButton>
+                  <QuestionMarkCircledIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+        )}
+
         {/* <p
             css={`
               color: var(--figma-color-text-secondary);
@@ -214,6 +249,22 @@ function LocaleItemForm({
             <div className="relative mt-12">
               <Textarea
                 label={LANGUAGE_LIST[lang]}
+                afterLabel={
+                  <Controller
+                    name={`hasPlurals.${lang}`}
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Switch
+                          {...field}
+                          label="Plural"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        ></Switch>
+                      </div>
+                    )}
+                  ></Controller>
+                }
                 id={lang}
                 maxRows={6}
                 className=""
@@ -222,27 +273,8 @@ function LocaleItemForm({
                   get(errors, `${lang}.one`) && "Translation is required"
                 }
               />
-              <div
-                css={`
-                  position: absolute;
-                  top: -2px;
-                  right: 0;
-                `}
-              >
-                <Controller
-                  name={`hasPlurals.${lang}`}
-                  control={control}
-                  render={({ field }) => (
-                    <Switch
-                      {...field}
-                      label="Plural"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    ></Switch>
-                  )}
-                ></Controller>
-              </div>
             </div>
+
             {watchHasPlurals[lang] && (
               <Textarea
                 label={`${LANGUAGE_LIST[lang]} - Plural`}
@@ -274,21 +306,19 @@ function LocaleItemForm({
               {localeItem ? "Update item" : "Add item"}
             </Button>
 
-            {localeItem ? (
-              <EditInfo localeItem={localeItem} />
-            ) : (
-              <Controller
-                name={`fromLibrary`}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={getLibraryOptions()}
-                  />
-                )}
-              />
-            )}
+            <Controller
+              name={`fromLibrary`}
+              control={control}
+              render={({ field }) => (
+                <Select
+                  inline
+                  maxWidth={"120px"}
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={getLibraryOptions()}
+                />
+              )}
+            />
           </footer>
         )}
       </div>

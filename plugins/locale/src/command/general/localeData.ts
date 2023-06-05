@@ -5,10 +5,15 @@ import {
   isInstance,
 } from "figma-helpers";
 import { PREFIX, DATA_FRAME_NAME } from "../../lib/constant";
-import { SavedLocaleData, LocaleData, LocaleItem } from "../../lib";
+import {
+  SavedLocaleData,
+  LocaleData,
+  LocaleItem,
+  SavedLocaleItem,
+} from "../../lib";
 import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
-import { unionWith, isArray } from "lodash-es";
+import { unionWith, isArray, groupBy } from "lodash-es";
 const firstPage = figma.root.children[0];
 function getData(node: BaseNode) {
   return getNodeData(node, `${PREFIX}data`);
@@ -120,23 +125,32 @@ export function saveLocaleData(localeData: LocaleData) {
       mainLocaleDataFrame.name = DATA_FRAME_NAME;
       firstPage.appendChild(mainLocaleDataFrame);
     }
-    const filterLocaleData: SavedLocaleData = {
-      ...localeData,
-      localeItems: localeData.localeItems
-        .filter(
-          (localeItem) =>
-            !("fromLibrary" in localeItem) ||
-            localeItem.fromLibrary == mainLocaleDataFrame.id
-        )
-        .map((localeItem) => {
-          const { fromLibrary, isLocal: isLocal, ...rest } = localeItem;
+    const defaultLibraryId = mainLocaleDataFrame.id;
+    const libraryGroups = groupBy(
+      localeData.localeItems.filter((item) => item.isLocal),
+      (item) => item.fromLibrary || defaultLibraryId
+    );
+    Object.keys(libraryGroups).forEach((libraryId) => {
+      const libraryItems = libraryGroups[libraryId];
+      const libraryNode = figma.getNodeById(libraryId);
+      if (libraryNode) {
+        const items: SavedLocaleItem[] = libraryItems.map((item) => {
+          // remove from library and isLocal
+          const { fromLibrary, isLocal, ...rest } = item;
           return rest;
-        }),
-    };
-    console.log(filterLocaleData);
-    const localeDataString = JSON.stringify(filterLocaleData);
+        });
+        setNodeData(
+          libraryNode,
+          `${PREFIX}data`,
+          JSON.stringify({
+            localeItems: items,
+          })
+        );
+      }
+    });
+    // const localeDataString = JSON.stringify(filterLocaleData);
 
-    // setNodeData(mainLocaleDataFrame, `${PREFIX}main_data`, '1');
-    setNodeData(mainLocaleDataFrame, `${PREFIX}data`, localeDataString);
+    /////// setNodeData(mainLocaleDataFrame, `${PREFIX}main_data`, '1');
+    // setNodeData(mainLocaleDataFrame, `${PREFIX}data`, localeDataString);
   }
 }

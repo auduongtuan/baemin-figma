@@ -51,7 +51,7 @@ function useLocaleForm({
             setValue(`hasPlurals.${inputName}`, false);
             setValue(`${inputName}.one`, itemContent);
           }
-        } else if (inputName == "prioritized") {
+        } else if (inputName == "prioritized" || inputName == "fromLibrary") {
           setValue(inputName, item[inputName]);
         }
       }

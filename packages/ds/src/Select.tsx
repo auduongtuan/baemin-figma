@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
 import clsx from "clsx";
-import { useSelect } from "downshift";
-import { eq, isEqual } from "lodash-es";
+import { UseSelectProps, useSelect } from "downshift";
+import { isEqual } from "lodash-es";
 import Menu, { MenuItemProps } from "./Menu";
+import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
+import { useDialogContext } from "./Dialog";
 export interface SelectOption extends MenuItemProps {
   id?: string;
   value: any;
@@ -25,6 +27,7 @@ export interface SelectProps {
   inline?: boolean;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
+  maxWidth?: number | string;
 }
 const Select = ({
   label,
@@ -39,6 +42,7 @@ const Select = ({
   errorText,
   onChange,
   helpText,
+  maxWidth,
   ...rest
 }: SelectProps) => {
   const optionToString = (option: SelectOption) => (option ? option.name : "");
@@ -55,6 +59,27 @@ const Select = ({
       setSelectedItem(null);
     }
   }, [options, value, defaultValue]);
+  const stateReducer: UseSelectProps<any>["stateReducer"] = (
+    state,
+    actionAndChanges
+  ) => {
+    const { type, changes } = actionAndChanges;
+    switch (type) {
+      // disable downshift clickoutside
+      case useSelect.stateChangeTypes.ToggleButtonBlur:
+        return {
+          ...changes,
+          isOpen: isOpen,
+        };
+      case useSelect.stateChangeTypes.ToggleButtonKeyDownEscape:
+        return changes;
+      default:
+        return changes;
+    }
+    // return changes;
+  };
+  const { setHoldEscape } = useDialogContext();
+
   const {
     isOpen,
     getToggleButtonProps,
@@ -62,15 +87,28 @@ const Select = ({
     getMenuProps,
     highlightedIndex,
     getItemProps,
+    closeMenu,
   } = useSelect({
     items: options,
     itemToString: optionToString,
     selectedItem,
+    stateReducer,
     onSelectedItemChange: ({ selectedItem: newSelectedItem }) => {
       setSelectedItem(newSelectedItem);
       if (onChange) onChange(newSelectedItem.value);
     },
   });
+  useEffect(() => {
+    if (setHoldEscape && isOpen) {
+      setHoldEscape(isOpen);
+    }
+    if (setHoldEscape && !isOpen) {
+      setTimeout(() => {
+        setHoldEscape(false);
+      });
+    }
+  }, [setHoldEscape, isOpen]);
+
   return (
     <div
       css={`
@@ -95,6 +133,9 @@ const Select = ({
             })}
             {...getToggleButtonProps()}
             disabled={disabled}
+            style={{
+              maxWidth: maxWidth,
+            }}
           >
             <span
               className={`select-menu__label ${
@@ -148,40 +189,49 @@ const Select = ({
 
         {isOpen && (
           <Portal asChild>
-            <Popper.Content
-              sideOffset={2}
-              align="start"
-              collisionPadding={4}
-              avoidCollisions={true}
-              style={{ zIndex: 80 }}
+            <DismissableLayer
+              style={{
+                pointerEvents: "auto",
+              }}
+              onPointerDownOutside={(e) => {
+                closeMenu();
+              }}
             >
-              <Menu
-                style={{
-                  minWidth: "var(--radix-popper-anchor-width)",
-                  maxWidth: "var(--radix-popper-available-width)",
-                  maxHeight: "var(--radix-popper-available-height)",
-                }}
-                {...getMenuProps()}
+              <Popper.Content
+                sideOffset={2}
+                align="start"
+                collisionPadding={4}
+                avoidCollisions={true}
+                style={{ zIndex: 80 }}
               >
-                {options &&
-                  options.map((item, index) => (
-                    <Menu.Item
-                      selected={selectedItem == item}
-                      highlighted={highlightedIndex == index}
-                      key={`${item.value}${index}`}
-                      name={item.name}
-                      icon={item.icon}
-                      content={item.content}
-                      // content={item.content}
-                      {...getItemProps({
-                        item,
-                        index,
-                        disabled: item.disabled,
-                      })}
-                    ></Menu.Item>
-                  ))}
-              </Menu>
-            </Popper.Content>
+                <Menu
+                  style={{
+                    minWidth: "var(--radix-popper-anchor-width)",
+                    maxWidth: "var(--radix-popper-available-width)",
+                    maxHeight: "var(--radix-popper-available-height)",
+                  }}
+                  {...getMenuProps()}
+                >
+                  {options &&
+                    options.map((item, index) => (
+                      <Menu.Item
+                        selected={selectedItem == item}
+                        highlighted={highlightedIndex == index}
+                        key={`${item.value}${index}`}
+                        name={item.name}
+                        icon={item.icon}
+                        content={item.content}
+                        // content={item.content}
+                        {...getItemProps({
+                          item,
+                          index,
+                          disabled: item.disabled,
+                        })}
+                      ></Menu.Item>
+                    ))}
+                </Menu>
+              </Popper.Content>
+            </DismissableLayer>
           </Portal>
         )}
       </Popper.Root>

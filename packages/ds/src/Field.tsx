@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import styled, { css } from "styled-components";
 import { renderToString } from "react-dom/server";
+import clsx from "clsx";
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from "react-textarea-autosize";
@@ -15,11 +16,15 @@ export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
+  labelClass?: string;
+  afterLabel?: React.ReactNode;
 }
 export interface TextareaProps extends TextareaAutosizeProps {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
+  labelClass?: string;
+  afterLabel?: React.ReactNode;
 }
 
 export const BaseInputStyle = css`
@@ -111,6 +116,8 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
     {
       label,
+      labelClass,
+      afterLabel,
       id,
       defaultValue = "",
       value,
@@ -127,9 +134,17 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
     return (
       <div className={className && className}>
         {label && (
-          <label htmlFor={id} className="mb-8 text-xsmall">
-            {label}
-          </label>
+          <div className="flex mb-8 items-center">
+            <label
+              htmlFor={id}
+              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+            >
+              {label}
+            </label>
+            {afterLabel && (
+              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
+            )}
+          </div>
         )}
         <StyledTextBox
           id={id}
@@ -168,11 +183,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       label,
+      labelClass,
       id,
       defaultValue = "",
       placeholder,
       className = "",
       helpText,
+      afterLabel,
       ...rest
     },
     ref
@@ -180,9 +197,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={className && className}>
         {label && (
-          <label htmlFor={id} className="mb-8 text-xsmall">
-            {label}
-          </label>
+          <div className="flex mb-8 items-center">
+            <label
+              htmlFor={id}
+              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+            >
+              {label}
+            </label>
+            {afterLabel && (
+              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
+            )}
+          </div>
         )}
         <StyledTextarea
           id={id}

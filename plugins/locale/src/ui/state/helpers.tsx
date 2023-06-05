@@ -98,6 +98,10 @@ export function getDefaultLocalLibraryId() {
   const { localeLibraries } = store.getState().locale;
   return localeLibraries.find((library) => library.local)?.id;
 }
+export function getLibrary(id: string) {
+  const { localeLibraries } = store.getState().locale;
+  return localeLibraries.find((library) => library.id == id);
+}
 export function getLibraryName(id: string) {
   const { localeLibraries } = store.getState().locale;
   return localeLibraries.find((library) => library.id == id)?.name;

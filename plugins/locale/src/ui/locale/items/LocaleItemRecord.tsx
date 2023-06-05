@@ -61,7 +61,7 @@ title={ */}
               <Tooltip
                 content={
                   <>
-                    {`This item is from a external library (${getLibraryName(
+                    {`From an external library (${getLibraryName(
                       item.fromLibrary as string
                     )}).`}
                     <br />

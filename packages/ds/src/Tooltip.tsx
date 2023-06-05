@@ -22,6 +22,7 @@ const Tooltip = ({
               color: var(--figma-color-text-onbrand);
               background-color: var(--black8);
               user-select: none;
+              max-width: 240px;
               z-index: 60;
               /* animation-duration: 400ms;
               animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);

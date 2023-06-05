@@ -42,7 +42,8 @@ const LocaleItemList = () => {
       >
         {localeItems && (
           <h4 className="mt-0 --flex-grow-1 font-medium text-secondary">
-            {filteredLocaleItems.length} {pluralize("item", localeItems.length)}
+            {filteredLocaleItems.length}{" "}
+            {pluralize("item", filteredLocaleItems.length)}
           </h4>
         )}
         {localeItems && localeItems.length == 0 && (

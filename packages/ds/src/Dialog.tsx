@@ -92,7 +92,6 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
 };
 const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
   const { holdEscape } = useDialogContext();
-  console.log("buttons", buttons);
   return (
     <RDialog.Portal>
       <RDialog.Overlay
@@ -150,6 +149,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
           >
             <RDialog.Title
               css={`
+                font-weight: var(--font-weight-medium);
                 font-size: var(--font-size-large);
                 flex-grow: 1;
                 margin: 0;
@@ -157,7 +157,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
             >
               {title}
             </RDialog.Title>
-            <div className="flex items-center">
+            <div className="flex items-center flex-grow-0 flex-shrink-0 gap-8">
               {buttons && buttons}
               <RDialog.Close asChild>
                 <IconButton>

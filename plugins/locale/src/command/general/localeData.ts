@@ -84,16 +84,11 @@ export function getLocaleData() {
       // end migrate
 
       // if main node
-      console.log(
-        localeDataNode.name,
-        localeDataNode.id === mainLocaleDataFrame.id
-      );
       const isLocalNode = isLocal(localeDataNode);
       if (localeDataNode.id === mainLocaleDataFrame.id) {
         combinedLocaleData.sheetId = localeData.sheetId;
         combinedLocaleData.sheetName = localeData.sheetName;
         combinedLocaleData.modifiedTime = localeData.modifiedTime;
-        console.log("MAIN LA", localeDataNode);
         // combinedLocaleData.localeItems = unionWith(
         //   localeData.localeItems,
         //   combinedLocaleData.localeItems,
@@ -114,7 +109,6 @@ export function getLocaleData() {
     }
   });
   // console.log(localeItems);
-  console.log(combinedLocaleData);
   return combinedLocaleData;
 }
 export function saveLocaleData(localeData: LocaleData) {
@@ -148,9 +142,5 @@ export function saveLocaleData(localeData: LocaleData) {
         );
       }
     });
-    // const localeDataString = JSON.stringify(filterLocaleData);
-
-    /////// setNodeData(mainLocaleDataFrame, `${PREFIX}main_data`, '1');
-    // setNodeData(mainLocaleDataFrame, `${PREFIX}data`, localeDataString);
   }
 }

@@ -21,7 +21,7 @@ import { useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import EditDialog from "../dialogs/EditDialog";
+import EditDialog, { EditDialogTrigger } from "../dialogs/EditDialog";
 import FormulaEditor from "./FormulaEditor";
 import KeyCombobox from "./KeyCombobox";
 import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
@@ -151,7 +151,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                     </IconButton>
                   </Tooltip>
                   {!localeItem.fromLibrary && (
-                    <EditDialog item={localeItem} text={text} />
+                    <EditDialogTrigger item={localeItem} />
                   )}
                 </>
               )}

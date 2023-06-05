@@ -26,10 +26,10 @@ io.on("update_texts", (msg) => {
     io.send("update_texts", { success: true });
   });
 });
-io.on("get_locale_data", () => {
-  io.send("get_locale_data", { localeData: getLocaleData() });
+io.on("get_locale_data", async () => {
+  io.send("get_locale_data", { localeData: await getLocaleData() });
 });
-io.on("save_locale_data", (msg) => saveLocaleData(msg.localeData));
+io.on("save_locale_data", async (msg) => await saveLocaleData(msg.localeData));
 io.on(
   "print_code_block",
   async (msg) =>

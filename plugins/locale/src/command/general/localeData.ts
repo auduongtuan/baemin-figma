@@ -15,38 +15,61 @@ import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
 import { unionWith, isArray, groupBy } from "lodash-es";
 const firstPage = figma.root.children[0];
+import changeText from "figma-helpers/changeText";
+import { DEFAULT_FONTS } from "../../lib/constant";
 function getData(node: BaseNode) {
   return getNodeData(node, `${PREFIX}data`);
 }
-function isMain(node: BaseNode) {
-  return getNodeData(node, `${PREFIX}main_document_id`) === figma.root.id;
+function setData(node: BaseNode, data: SavedLocaleData) {
+  return setNodeData(node, `${PREFIX}data`, JSON.stringify(data));
 }
 const isLocal = (node: SceneNode) => {
   return isFrame(node) || isComponent(node);
 };
-const localeDataNodes = firstPage
-  .findAll(
-    (node) =>
-      ((isFrame(node) || isComponent(node)) && getData(node) != "") ||
-      (isInstance(node) && getData(node.mainComponent) != "")
-  )
-  .sort((a, b) => {
-    // console.log(isMain(b), isMain(a));
-    return (
-      Number(isLocal(b)) - Number(isLocal(a)) || b.name.localeCompare(a.name)
-    );
-  });
-// first local node
-let mainLocaleDataFrame = localeDataNodes.find((node) => isLocal(node));
-export function getLocaleData() {
+function getNodes() {
+  return firstPage
+    .findAll(
+      (node) =>
+        ((isFrame(node) || isComponent(node)) && getData(node) != "") ||
+        (isInstance(node) && getData(node.mainComponent) != "")
+    )
+    .sort((a, b) => {
+      return (
+        Number(isLocal(b)) - Number(isLocal(a)) || b.name.localeCompare(a.name)
+      );
+    });
+}
+const getDataNodes = async () => {
+  const all = getNodes();
+  await changeText.loadFonts(DEFAULT_FONTS);
+  const createMain = () => {
+    const mainNode = createDataBlock();
+    mainNode.name = DATA_FRAME_NAME;
+    // default data
+    setData(mainNode, {
+      localeItems: [],
+    });
+    firstPage.appendChild(mainNode);
+    all.push(mainNode);
+    return mainNode;
+  };
+  const main: FrameNode | ComponentNode =
+    (all.find((node) => isLocal(node)) as FrameNode | ComponentNode) ||
+    createMain();
+  return {
+    all,
+    main,
+  };
+};
+
+export async function getLocaleData() {
   // const localeData = await figma.clientStorage.getAsync('localeData');
   // setNodeData(mainLocaleDataFrame, `${PREFIX}main_document_id`, figma.root.id);
-
   let combinedLocaleData: SavedLocaleData = {
     localeItems: [],
   };
-
-  localeDataNodes.reverse().forEach((localeDataNode, i) => {
+  const dataNodes = await getDataNodes();
+  dataNodes.all.reverse().forEach((localeDataNode, i) => {
     const nodeLocaleData = getData(localeDataNode);
 
     try {
@@ -60,7 +83,7 @@ export function getLocaleData() {
         id: localeDataNode.id,
         name: localeDataNode.name,
         local: isLocal(localeDataNode),
-        main: localeDataNode.id === mainLocaleDataFrame.id,
+        main: localeDataNode.id === dataNodes.main.id,
       });
 
       // migrate to new typed system
@@ -85,7 +108,7 @@ export function getLocaleData() {
 
       // if main node
       const isLocalNode = isLocal(localeDataNode);
-      if (localeDataNode.id === mainLocaleDataFrame.id) {
+      if (localeDataNode.id === dataNodes.main.id) {
         combinedLocaleData.sheetId = localeData.sheetId;
         combinedLocaleData.sheetName = localeData.sheetName;
         combinedLocaleData.modifiedTime = localeData.modifiedTime;
@@ -111,15 +134,11 @@ export function getLocaleData() {
   // console.log(localeItems);
   return combinedLocaleData;
 }
-export function saveLocaleData(localeData: LocaleData) {
+export async function saveLocaleData(localeData: LocaleData) {
   // only save locale file
   if (localeData) {
-    if (!mainLocaleDataFrame) {
-      mainLocaleDataFrame = createDataBlock();
-      mainLocaleDataFrame.name = DATA_FRAME_NAME;
-      firstPage.appendChild(mainLocaleDataFrame);
-    }
-    const defaultLibraryId = mainLocaleDataFrame.id;
+    const dataNodes = await getDataNodes();
+    const defaultLibraryId = dataNodes.main.id;
     const libraryGroups = groupBy(
       localeData.localeItems.filter((item) => item.isLocal),
       (item) => item.fromLibrary || defaultLibraryId
@@ -133,13 +152,9 @@ export function saveLocaleData(localeData: LocaleData) {
           const { fromLibrary, isLocal, ...rest } = item;
           return rest;
         });
-        setNodeData(
-          libraryNode,
-          `${PREFIX}data`,
-          JSON.stringify({
-            localeItems: items,
-          })
-        );
+        setData(libraryNode, {
+          localeItems: items,
+        });
       }
     });
   }

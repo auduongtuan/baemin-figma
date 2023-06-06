@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
 import { Collapsible, Empty } from "ds";
@@ -9,15 +9,11 @@ import LocaleItemListHeader from "./LocaleItemListHeader";
 
 const LocaleItemList = () => {
   const [source, setSource] = useState("all");
-  const filterFn = useCallback(
-    (item: LocaleItem) => {
-      if (source == "all") return true;
-      return item.fromLibrary && item.fromLibrary == source;
-    },
-    [source]
-  );
   const localeItems = useLocaleItems();
-  const filteredLocaleItems = localeItems.filter(filterFn);
+  const filteredLocaleItems = localeItems.filter((item: LocaleItem) => {
+    if (source == "all") return true;
+    return item.fromLibrary && item.fromLibrary == source;
+  });
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
       const parts = item.key.split(".");
@@ -25,7 +21,8 @@ const LocaleItemList = () => {
       return "";
     })
   ).sort((a, b) => a[0].localeCompare(b[0]));
-
+  const defaultExpanded =
+    filteredLocaleItems.length < 32 || groupedLocaleItems.length < 4;
   return (
     <div
       className=""
@@ -56,7 +53,7 @@ const LocaleItemList = () => {
         {localeItems &&
           groupedLocaleItems &&
           groupedLocaleItems.map(([name, items]) => (
-            <Collapsible defaultOpen={localeItems.length < 12}>
+            <Collapsible key={source + name} defaultOpen={defaultExpanded}>
               <Collapsible.Trigger
                 css={`
                   font-weight: var(--font-weight-medium);

@@ -3,6 +3,7 @@ import * as RDialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
 import { IconButton } from "./Button";
+import { Portal } from "@radix-ui/react-portal";
 
 interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
   title?: string;
@@ -41,18 +42,21 @@ const DialogContent = ({ children }: React.ComponentPropsWithRef<"div">) => {
   );
 };
 const DialogFooter = ({ children }: React.ComponentPropsWithRef<"footer">) => {
+  const { dialogContainerRef } = useDialogContext();
   return (
-    <footer
-      css={`
-        padding: 8px 16px;
-        background: var(--figma-color-bg);
-        border-top: 1px solid #eee;
-        flex-shrink: 0;
-        flex-grow: 0;
-      `}
-    >
-      {children}
-    </footer>
+    <Portal container={dialogContainerRef?.current}>
+      <footer
+        css={`
+          padding: 8px 16px;
+          background: var(--figma-color-bg);
+          border-top: 1px solid #eee;
+          flex-shrink: 0;
+          flex-grow: 0;
+        `}
+      >
+        {children}
+      </footer>
+    </Portal>
   );
 };
 interface DialogContextType
@@ -63,6 +67,7 @@ interface DialogContextType
   setOnEscapeKeyDown?: React.Dispatch<
     React.SetStateAction<RDialog.DialogContentProps["onEscapeKeyDown"]>
   >;
+  dialogContainerRef?: React.RefObject<HTMLDivElement>;
 }
 const DialogContext = createContext<DialogContextType>({});
 export const useDialogContext = () => {
@@ -73,6 +78,7 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
   const [onEscapeKeyDown, setOnEscapeKeyDown] =
     React.useState<RDialog.DialogContentProps["onEscapeKeyDown"]>();
   const [holdEscape, setHoldEscape] = React.useState(false);
+  const dialogContainerRef = React.useRef<HTMLDivElement>(null);
   return (
     <RDialog.Root {...rest}>
       <DialogContext.Provider
@@ -83,6 +89,7 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
           setOnEscapeKeyDown,
           holdEscape,
           setHoldEscape,
+          dialogContainerRef,
         }}
       >
         {children}
@@ -91,7 +98,7 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
   );
 };
 const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
-  const { holdEscape } = useDialogContext();
+  const { holdEscape, dialogContainerRef } = useDialogContext();
   return (
     <RDialog.Portal>
       <RDialog.Overlay
@@ -133,6 +140,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
             outline: none;
           }
         `}
+        ref={dialogContainerRef}
         {...rest}
       >
         {title && (

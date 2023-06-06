@@ -11,6 +11,7 @@ import {
   Select,
   Tooltip,
   IconButton,
+  Dialog,
 } from "ds";
 import { debounce, get, isString } from "lodash-es";
 import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
@@ -90,6 +91,13 @@ function LocaleItemForm({
         return acc;
       },
       {
+        ...(localeItem
+          ? {
+              createdAt: localeItem.createdAt,
+              prioritized: localeItem.prioritized,
+              imported: localeItem.imported,
+            }
+          : {}),
         key: key,
         fromLibrary: fromLibrary || defaultLocalLibraryId,
         isLocal: getLibrary(fromLibrary)?.local || false,
@@ -156,8 +164,9 @@ function LocaleItemForm({
   const localeLibraries = useAppSelector(
     (state) => state.locale.localeLibraries
   );
+  const submitFn = handleSubmit(item ? updateLocaleItemHandler : addNewKey);
   return (
-    <form onSubmit={handleSubmit(item ? updateLocaleItemHandler : addNewKey)}>
+    <form onSubmit={submitFn}>
       {showTitle && item && saveOnChange && (
         <header className="flex justify-between items-center mb-8">
           <h4 className="mt-0 font-medium truncate">
@@ -226,7 +235,14 @@ function LocaleItemForm({
             <div className="flex-grow-0 flex-shrink-0">
               <Tooltip
                 content={
-                  "Tip: <b>, <a>, <ul>, <ol>, <li> HTML tags could be used to style texts."
+                  <>
+                    <p>
+                      {`Tip: Use {{count}} for counter. Use {{variableName}} for variable.`}
+                    </p>
+                    <p className="mt-8">
+                      {`Tip: <b>, <a>, <ul>, <ol>, <li> HTML tags could be used to style texts.`}
+                    </p>
+                  </>
                 }
               >
                 <IconButton>
@@ -236,14 +252,6 @@ function LocaleItemForm({
             </div>
           </div>
         )}
-
-        {/* <p
-            css={`
-              color: var(--figma-color-text-secondary);
-              font-size: var(--font-size-xsmall);
-              margin-top: 8px;
-            `}
-          >{`Use {{count}} for counter. Use {{variableName}} for variable`}</p> */}
         {languages.map((lang) => (
           <>
             <div className="relative mt-12">
@@ -270,7 +278,8 @@ function LocaleItemForm({
                 className=""
                 {...register(`${lang}.one`, { required: true })}
                 errorText={
-                  get(errors, `${lang}.one`) && "Translation is required"
+                  get(errors, `${lang}.one`) &&
+                  `${LANGUAGE_LIST[lang]} translation is required`
                 }
               />
             </div>
@@ -301,25 +310,27 @@ function LocaleItemForm({
           ></Controller>
         )}
         {!saveOnChange && (
-          <footer className="flex justify-between items-center mt-16">
-            <Button type="submit">
-              {localeItem ? "Update item" : "Add item"}
-            </Button>
+          <Dialog.Footer>
+            <footer className="flex justify-between items-center">
+              <Button type="submit" onClick={submitFn}>
+                {localeItem ? "Update item" : "Add item"}
+              </Button>
 
-            <Controller
-              name={`fromLibrary`}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  inline
-                  maxWidth={"120px"}
-                  value={field.value}
-                  onChange={field.onChange}
-                  options={getLibraryOptions()}
-                />
-              )}
-            />
-          </footer>
+              <Controller
+                name={`fromLibrary`}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    inline
+                    maxWidth={"120px"}
+                    value={field.value}
+                    onChange={field.onChange}
+                    options={getLibraryOptions()}
+                  />
+                )}
+              />
+            </footer>
+          </Dialog.Footer>
         )}
       </div>
     </form>

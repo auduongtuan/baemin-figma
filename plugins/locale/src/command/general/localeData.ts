@@ -53,12 +53,16 @@ const getDataNodes = async () => {
     all.push(mainNode);
     return mainNode;
   };
+  const local: (FrameNode | ComponentNode)[] = all.filter((node) =>
+    isLocal(node)
+  ) as (FrameNode | ComponentNode)[];
   const main: FrameNode | ComponentNode =
     (all.find((node) => isLocal(node)) as FrameNode | ComponentNode) ||
     createMain();
   return {
     all,
     main,
+    local,
   };
 };
 
@@ -143,19 +147,17 @@ export async function saveLocaleData(localeData: LocaleData) {
       localeData.localeItems.filter((item) => item.isLocal),
       (item) => item.fromLibrary || defaultLibraryId
     );
-    Object.keys(libraryGroups).forEach((libraryId) => {
-      const libraryItems = libraryGroups[libraryId];
-      const libraryNode = figma.getNodeById(libraryId);
-      if (libraryNode) {
-        const items: SavedLocaleItem[] = libraryItems.map((item) => {
-          // remove from library and isLocal
-          const { fromLibrary, isLocal, ...rest } = item;
-          return rest;
-        });
-        setData(libraryNode, {
-          localeItems: items,
-        });
-      }
+    dataNodes.local.forEach((libraryNode) => {
+      const libraryItems =
+        libraryNode.id in libraryGroups ? libraryGroups[libraryNode.id] : [];
+      const items: SavedLocaleItem[] = libraryItems.map((item) => {
+        // remove from library and isLocal
+        const { fromLibrary, isLocal, ...rest } = item;
+        return rest;
+      });
+      setData(libraryNode, {
+        localeItems: items,
+      });
     });
   }
 }

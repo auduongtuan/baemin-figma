@@ -2,18 +2,52 @@ import { pluralize } from "@capaj/pluralize";
 import { Button, Checkbox, Collapsible, Dialog, Divider, Dropzone } from "ds";
 import { groupBy, orderBy, unionWith } from "lodash-es";
 import React, { useCallback, useEffect, useReducer } from "react";
-import { LocaleItem } from "../../../lib";
+import { LocaleItem, getStringContent } from "../../../lib";
 import { flat } from "../../../lib/helpers";
 import { useLanguages, useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
-import configs from "figma-helpers/configs";
+import {
+  getDefaultLocalLibraryId,
+  getLibraryOptions,
+} from "../../state/helpers";
+import { Select } from "ds";
 interface ImportFile {
   name: string;
   items: Object;
 }
+const getInitialImportState = () => ({
+  files: [],
+  items: [],
+  options: { override: false, libraryId: getDefaultLocalLibraryId() },
+});
+const importReducer = (
+  state: {
+    files: ImportFile[];
+    items: LocaleItem[];
+    options: { override: boolean; libraryId: string };
+  },
+  action: {
+    type: "ADD_FILE" | "SET_ITEMS" | "CHANGE_OPTIONS" | "RESET";
+    file?: ImportFile;
+    items?: LocaleItem[];
+    options?: { override?: boolean; libraryId?: string };
+  }
+) => {
+  if (action.type == "ADD_FILE") {
+    state = { ...state, files: [...state.files, action.file] };
+  } else if (action.type == "SET_ITEMS") {
+    state = { ...state, items: [...action.items] };
+  } else if (action.type == "CHANGE_OPTIONS") {
+    state = { ...state, options: { ...state.options, ...action.options } };
+  } else if (action.type == "RESET") {
+    state = { ...getInitialImportState() };
+  }
+  return state;
+};
+
 const ImportDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
@@ -21,30 +55,10 @@ const ImportDialog = () => {
   const localeItems = useLocaleItems();
   const dispatch = useAppDispatch();
   const languages = useLanguages();
+
   const [importState, dispatchImportState] = useReducer(
-    (
-      state: {
-        files: ImportFile[];
-        items: LocaleItem[];
-        options: { override: boolean };
-      },
-      action: {
-        type: "ADD_FILE" | "SET_ITEMS" | "CHANGE_OPTIONS";
-        file?: ImportFile;
-        items?: LocaleItem[];
-        options?: { override: boolean };
-      }
-    ) => {
-      if (action.type == "ADD_FILE") {
-        state = { ...state, files: [...state.files, action.file] };
-      } else if (action.type == "SET_ITEMS") {
-        state = { ...state, items: [...action.items] };
-      } else if (action.type == "CHANGE_OPTIONS") {
-        state = { ...state, options: { ...state.options, ...action.options } };
-      }
-      return state;
-    },
-    { files: [], items: [], options: { override: false } }
+    importReducer,
+    getInitialImportState()
   );
 
   const groupedLocaleItems = Object.entries(
@@ -100,6 +114,7 @@ const ImportDialog = () => {
         opened: false,
       })
     );
+    dispatchImportState({ type: "RESET" });
     runCommand("show_figma_notify", {
       message: `${importState.items.length} ${pluralize(
         "item",
@@ -153,19 +168,22 @@ const ImportDialog = () => {
             key: key,
             ...translations,
             createdAt: currentTime,
+            fromLibrary: importState.options.libraryId,
+            isLocal: true,
             imported: true,
           };
         }),
       });
     }
-  }, [importState.files]);
+  }, [importState.files, importState.options]);
   return (
     <Dialog
       open={currentDialog.type == "IMPORT" && currentDialog.opened}
       // open={true}
-      onOpenChange={(open) =>
-        dispatch(setCurrentDialog({ type: "IMPORT", opened: open }))
-      }
+      onOpenChange={(open) => {
+        if (!open) dispatchImportState({ type: "RESET" });
+        dispatch(setCurrentDialog({ type: "IMPORT", opened: open }));
+      }}
     >
       <Dialog.Panel title="Import locale items">
         <Dialog.Content>
@@ -174,6 +192,20 @@ const ImportDialog = () => {
               <h4 className="mt-0 mb-8 font-medium text-secondary">
                 Import options
               </h4>
+
+              <Select
+                // inline
+                // maxWidth={"120px"}
+                label="Library"
+                value={importState.options.libraryId}
+                onChange={(value) => {
+                  dispatchImportState({
+                    type: "CHANGE_OPTIONS",
+                    options: { libraryId: value },
+                  });
+                }}
+                options={getLibraryOptions()}
+              />
               <Checkbox
                 checked={importState.options.override}
                 onCheckedChange={(checked) =>
@@ -183,6 +215,7 @@ const ImportDialog = () => {
                   })
                 }
                 label="Override local items if duplicated"
+                className="mt-8"
               />
               <h4 className="mt-16 mb-8 font-medium text-secondary">
                 Review items
@@ -206,7 +239,7 @@ const ImportDialog = () => {
                                   (lang) =>
                                     lang in item && (
                                       <div className="truncate">
-                                        {item[lang]}
+                                        {getStringContent(item[lang])}
                                       </div>
                                     )
                                 )}

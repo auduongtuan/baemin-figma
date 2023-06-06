@@ -19,7 +19,7 @@ const DeleteDialog = () => {
     if (item) {
       dispatch(removeLocaleItem(item));
       dispatch(setCurrentDialog({ opened: false }));
-      runCommand("show_figma_notify", { message: "Item removed" });
+      runCommand("show_figma_notify", { message: "Item deleted" });
     }
   }, [item]);
   const dispatch = useAppDispatch();

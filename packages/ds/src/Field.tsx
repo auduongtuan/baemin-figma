@@ -159,17 +159,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           aria-invalid={errorText ? true : false}
         />
         {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
-        {helpText && (
-          <p
-            css={`
-              color: var(--figma-color-text-secondary);
-              font-size: var(--font-size-xsmall);
-              margin-top: 8px;
-            `}
-          >
-            {helpText}
-          </p>
-        )}
+        {helpText && <HelpText>{helpText}</HelpText>}
       </div>
     );
   }
@@ -188,6 +178,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       defaultValue = "",
       placeholder,
       className = "",
+      errorText,
       helpText,
       afterLabel,
       ...rest
@@ -217,8 +208,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           defaultValue={defaultValue}
           className="textarea"
           {...rest}
+          aria-invalid={errorText ? true : false}
           ref={ref}
         ></StyledTextarea>
+        {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
         {helpText && <HelpText>{helpText}</HelpText>}
       </div>
     );

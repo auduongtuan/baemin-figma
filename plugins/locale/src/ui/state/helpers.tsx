@@ -96,6 +96,7 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
 }
 export function getDefaultLocalLibraryId() {
   const { localeLibraries } = store.getState().locale;
+  console.log(localeLibraries);
   return localeLibraries.find((library) => library.local)?.id;
 }
 export function getLibrary(id: string) {

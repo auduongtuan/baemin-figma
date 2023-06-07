@@ -4,7 +4,7 @@ import {
   PlusCircledIcon,
   TextIcon,
 } from "@radix-ui/react-icons";
-import classNames from "classnames";
+import clsx from "clsx";
 import { IconButton, Switch, Tag, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
 import React, { useEffect, useMemo, useState } from "react";
@@ -21,7 +21,7 @@ import { useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import EditDialog from "../dialogs/EditDialog";
+import EditDialog, { EditDialogTrigger } from "../dialogs/EditDialog";
 import FormulaEditor from "./FormulaEditor";
 import KeyCombobox from "./KeyCombobox";
 import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
@@ -31,7 +31,7 @@ const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
 }) => {
   return (
     <div
-      className={classNames("flex items-center gap-8", className)}
+      className={clsx("flex items-center gap-8", className)}
       css={`
         & > .icon-group {
           transition: opacity 0.1s;
@@ -151,7 +151,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                     </IconButton>
                   </Tooltip>
                   {!localeItem.fromLibrary && (
-                    <EditDialog item={localeItem} text={text} />
+                    <EditDialogTrigger item={localeItem} />
                   )}
                 </>
               )}

@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import styled, { css } from "styled-components";
 import { renderToString } from "react-dom/server";
+import clsx from "clsx";
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from "react-textarea-autosize";
@@ -15,11 +16,15 @@ export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
+  labelClass?: string;
+  afterLabel?: React.ReactNode;
 }
 export interface TextareaProps extends TextareaAutosizeProps {
   label?: React.ReactNode;
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
+  labelClass?: string;
+  afterLabel?: React.ReactNode;
 }
 
 export const BaseInputStyle = css`
@@ -111,6 +116,8 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
     {
       label,
+      labelClass,
+      afterLabel,
       id,
       defaultValue = "",
       value,
@@ -127,9 +134,17 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
     return (
       <div className={className && className}>
         {label && (
-          <label htmlFor={id} className="mb-8 text-xsmall">
-            {label}
-          </label>
+          <div className="flex mb-8 items-center">
+            <label
+              htmlFor={id}
+              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+            >
+              {label}
+            </label>
+            {afterLabel && (
+              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
+            )}
+          </div>
         )}
         <StyledTextBox
           id={id}
@@ -144,17 +159,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           aria-invalid={errorText ? true : false}
         />
         {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
-        {helpText && (
-          <p
-            css={`
-              color: var(--figma-color-text-secondary);
-              font-size: var(--font-size-xsmall);
-              margin-top: 8px;
-            `}
-          >
-            {helpText}
-          </p>
-        )}
+        {helpText && <HelpText>{helpText}</HelpText>}
       </div>
     );
   }
@@ -168,11 +173,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       label,
+      labelClass,
       id,
       defaultValue = "",
       placeholder,
       className = "",
+      errorText,
       helpText,
+      afterLabel,
       ...rest
     },
     ref
@@ -180,9 +188,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={className && className}>
         {label && (
-          <label htmlFor={id} className="mb-8 text-xsmall">
-            {label}
-          </label>
+          <div className="flex mb-8 items-center">
+            <label
+              htmlFor={id}
+              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+            >
+              {label}
+            </label>
+            {afterLabel && (
+              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
+            )}
+          </div>
         )}
         <StyledTextarea
           id={id}
@@ -192,8 +208,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           defaultValue={defaultValue}
           className="textarea"
           {...rest}
+          aria-invalid={errorText ? true : false}
           ref={ref}
         ></StyledTextarea>
+        {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
         {helpText && <HelpText>{helpText}</HelpText>}
       </div>
     );

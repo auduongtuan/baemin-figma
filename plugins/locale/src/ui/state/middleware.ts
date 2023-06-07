@@ -10,7 +10,7 @@ import {
 } from "./localeSlice";
 import type { RootState } from "./store";
 import { runCommand } from "../uiHelper";
-import { LocaleData } from "../../lib";
+import { SavedLocaleData } from "../../lib";
 export const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
   matcher: isAnyOf(
@@ -23,7 +23,7 @@ listenerMiddleware.startListening({
   effect: (action, listenerApi) => {
     const modifiedTime = new Date().toJSON();
     const state = listenerApi.getState() as RootState;
-    const localeData: LocaleData = {
+    const localeData: SavedLocaleData = {
       sheetName: state.locale.sheetName,
       sheetId: state.locale.sheetId,
       modifiedTime: modifiedTime,

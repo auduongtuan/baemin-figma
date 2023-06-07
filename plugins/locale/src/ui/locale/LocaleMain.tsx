@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useAppDispatch } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { setTextsInLocaleSelection, setLocaleData } from "../state/localeSlice";
 import AppBar from "./atoms/AppBar";
 import LocaleItemList from "./items/LocaleItemList";
@@ -10,6 +10,8 @@ import io from "figma-helpers/io";
 import { useLocaleSelection } from "../hooks/locale";
 import MainSekeleton from "./atoms/MainSkeleton";
 import { setConfigs } from "../state/localeAppSlice";
+import DeleteDialog from "./dialogs/DeleteDialog";
+import EditDialog from "./dialogs/EditDialog";
 const Locale = ({}) => {
   const localeSelection = useLocaleSelection();
   const dispatch = useAppDispatch();
@@ -34,6 +36,9 @@ const Locale = ({}) => {
       dispatch(setTextsInLocaleSelection(data.texts));
     });
   }, []);
+  const currentDialog = useAppSelector(
+    (state) => state.localeApp.currentDialog
+  );
   return !isReady ? (
     <MainSekeleton />
   ) : (
@@ -46,7 +51,9 @@ const Locale = ({}) => {
         width: 100%;
       `}
     >
-      <NewDialog />
+      {currentDialog.type == "NEW" && <NewDialog />}
+      {currentDialog.type == "DELETE" && <DeleteDialog />}
+      {currentDialog.type == "EDIT" && <EditDialog />}
       <section
         css={`
           flex-shrink: 1;

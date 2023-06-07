@@ -742,6 +742,9 @@ label {
 .max-w-full {
   max-width: 100%;
 }
+.min-h-full {
+  min-height: 100%;
+}
 .min-w-0 {
   min-width: 0;
 }
@@ -994,7 +997,7 @@ select.select-menu {
     letter-spacing: var(--font-letter-spacing-neg-xsmall);
     line-height: var(--line-height);
     color: var(--black8);
-    margin-right: 6px;
+    // margin-right: 6px;
     margin-top: -2px;
     white-space: nowrap;
     overflow-x: hidden;
@@ -1007,6 +1010,8 @@ select.select-menu {
 
   //caret / chevron
   &__caret {
+    flex-shrink: 0;
+    flex-grow: 0;
     width: 30px;
     height: 30px;
     display: block;

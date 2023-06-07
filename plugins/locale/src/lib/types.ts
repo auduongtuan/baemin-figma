@@ -1,18 +1,25 @@
 import { MIXED_VALUE, LANGUAGE_LIST } from "./constant";
 
-export interface LocaleData {
+export interface SavedLocaleData {
   sheetName?: string;
   sheetId?: string;
   // localeSelection?: LocaleSelection;
-  localeItems?: LocaleItem[];
+  localeItems?: SavedLocaleItem[];
   localeLibraries?: LocaleLibrary[];
   // matchedItem?: LocaleItem;
   modifiedTime?: string;
 }
+export interface LocaleData extends SavedLocaleData {
+  localeSelection?: LocaleSelection;
+  localeLibraries?: LocaleLibrary[];
+  localeItems?: LocaleItem[];
+}
+
 export type LocaleLibrary = {
-  id?: string; // node id
-  name?: string;
+  id: string; // node id
+  name: string;
   local: boolean;
+  main: boolean;
 };
 export type LocaleItemPluralContent = {
   zero?: "string";
@@ -24,15 +31,20 @@ export type LocaleItemPluralContent = {
 };
 export type LocaleItemContent = string | LocaleItemPluralContent;
 export type Lang = keyof typeof LANGUAGE_LIST;
-export type LocaleItem = {
+
+export type SavedLocaleItem = {
   key: string;
-  fromLibrary?: boolean | string;
   createdAt?: string;
   updatedAt?: string;
   prioritized?: boolean;
   imported?: boolean;
 } & {
   [key in Lang]?: LocaleItemContent;
+};
+
+export type LocaleItem = SavedLocaleItem & {
+  fromLibrary?: string;
+  isLocal?: boolean;
 };
 
 export type LocaleTextVariables = { [key: string]: number | string };

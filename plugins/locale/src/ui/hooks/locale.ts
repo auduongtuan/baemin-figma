@@ -6,6 +6,9 @@ export function useLocaleSelection() {
 export function useLocaleItems() {
   return useAppSelector((state) => state.locale.localeItems);
 }
+export function useLocaleLibraries() {
+  return useAppSelector((state) => state.locale.localeLibraries);
+}
 export function useConfigs() {
   return useAppSelector((state) => state.localeApp.configs);
 }

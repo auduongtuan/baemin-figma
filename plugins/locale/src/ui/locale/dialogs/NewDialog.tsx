@@ -15,7 +15,7 @@ const NewDialog = () => {
         dispatch(setCurrentDialog({ type: "NEW", opened: open }))
       }
     >
-      <Dialog.Panel title="Add new locale item">
+      <Dialog.Panel title="Add new item">
         <Dialog.Content>
           <LocaleItemForm
             key="new-item-dialog"

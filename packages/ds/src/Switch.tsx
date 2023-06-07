@@ -1,14 +1,14 @@
 import React, { forwardRef } from "react";
 import * as RSwitch from "@radix-ui/react-switch";
 import { uniqueId } from "lodash-es";
-import classnames from "classnames";
+import clsx from "clsx";
 const Switch = forwardRef<
   HTMLButtonElement,
   RSwitch.SwitchProps & { label: React.ReactNode }
 >(({ label, className, ...rest }, forwardedRef) => {
   const id = uniqueId("Switch");
   return (
-    <div className={classnames("flex gap-8 items-center", className)}>
+    <div className={clsx("flex gap-8 items-center", className)}>
       <label
         htmlFor={id}
         css={`

@@ -4,11 +4,11 @@ import {
   MIXED_VALUE,
   LocaleSelection,
   LocaleItem,
+  SavedLocaleData,
   LocaleData,
 } from "../../lib";
 import { cloneDeep, pickBy } from "lodash-es";
-type LocaleState = LocaleData & { localeSelection: LocaleSelection };
-const initialState: LocaleState = {
+const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
   localeSelection: {
@@ -19,11 +19,12 @@ const initialState: LocaleState = {
       lang: undefined,
     },
   },
+  localeLibraries: [],
   localeItems: [],
   // matchedItem: null,
   modifiedTime: null,
 };
-function updateSummaryInLocaleSelection(state: LocaleState) {
+function updateSummaryInLocaleSelection(state: LocaleData) {
   const isSameLang = state.localeSelection.texts.every(
     (text) => text && text.lang == state.localeSelection.texts[0].lang
   );
@@ -46,7 +47,7 @@ export const localeSlice = createSlice({
   name: "locale",
   initialState,
   reducers: {
-    setLocaleData: (state, action: PayloadAction<LocaleData>) => {
+    setLocaleData: (state, action: PayloadAction<SavedLocaleData>) => {
       if ("sheetId" in action.payload) state.sheetId = action.payload.sheetId;
       if ("sheetName" in action.payload)
         state.sheetName = action.payload.sheetName;

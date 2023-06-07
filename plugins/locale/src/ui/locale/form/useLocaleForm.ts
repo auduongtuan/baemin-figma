@@ -10,6 +10,7 @@ import { Lang, LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash-es";
+import { getDefaultLocalLibraryId } from "../../state/helpers";
 function useLocaleForm({
   item,
   quickEdit,
@@ -50,7 +51,7 @@ function useLocaleForm({
             setValue(`hasPlurals.${inputName}`, false);
             setValue(`${inputName}.one`, itemContent);
           }
-        } else if (inputName == "prioritized") {
+        } else if (inputName == "prioritized" || inputName == "fromLibrary") {
           setValue(inputName, item[inputName]);
         }
       }
@@ -64,6 +65,7 @@ function useLocaleForm({
         }, {}),
         hasPlurals: { en: false, vi: false },
         prioritized: undefined,
+        fromLibrary: getDefaultLocalLibraryId(),
       });
     }
   }, [item]);

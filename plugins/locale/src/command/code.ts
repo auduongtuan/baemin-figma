@@ -26,10 +26,10 @@ io.on("update_texts", (msg) => {
     io.send("update_texts", { success: true });
   });
 });
-io.on("get_locale_data", () => {
-  io.send("get_locale_data", { localeData: getLocaleData() });
+io.on("get_locale_data", async () => {
+  io.send("get_locale_data", { localeData: await getLocaleData() });
 });
-io.on("save_locale_data", (msg) => saveLocaleData(msg.localeData));
+io.on("save_locale_data", async (msg) => await saveLocaleData(msg.localeData));
 io.on(
   "print_code_block",
   async (msg) =>
@@ -62,11 +62,6 @@ io.on("set_configs", async (msg) => {
   }
 });
 figma.on("run", ({ command, parameters }: RunEvent) => {
-  figma.showUI(__html__, {
-    title: PLUGIN_NAME,
-    width: 360,
-    height: 640,
-  });
   configs
     .fetch({
       languages: INITIAL_LANGUAGES,
@@ -75,6 +70,11 @@ figma.on("run", ({ command, parameters }: RunEvent) => {
     .then((data) => {
       configs.setAll(data);
       changeText.loadFonts(DEFAULT_FONTS).then(() => {
+        figma.showUI(__html__, {
+          title: PLUGIN_NAME,
+          width: 360,
+          height: 640,
+        });
         updateSelection();
       });
     });

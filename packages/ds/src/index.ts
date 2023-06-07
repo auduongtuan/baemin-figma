@@ -49,3 +49,6 @@ export * from "./Dropzone";
 
 export { default as Skeleton } from "./Skeleton";
 export * from "./Skeleton";
+
+export { default as Empty } from "./Empty";
+export * from "./Empty";

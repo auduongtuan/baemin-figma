@@ -5,6 +5,7 @@ import {
   LocaleItem,
   LocaleItemContent,
   LocaleItemPluralContent,
+  LocaleLibrary,
 } from "./types";
 import configs from "figma-helpers/configs";
 
@@ -80,4 +81,15 @@ export function getUsedTags(localeItem: LocaleItem) {
   }, []);
 
   return tags;
+}
+export function filterItemsByLibrary(
+  localeItems: LocaleItem[],
+  library: LocaleLibrary
+) {
+  if (!localeItems) return [];
+
+  const filteredLocaleItems = localeItems.filter(
+    (item) => "fromLibrary" in item && item.fromLibrary == library.id
+  );
+  return filteredLocaleItems;
 }

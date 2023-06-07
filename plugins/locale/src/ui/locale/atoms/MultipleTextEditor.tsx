@@ -22,11 +22,11 @@ const MultipleTextEditor = () => {
   return localeSelection && localeSelection.texts ? (
     <div className="p-16">
       <header className="flex items-center">
-        <h4 className="mt-0 flex-grow-1 font-medium text-secondary">
+        <h4 className="mt-0 grow font-medium text-secondary">
           {localeSelection.texts.length}{" "}
           {pluralize("text", localeSelection.texts.length)} in selection
         </h4>
-        <div className="flex gap-8 flex-shrink-0">
+        <div className="flex gap-8 shrink-0">
           <Tooltip content="Update texts to latest content">
             <IconButton
               onClick={() => {
@@ -73,7 +73,7 @@ const MultipleTextEditor = () => {
           </Tooltip>
         </div>
       </header>
-      <div className="mt-16 flex flex-column gap-16">
+      <div className="mt-16 flex flex-col gap-16">
         {localeSelection.texts.map((text) => {
           return <TextEditForm key={text.id} text={text}></TextEditForm>;
         })}

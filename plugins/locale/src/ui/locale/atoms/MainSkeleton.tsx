@@ -8,12 +8,12 @@ function randomIntFromInterval(min: number, max: number) {
 const MainSekeleton = memo(() => {
   return (
     <div
-      className="flex flex-column"
+      className="flex flex-col"
       css={`
         height: 100vh;
       `}
     >
-      <div className="py-10 px-16 flex align-content-between justify-between w-full">
+      <div className="py-10 px-16 flex content-between justify-between w-full">
         <Skeleton width="80px" height="20px" />
         <div className="flex gap-8">
           <Skeleton width="20px" height="20px" />
@@ -21,7 +21,7 @@ const MainSekeleton = memo(() => {
         </div>
       </div>
       <Divider />
-      <div className="py-24 p-16 flex flex-column h-full gap-24 flex-grow-1">
+      <div className="py-24 p-16 flex flex-col h-full gap-24 grow">
         <Skeleton height="20px" width="100px" />
         {[...Array(8)].map((_, i) => (
           <Skeleton
@@ -31,7 +31,7 @@ const MainSekeleton = memo(() => {
         ))}
       </div>
       <Divider />
-      <div className="py-10 px-16 flex align-content-between justify-between w-full flex-grow-0 flex-shrink-0">
+      <div className="py-10 px-16 flex content-between justify-between w-full grow-0 shrink-0">
         <Skeleton width="40px" height="20px" />
         <div className="flex gap-8">
           <Skeleton width="20px" height="20px" />

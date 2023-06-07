@@ -31,29 +31,15 @@ const AppBar = () => {
 
   // console.log("Navigator", navigator.clipboard);
   return (
-    <footer
-      css={`
-        justify-content: space-between;
-        display: flex;
-        /* position: fixed; */
-        /* bottom: 0; */
-        background: #fff;
-        border-top: 1px solid #eee;
-        width: 100%;
-        /* left: 0; */
-        padding: 12px 16px;
-        flex-grow: 0;
-        flex-shrink: 0;
-      `}
-    >
-      <div className="flex-grow-1">
+    <footer className="justify-between flex bg-white border-t border-divider w-full py-12 px-16 grow-0 shrink-0 ">
+      <div className="grow">
         <span className="text-secondary">
           v{import.meta.env.VITE_PLUGIN_VERSION}
         </span>
         {/* {isWorking && <WorkingIcon showText />} */}
         {/* <WorkingIcon /> */}
       </div>
-      <div className="flex flex-grow-0 flex-shrink-0 gap-16">
+      <div className="flex grow-0 shrink-0 gap-16">
         <Tooltip content="Import JSON files">
           <IconButton
             onClick={() => {

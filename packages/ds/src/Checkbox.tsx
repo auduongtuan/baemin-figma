@@ -5,13 +5,13 @@ import { CheckIcon } from "@radix-ui/react-icons";
 
 const Checkbox = forwardRef<
   HTMLButtonElement,
-  RCheckbox.CheckboxProps & { label: React.ReactNode }
->(({ label, className, ...rest }, forwardedRef) => {
-  const id = uniqueId("Switch");
+  RCheckbox.CheckboxProps & { label?: React.ReactNode; id?: string }
+>(({ label, className, id, ...rest }, forwardedRef) => {
+  const checkboxId = id || uniqueId("Checkbox");
   return (
     <div className={`flex gap-8 items-center ${className}`}>
       <RCheckbox.Root
-        id={id}
+        id={checkboxId}
         css={`
           background-color: var(--white);
           border: 1px solid var(--black8-opaque);
@@ -37,19 +37,21 @@ const Checkbox = forwardRef<
           <CheckIcon width={11} height={11} />
         </RCheckbox.Indicator>
       </RCheckbox.Root>
-      <label
-        htmlFor={id}
-        css={`
-          align-items: center;
-          color: var(--black8);
-          display: flex;
-          height: 100%;
-          line-height: var(--font-line-height);
-          user-select: none;
-        `}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          htmlFor={checkboxId}
+          css={`
+            align-items: center;
+            color: var(--black8);
+            display: flex;
+            height: 100%;
+            line-height: var(--font-line-height);
+            user-select: none;
+          `}
+        >
+          {label}
+        </label>
+      )}
     </div>
   );
 });

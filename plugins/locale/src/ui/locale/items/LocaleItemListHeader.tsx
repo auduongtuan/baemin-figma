@@ -9,17 +9,10 @@ import { LocaleLibrary } from "../../../lib";
 const LocaleItemListHeader = ({ source, setSource }) => {
   const dispatch = useAppDispatch();
   return (
-    <header
-      css={`
-        position: sticky;
-        background: var(--figma-color-bg);
-        z-index: 20;
-        top: 0;
-      `}
-    >
+    <header className="sticky z-20 top-0 bg-white">
       <div className="flex items-center px-16 py-4">
-        <div className="flex gap-8 w-full flex-grow-1">
-          <div className="items-center flex-grow-1">
+        <div className="flex gap-8 w-full grow">
+          <div className="items-center grow">
             <Select
               inline
               label="Library"

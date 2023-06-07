@@ -7,7 +7,11 @@ const MAccordion = forwardRef<
   React.ElementRef<typeof RAccordion.Root>,
   AccordionProps
 >(({ children, ...rest }, ref) => {
-  return <RAccordion.Root {...rest} ref={ref}>{children}</RAccordion.Root>;
+  return (
+    <RAccordion.Root {...rest} ref={ref}>
+      {children}
+    </RAccordion.Root>
+  );
 });
 
 const MAccordionItem = ({ title, children }) => {
@@ -39,13 +43,13 @@ const MAccordionItem = ({ title, children }) => {
           <ChevronRightIcon
             width="12"
             height="12"
-            className="flex-grow-0 flex-shrink-0 chevron-icon"
+            className="grow-0 shrink-0 chevron-icon"
             css={`
               color: var(--figma-color-icon-secondary);
             `}
             aria-hidden
           />
-          <div className="flex-grow-1">{title}</div>
+          <div className="grow">{title}</div>
         </RAccordion.Trigger>
       </RAccordion.Header>
       <RAccordion.Content

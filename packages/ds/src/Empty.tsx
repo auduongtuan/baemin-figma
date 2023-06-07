@@ -12,10 +12,7 @@ const Empty = ({
 }) => {
   return (
     <div
-      className={clsx(
-        "flex flex-column items-center justify-center",
-        className
-      )}
+      className={clsx("flex flex-col items-center justify-center", className)}
       {...rest}
     >
       <FileIcon width={32} height={32} className="text-secondary" />

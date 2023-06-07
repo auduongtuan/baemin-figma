@@ -10,7 +10,7 @@ const EditInfo = ({ localeItem }: { localeItem: LocaleItem }) => {
     ("createdAt" in localeItem || "updatedAt" in localeItem) && (
       <Tooltip
         content={
-          <div className="flex flex-column gap-4">
+          <div className="flex flex-col gap-4">
             {localeItem.createdAt && (
               <div>
                 <p className="font-medium">Created at:</p>

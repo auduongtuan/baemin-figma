@@ -85,7 +85,7 @@ const SheetManagement = () => {
   };
   return (
     <div className="flex w-full">
-      <div className="flex-grow-1">
+      <div className="grow">
         <div className="flex gap-8">
           <p
             css={`
@@ -106,19 +106,13 @@ const SheetManagement = () => {
           />
         </div>
 
-        <p
-          css={`
-            margin: 0;
-            color: var(--figma-color-text-secondary);
-          `}
-          className="mt-4"
-        >
+        <p className="m-0 text-secondary mt-4">
           {localeItems && localeItems.length} items - Last sync{" "}
           {/* {timeAgo.format(new Date(modifiedTime))} */}
         </p>
       </div>
 
-      <div className="flex-shrink-0 flex-grow-0 flex gap-4">
+      <div className="shrink-0 grow-0 flex gap-4">
         <Button variant="secondary" onClick={() => sync()} loading={isSyncing}>
           Sync
         </Button>

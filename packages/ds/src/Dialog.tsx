@@ -165,7 +165,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
             >
               {title}
             </RDialog.Title>
-            <div className="flex items-center flex-grow-0 flex-shrink-0 gap-8">
+            <div className="flex items-center grow-0 shrink-0 gap-8">
               {buttons && buttons}
               <RDialog.Close asChild>
                 <IconButton>

@@ -177,21 +177,8 @@ function LocaleItemForm({
       )}
       {showTitle && !item && (
         <header className="mb-16">
-          <h4
-            css={`
-              margin: 0;
-            `}
-          >
-            Add new locale item
-          </h4>
-          <p
-            className="mt-8"
-            css={`
-              color: var(--figma-color-text-secondary);
-            `}
-          >
-            No matched item found
-          </p>
+          <h4 className="mb-0">Add new locale item</h4>
+          <p className="mt-8 text-secondary">No matched item found</p>
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
@@ -231,8 +218,8 @@ function LocaleItemForm({
         )}
         {!saveOnChange && (
           <div className="flex mt-24">
-            <h4 className="font-medium flex-grow-1">Translation</h4>
-            <div className="flex-grow-0 flex-shrink-0">
+            <h4 className="font-medium grow">Translation</h4>
+            <div className="grow-0 shrink-0">
               <Tooltip
                 content={
                   <>

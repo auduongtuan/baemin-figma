@@ -17,11 +17,20 @@ export default {
         large: "13px",
         xlarge: "14px",
       },
+      colors: {
+        action: "rgba(0,0,0,0.8)",
+      },
+      backgroundColor: {
+        brand: "var(--figma-color-bg-brand)",
+      },
       textColor: {
         secondary: "var(--figma-color-text-secondary)",
+        "icon-onbrand": "var(--figma-color-icon-onbrand)",
       },
       borderColor: {
         divider: "var(--figma-color-border)",
+        brand: "var(--figma-color-bg-brand)",
+        disabled: "rgba(0,0,0,0.2)",
       },
     },
   },

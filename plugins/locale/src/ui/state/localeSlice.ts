@@ -105,6 +105,14 @@ export const localeSlice = createSlice({
         ),
       ];
     },
+    removeLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
+      state.localeItems = [
+        ...state.localeItems.filter(
+          (localeItem) =>
+            !action.payload.map((item) => item.key).includes(localeItem.key)
+        ),
+      ];
+    },
     updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
       state.localeItems = [...action.payload];
     },
@@ -139,6 +147,7 @@ export const {
   updateLocaleItems,
   updateTextInLocaleSelection,
   removeLocaleItem,
+  removeLocaleItems,
   updateTextsInLocaleSelection,
 } = localeSlice.actions;
 export default localeSlice.reducer;

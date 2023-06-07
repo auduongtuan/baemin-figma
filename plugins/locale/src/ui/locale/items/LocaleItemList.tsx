@@ -1,18 +1,21 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React from "react";
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
-import { Checkbox, Collapsible, Empty } from "ds";
+import { Empty, IconButton, Tooltip } from "ds";
 import { LocaleItem } from "../../../lib";
-import LocaleItemRecord from "./LocaleItemRecord";
 import { useLocaleItems } from "../../hooks/locale";
 import LocaleItemListHeader from "./LocaleItemListHeader";
+import { useAppSelector } from "../../hooks/redux";
+import { TrashIcon } from "@radix-ui/react-icons";
+import LocaleItemListGroup from "./LocaleItemListGroup";
+import LocaleItemToolbar from "./LocaleItemToolbar";
 
 const LocaleItemList = () => {
-  const [source, setSource] = useState("all");
+  const listState = useAppSelector((state) => state.localeApp.list);
   const localeItems = useLocaleItems();
   const filteredLocaleItems = localeItems.filter((item: LocaleItem) => {
-    if (source == "all") return true;
-    return item.fromLibrary && item.fromLibrary == source;
+    if (listState.source == "all") return true;
+    return item.fromLibrary && item.fromLibrary == listState.source;
   });
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -25,7 +28,7 @@ const LocaleItemList = () => {
     filteredLocaleItems.length < 32 || groupedLocaleItems.length < 4;
   return (
     <div className="relative">
-      <LocaleItemListHeader source={source} setSource={setSource} />
+      <LocaleItemListHeader />
       <div className="p-16 flex gap-8 flex-col min-h-[calc(100%-41px)]">
         {localeItems && (
           <h4 className="mt-0 --grow font-medium text-secondary">
@@ -43,27 +46,15 @@ const LocaleItemList = () => {
         {localeItems &&
           groupedLocaleItems &&
           groupedLocaleItems.map(([name, items]) => (
-            <Collapsible key={source + name} defaultOpen={defaultExpanded}>
-              <Collapsible.Trigger className="font-medium">
-                <div className="flex gap-8">
-                  <Checkbox
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />{" "}
-                  <span className="grow">
-                    {name || "Ungrouped"} ({items.length})
-                  </span>
-                </div>
-              </Collapsible.Trigger>
-              <Collapsible.Content className="pl-16 pb-8">
-                {items.map((item) => (
-                  <LocaleItemRecord item={item} group={name} />
-                ))}
-              </Collapsible.Content>
-            </Collapsible>
+            <LocaleItemListGroup
+              key={listState.source + name}
+              defaultExpanded={defaultExpanded}
+              name={name}
+              items={items}
+            />
           ))}
       </div>
+      {listState.editMode && <LocaleItemToolbar />}
     </div>
   );
 };

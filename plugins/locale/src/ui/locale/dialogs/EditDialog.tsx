@@ -13,28 +13,32 @@ const EditDialog = () => {
   );
   const dispatch = useAppDispatch();
   const items = useLocaleItems();
-  const item = findItemByKey(currentDialog.key, items);
+  const item = currentDialog.key
+    ? findItemByKey(currentDialog.key, items)
+    : undefined;
   return (
-    <Dialog
-      open={currentDialog.type == "EDIT" && currentDialog.opened}
-      onOpenChange={(open) => {
-        dispatch(setCurrentDialog({ opened: open }));
-      }}
-    >
-      <Dialog.Panel
-        title="Edit locale item"
-        buttons={<EditInfo localeItem={item} />}
+    item && (
+      <Dialog
+        open={currentDialog.type == "EDIT" && currentDialog.opened}
+        onOpenChange={(open) => {
+          dispatch(setCurrentDialog({ opened: open }));
+        }}
       >
-        <Dialog.Content>
-          <LocaleItemForm
-            key={item.key + "_edit"}
-            item={item}
-            showTitle={false}
-            saveOnChange={false}
-          />
-        </Dialog.Content>
-      </Dialog.Panel>
-    </Dialog>
+        <Dialog.Panel
+          title="Edit locale item"
+          buttons={<EditInfo localeItem={item} />}
+        >
+          <Dialog.Content>
+            <LocaleItemForm
+              key={item.key + "_edit"}
+              item={item}
+              showTitle={false}
+              saveOnChange={false}
+            />
+          </Dialog.Content>
+        </Dialog.Panel>
+      </Dialog>
+    )
   );
 };
 export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {

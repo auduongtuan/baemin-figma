@@ -1,6 +1,6 @@
 import React from "react";
 import { pluralize } from "@capaj/pluralize";
-import { IconButton, Tooltip } from "ds";
+import { IconButton, LibraryIcon, MoveLibraryIcon, Tooltip } from "ds";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
@@ -9,12 +9,17 @@ const LocaleItemToolbar = ({}) => {
   const listState = useAppSelector((state) => state.localeApp.list);
   const dispatch = useAppDispatch();
   return (
-    <div className="py-8 px-16 sticky bottom-0 left-0 w-full bg-white border-t border-divider items-center flex">
+    <div className="sticky bottom-0 left-0 flex items-center w-full px-16 py-8 bg-white border-t border-divider">
       <div className="grow">
         {listState.selectedItems.length}{" "}
         {pluralize("item", listState.selectedItems.length)} selected
       </div>
-      <div className="grow-0 shrink-0">
+      <div className="flex gap-16 grow-0 shrink-0">
+        <Tooltip content="Move items to other library">
+          <IconButton onClick={() => {}}>
+            <MoveLibraryIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip content="Delete selected items">
           <IconButton
             onClick={() => {

@@ -53,3 +53,4 @@ export * from "./Skeleton";
 
 export { default as Empty } from "./Empty";
 export * from "./Empty";
+export * from "./icons";

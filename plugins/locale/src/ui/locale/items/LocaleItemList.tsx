@@ -14,8 +14,11 @@ const LocaleItemList = () => {
   const listState = useAppSelector((state) => state.localeApp.list);
   const localeItems = useLocaleItems();
   const filteredLocaleItems = localeItems.filter((item: LocaleItem) => {
-    if (listState.source == "all") return true;
-    return item.fromLibrary && item.fromLibrary == listState.source;
+    const needLocal = !listState.editMode || item.isLocal;
+    if (listState.source == "all") return needLocal && true;
+    return (
+      needLocal && item.fromLibrary && item.fromLibrary == listState.source
+    );
   });
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -31,14 +34,14 @@ const LocaleItemList = () => {
       <LocaleItemListHeader />
       <div className="p-16 flex gap-8 flex-col min-h-[calc(100%-41px)]">
         {localeItems && (
-          <h4 className="mt-0 --grow font-medium text-secondary">
-            {filteredLocaleItems.length}{" "}
+          <h4 className="mt-0 font-medium --grow text-secondary">
+            {filteredLocaleItems.length} {listState.editMode && "editable "}
             {pluralize("item", filteredLocaleItems.length)}
           </h4>
         )}
         {localeItems && localeItems.length == 0 && (
           <Empty
-            className="grow h-full"
+            className="h-full grow"
             title={"No items yet"}
             description={"Import or add your i18n items to use the plugin."}
           ></Empty>

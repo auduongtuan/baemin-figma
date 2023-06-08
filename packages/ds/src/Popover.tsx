@@ -2,7 +2,7 @@ import React from "react";
 import * as RPopover from "@radix-ui/react-popover";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
-import { IconButton } from "./Button";
+import { IconButton } from "./IconButton";
 
 interface PopoverContentProps extends React.ComponentPropsWithoutRef<"div"> {
   title?: string;

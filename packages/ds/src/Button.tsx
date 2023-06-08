@@ -7,36 +7,7 @@ interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   type?: "button" | "submit" | "reset";
   loading?: boolean;
 }
-interface IconButtonProps extends React.ComponentPropsWithoutRef<"button"> {
-  icon?: string;
-  type?: "button" | "submit" | "reset";
-}
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  (
-    { icon, className = "", type = "button", children, ...rest },
-    forwardedRef
-  ) => {
-    return (
-      <button
-        ref={forwardedRef}
-        type={type}
-        css={`
-          color: var(--black8-opaque);
-          background: transparent;
-          padding: 4px;
-          margin: -4px;
-          &:hover {
-            background: var(--figma-color-bg-hover);
-          }
-        `}
-        className={className}
-        {...rest}
-      >
-        {children ? children : <span className={`icon icon--${icon}`}></span>}
-      </button>
-    );
-  }
-);
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {

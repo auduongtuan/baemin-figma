@@ -32,7 +32,7 @@ const initialState: {
   },
   list: {
     source: "all",
-    editMode: true,
+    editMode: false,
     selectedItems: [],
   },
 };

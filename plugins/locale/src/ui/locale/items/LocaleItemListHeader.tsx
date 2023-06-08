@@ -14,9 +14,9 @@ const LocaleItemListHeader = () => {
   const dispatch = useAppDispatch();
   const { source, editMode } = useAppSelector((state) => state.localeApp.list);
   return (
-    <header className="sticky z-20 top-0 bg-white">
+    <header className="sticky top-0 z-20 bg-white">
       <div className="flex items-center px-16 py-4">
-        <div className="flex gap-8 w-full grow">
+        <div className="flex w-full gap-8 grow">
           <div className="items-center grow">
             <Select
               inline
@@ -32,9 +32,12 @@ const LocaleItemListHeader = () => {
               maxWidth="240px"
             />
           </div>
-          <div className="inline-flex justify-center items-center gap-8">
+          <div className="inline-flex items-center justify-center gap-8">
             <Tooltip content="Toggle list edit mode">
-              <IconButton onClick={() => dispatch(setEditMode(!editMode))}>
+              <IconButton
+                pressed={editMode}
+                onClick={() => dispatch(setEditMode(!editMode))}
+              >
                 <MixerHorizontalIcon />
               </IconButton>
             </Tooltip>

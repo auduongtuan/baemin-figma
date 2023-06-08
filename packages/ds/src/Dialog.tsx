@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect } from "react";
 import * as RDialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
-import { IconButton } from "./Button";
+import { IconButton } from "./IconButton";
 import { Portal } from "@radix-ui/react-portal";
 
 interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -165,7 +165,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
             >
               {title}
             </RDialog.Title>
-            <div className="flex items-center grow-0 shrink-0 gap-8">
+            <div className="flex items-center gap-8 grow-0 shrink-0">
               {buttons && buttons}
               <RDialog.Close asChild>
                 <IconButton>

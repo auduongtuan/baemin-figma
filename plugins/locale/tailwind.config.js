@@ -10,6 +10,11 @@ export default {
   ],
   theme: {
     extend: {
+      data: {
+        open: 'state="open"',
+        checked: 'state="checked"',
+        indeterminate: 'state="indeterminate"',
+      },
       spacing: spacingScale,
       fontSize: {
         xsmall: "11px",
@@ -19,18 +24,18 @@ export default {
       },
       colors: {
         action: "rgba(0,0,0,0.8)",
-      },
-      backgroundColor: {
+        secondary: "var(--figma-color-text-secondary)",
         brand: "var(--figma-color-bg-brand)",
       },
+      backgroundColor: {
+        hover: "var(--figma-color-bg-hover)",
+      },
       textColor: {
-        secondary: "var(--figma-color-text-secondary)",
         "icon-onbrand": "var(--figma-color-icon-onbrand)",
       },
       borderColor: {
         divider: "var(--figma-color-border)",
-        brand: "var(--figma-color-bg-brand)",
-        disabled: "rgba(0,0,0,0.2)",
+        disabled: "rgba(0,0,0,0.1)",
       },
     },
   },

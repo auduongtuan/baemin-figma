@@ -80,3 +80,9 @@ export interface LocaleSelection {
   texts?: LocaleText[];
 }
 export type LocaleJsonFormat = "i18n-js" | "i18next";
+
+export interface Configs {
+  languages: Lang[];
+  defaultLanguage: Lang;
+  altLanguage: Lang;
+}

@@ -30,9 +30,9 @@ const LocaleItemList = () => {
   const defaultExpanded =
     filteredLocaleItems.length < 32 || groupedLocaleItems.length < 4;
   return (
-    <div className="relative">
+    <div className="relative flex flex-col grow">
       <LocaleItemListHeader />
-      <div className="p-16 flex gap-8 flex-col min-h-[calc(100%-41px)]">
+      <div className="flex flex-col gap-8 p-16 grow">
         {localeItems && (
           <h4 className="mt-0 font-medium --grow text-secondary">
             {filteredLocaleItems.length} {listState.editMode && "editable "}

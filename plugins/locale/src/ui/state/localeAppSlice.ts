@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Lang, LocaleItem } from "../../lib";
+import { Lang, LocaleItem, Configs } from "../../lib";
 import configs from "figma-helpers/configs";
 import { unionWith } from "lodash-es";
 interface DialogState {
@@ -8,10 +8,11 @@ interface DialogState {
   type?: "EDIT" | "NEW" | "DELETE" | "IMPORT";
   onDone?: (localeItem: LocaleItem) => void;
 }
+
 const initialState: {
   currentDialog: DialogState;
   isWorking: boolean;
-  configs: { languages: Lang[]; defaultLanguage: Lang; altLanguage: Lang };
+  configs: Configs;
   list: {
     editMode: boolean;
     source: "all" | string;

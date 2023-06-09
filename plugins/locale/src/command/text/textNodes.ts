@@ -9,7 +9,11 @@ export function getTextNodes(scope?: BaseNode | BaseNode[]): TextNode[] {
     : selection();
   const textNodes: TextNode[] = [];
   updateNodes.forEach((parentNode) => {
-    if (isContainer(parentNode) || parentNode.type == "PAGE") {
+    if (
+      isContainer(parentNode) ||
+      parentNode.type == "COMPONENT_SET" ||
+      parentNode.type == "PAGE"
+    ) {
       textNodes.push(
         ...(parentNode.findAllWithCriteria({ types: ["TEXT"] }) as TextNode[])
       );

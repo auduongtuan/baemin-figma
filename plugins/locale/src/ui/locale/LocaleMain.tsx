@@ -42,11 +42,11 @@ const Locale = ({}) => {
   return !isReady ? (
     <MainSekeleton />
   ) : (
-    <div className="bg-white flex flex-col h-screen w-full">
+    <div className="flex flex-col w-full h-screen bg-white">
       {currentDialog.type == "NEW" && <NewDialog />}
       {currentDialog.type == "DELETE" && <DeleteDialog />}
       {currentDialog.type == "EDIT" && <EditDialog />}
-      <section className="shrink grow w-full overflow-scroll">
+      <section className="flex flex-col w-full overflow-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (
           <SelectionEditor />
         ) : (

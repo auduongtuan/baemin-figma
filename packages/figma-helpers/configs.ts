@@ -11,7 +11,7 @@ const configs = (function (isFigma: boolean) {
   function get<T = unknown>(name: string, defaultValue: T = null) {
     return name in configs ? configs[name] : defaultValue;
   }
-  function setAll(configValues: { [key: string]: any }) {
+  function setAll<T>(configValues: Partial<T>) {
     for (const key in configValues) {
       configs[key] = configValues[key];
     }

@@ -83,43 +83,37 @@ function LocaleItemForm({
     const { key, hasPlurals, prioritized, fromLibrary, ...content } =
       data || getValues();
     const currentDate = new Date();
-    return languages.reduce(
-      (acc, lang: string) => {
-        if (lang in hasPlurals && lang in content && content[lang]) {
-          acc[lang] = hasPlurals[lang] ? content[lang] : content[lang].one;
-        }
-        return acc;
-      },
-      {
-        ...(localeItem
-          ? {
-              createdAt: localeItem.createdAt,
-              prioritized: localeItem.prioritized,
-              imported: localeItem.imported,
-            }
-          : {}),
-        key: key,
-        fromLibrary: fromLibrary || defaultLocalLibraryId,
-        isLocal: getLibrary(fromLibrary)?.local || false,
-        ...(type == "create"
-          ? {
-              createdAt: currentDate.toJSON(),
-            }
-          : {}),
-        updatedAt: currentDate.toJSON(),
-        ...(type != "quick-update"
-          ? { prioritized: prioritized || false }
-          : {}),
+
+    const initalData = {
+      ...(localeItem
+        ? {
+            createdAt: localeItem.createdAt || currentDate.toJSON(),
+            prioritized: localeItem.prioritized,
+            imported: localeItem.imported,
+          }
+        : {
+            createdAt: currentDate.toJSON(),
+          }),
+      key: key,
+      fromLibrary: fromLibrary || defaultLocalLibraryId,
+      isLocal: getLibrary(fromLibrary)?.local || false,
+      updatedAt: currentDate.toJSON(),
+      ...(type != "quick-update" ? { prioritized: prioritized || false } : {}),
+    };
+    return languages.reduce((acc, lang: string) => {
+      if (lang in hasPlurals && lang in content && content[lang]) {
+        acc[lang] = hasPlurals[lang] ? content[lang] : content[lang].one;
       }
-    );
+      return acc;
+    }, initalData);
   };
   // save on submit
   const updateLocaleItemHandler = useCallback(() => {
     const oldKey = getValues("oldKey");
     const localeItemData = getContent("update");
+    dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
     dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
     if (localeSelection) updateTextsOfItem(oldKey, localeItemData);
-    dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
     runCommand("show_figma_notify", { message: "Item updated" });
   }, [localeSelection, localeItems]);
 
@@ -168,7 +162,7 @@ function LocaleItemForm({
   return (
     <form onSubmit={submitFn}>
       {showTitle && item && saveOnChange && (
-        <header className="flex justify-between items-center mb-8">
+        <header className="flex items-center justify-between mb-8">
           <h4 className="mt-0 font-medium truncate">
             Quick edit {localeItem.key}
           </h4>
@@ -177,21 +171,8 @@ function LocaleItemForm({
       )}
       {showTitle && !item && (
         <header className="mb-16">
-          <h4
-            css={`
-              margin: 0;
-            `}
-          >
-            Add new locale item
-          </h4>
-          <p
-            className="mt-8"
-            css={`
-              color: var(--figma-color-text-secondary);
-            `}
-          >
-            No matched item found
-          </p>
+          <h4 className="mb-0">Add new locale item</h4>
+          <p className="mt-8 text-secondary">No matched item found</p>
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
@@ -231,8 +212,8 @@ function LocaleItemForm({
         )}
         {!saveOnChange && (
           <div className="flex mt-24">
-            <h4 className="font-medium flex-grow-1">Translation</h4>
-            <div className="flex-grow-0 flex-shrink-0">
+            <h4 className="font-medium grow">Translation</h4>
+            <div className="grow-0 shrink-0">
               <Tooltip
                 content={
                   <>
@@ -311,7 +292,7 @@ function LocaleItemForm({
         )}
         {!saveOnChange && (
           <Dialog.Footer>
-            <footer className="flex justify-between items-center">
+            <footer className="flex items-center justify-between">
               <Button type="submit" onClick={submitFn}>
                 {localeItem ? "Update item" : "Add item"}
               </Button>

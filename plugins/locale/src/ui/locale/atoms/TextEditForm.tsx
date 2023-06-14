@@ -103,25 +103,15 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
     <div>
-      <div
-        className="text-left font-normal text-small flex w-full items-center"
-        css={`
-          & .actions {
-            opacity: 0;
-          }
-          &:hover .actions {
-            opacity: 1;
-          }
-        `}
-      >
+      <div className="text-left font-normal text-small flex w-full items-center group">
         <TextIcon
-          className="text-secondary mr-8 flex-shrink-0 flex-grow-0"
+          className="text-secondary mr-8 shrink-0 grow-0"
           css={`
             width: 16px;
             height: 16px;
           `}
         />
-        <div className="flex-grow-1 flex-shrink-1 font-medium truncate">
+        <div className="grow shrink font-medium truncate">
           {text.characters}
         </div>
       </div>
@@ -134,7 +124,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               text={text}
             />
             <div
-              className={`icon-group flex flex-grow-1 gap-12`}
+              className={`icon-group flex grow gap-12`}
               data-activated={iconGroupActivated ? "activated" : undefined}
             >
               {localeItem && !useFormula && (
@@ -215,7 +205,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                 }}
               />
               <div
-                className={`icon-group flex flex-grow-1 gap-12`}
+                className={`icon-group flex grow gap-12`}
                 data-activated={iconGroupActivated ? "activated" : undefined}
               >
                 <SwitchLanguageDropdownMenu

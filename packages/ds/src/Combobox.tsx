@@ -189,11 +189,11 @@ const Combobox = ({
             className={clsx("select-menu__button", {
               "select-menu__button--focus": isFocus,
               "select-menu__button--disabled": disabled,
-              "flex-shrink-1": inline,
+              shrink: inline,
             })}
           >
             <input
-              className={clsx("select-menu__label flex-grow-1", {
+              className={clsx("select-menu__label grow", {
                 // "select-menu__label--placeholder": !inputValue ? true : false,
               })}
               placeholder={placeholder}

@@ -7,45 +7,25 @@ const MAccordion = forwardRef<
   React.ElementRef<typeof RAccordion.Root>,
   AccordionProps
 >(({ children, ...rest }, ref) => {
-  return <RAccordion.Root {...rest} ref={ref}>{children}</RAccordion.Root>;
+  return (
+    <RAccordion.Root {...rest} ref={ref}>
+      {children}
+    </RAccordion.Root>
+  );
 });
 
 const MAccordionItem = ({ title, children }) => {
   return (
     <RAccordion.Item value="item-1">
       <RAccordion.Header>
-        <RAccordion.Trigger
-          css={`
-            border: none;
-            background: none;
-            display: flex;
-            width: 100%;
-            align-items: flex-start;
-            gap: 4px;
-            padding: 6px 4px;
-            margin: 0 -4px;
-            border-radius: var(--border-radius-large);
-            &:hover {
-              background: var(--figma-color-bg-hover);
-            }
-            .chevron-icon {
-              transition: transform 100ms;
-            }
-            &[data-state="open"] .chevron-icon {
-              transform: rotate(90deg);
-            }
-          `}
-        >
+        <RAccordion.Trigger className="flex items-start w-full gap-4 px-4 py-6 -mx-4 border-none rounded-lg bg-none hover:bg-hover group">
           <ChevronRightIcon
             width="12"
             height="12"
-            className="flex-grow-0 flex-shrink-0 chevron-icon"
-            css={`
-              color: var(--figma-color-icon-secondary);
-            `}
+            className={`grow-0 shrink-0 transition-transform duration-100 group-hover:data-open:rotate-90 text-secondary`}
             aria-hidden
           />
-          <div className="flex-grow-1">{title}</div>
+          <div className="grow">{title}</div>
         </RAccordion.Trigger>
       </RAccordion.Header>
       <RAccordion.Content

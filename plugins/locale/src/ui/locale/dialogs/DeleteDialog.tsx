@@ -1,36 +1,48 @@
 import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { Button, IconButton, Dialog, Tooltip, Tag } from "ds";
-import { removeLocaleItem } from "../../state/localeSlice";
-import { Crosshair2Icon, Pencil2Icon, TrashIcon } from "@radix-ui/react-icons";
+import { Button, IconButton, Dialog, Tooltip } from "ds";
+import { removeLocaleItem, removeLocaleItems } from "../../state/localeSlice";
+import { TrashIcon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
-import { setCurrentDialog } from "../../state/localeAppSlice";
-import LocaleItemForm from "../form/LocaleItemForm";
+import {
+  clearSelectedItems,
+  setCurrentDialog,
+} from "../../state/localeAppSlice";
 import { LocaleItem, findItemByKey } from "../../../lib";
-import { getLibraryName } from "../../state/helpers";
 import { useLocaleItems } from "../../hooks/locale";
+import { pluralize } from "@capaj/pluralize";
 const DeleteDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
+  console.log(currentDialog);
   const items = useLocaleItems();
-  const item = findItemByKey(currentDialog.key, items);
+  const { selectedItems } = useAppSelector((state) => state.localeApp.list);
+  const item =
+    currentDialog.key != "__SELECTED_ITEMS"
+      ? findItemByKey(currentDialog.key, items)
+      : undefined;
+  const deleteSelectedItems = currentDialog.key == "__SELECTED_ITEMS";
   const deleteLocaleItemHandler = useCallback(() => {
     if (item) {
       dispatch(removeLocaleItem(item));
       dispatch(setCurrentDialog({ opened: false }));
       runCommand("show_figma_notify", { message: "Item deleted" });
     }
-  }, [item]);
+    if (deleteSelectedItems) {
+      dispatch(removeLocaleItems(selectedItems));
+      dispatch(setCurrentDialog({ opened: false }));
+      dispatch(clearSelectedItems);
+      runCommand("show_figma_notify", { message: "Items deleted" });
+    }
+  }, [item, selectedItems]);
   const dispatch = useAppDispatch();
-  return item ? (
+  return (
     <Dialog
       open={currentDialog.opened && currentDialog.type == "DELETE"}
       onOpenChange={(open) => {
         dispatch(
           setCurrentDialog({
-            type: "DELETE",
-            key: item.key,
             opened: open,
           })
         );
@@ -38,7 +50,15 @@ const DeleteDialog = () => {
     >
       <Dialog.Panel title="Delete locale item">
         <Dialog.Content>
-          Are you sure you want to delete <strong>{item.key}</strong>?
+          Are you sure you want to delete{" "}
+          {!deleteSelectedItems && item && <strong>{item.key}</strong>}
+          {deleteSelectedItems &&
+            selectedItems &&
+            `${selectedItems.length} ${pluralize(
+              "item",
+              selectedItems.length
+            )}`}
+          ?
           <Button
             // variant="secondary"
             destructive
@@ -50,7 +70,7 @@ const DeleteDialog = () => {
         </Dialog.Content>
       </Dialog.Panel>
     </Dialog>
-  ) : null;
+  );
 };
 export const DeleteDialogTrigger = ({ item }: { item: LocaleItem }) => {
   const dispatch = useAppDispatch();

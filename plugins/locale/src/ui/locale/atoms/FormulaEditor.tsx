@@ -61,13 +61,7 @@ const FormulaEditor = ({ value, onChange, ...rest }: FormulaEditorProps) => {
         onChange={handleChange}
         placeholder={"Enter formula, press ':' to add keys"}
         customSuggestionsContainer={(children) => (
-          <Menu
-            css={`
-              max-width: 160px;
-            `}
-          >
-            {children}
-          </Menu>
+          <Menu className="max-w-[160px]">{children}</Menu>
         )}
         {...rest}
       >

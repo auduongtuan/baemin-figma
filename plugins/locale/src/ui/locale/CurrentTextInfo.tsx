@@ -17,18 +17,13 @@ const CurrentTextInfo = () => {
   return (
     languages &&
     localeSelection && (
-      <div
-        className=""
-        css={`
-          position: sticky;
-        `}
-      >
+      <div className="sticky">
         {/* <h4 className="mt-0">Summary</h4> */}
         <div className="flex gap-12 px-16 py-4">
           <KeyCombobox
             label="Key"
             inline
-            className="w-half"
+            className="w-1/2"
             value={
               localeSelection && localeSelection.summary
                 ? localeSelection.summary.key
@@ -39,7 +34,7 @@ const CurrentTextInfo = () => {
           <Select
             label={`Lang`}
             inline
-            className="w-half"
+            className="w-1/2"
             placeholder="Select language"
             id="lang"
             value={localeSelection.summary.lang}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Dialog, IconButton, Tooltip } from "ds";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import LocaleItemForm from "../form/LocaleItemForm";
@@ -13,8 +13,12 @@ const EditDialog = () => {
   );
   const dispatch = useAppDispatch();
   const items = useLocaleItems();
-  const item = findItemByKey(currentDialog.key, items);
-  return (
+  const item = useMemo(
+    () =>
+      currentDialog.key ? findItemByKey(currentDialog.key, items) : undefined,
+    [currentDialog]
+  );
+  return item ? (
     <Dialog
       open={currentDialog.type == "EDIT" && currentDialog.opened}
       onOpenChange={(open) => {
@@ -35,7 +39,7 @@ const EditDialog = () => {
         </Dialog.Content>
       </Dialog.Panel>
     </Dialog>
-  );
+  ) : null;
 };
 export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {
   const dispatch = useAppDispatch();

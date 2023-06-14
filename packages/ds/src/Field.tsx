@@ -137,13 +137,11 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           <div className="flex mb-8 items-center">
             <label
               htmlFor={id}
-              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+              className={clsx("grow text-xsmall", labelClass)}
             >
               {label}
             </label>
-            {afterLabel && (
-              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
-            )}
+            {afterLabel && <div className="grow-0 shrink-0">{afterLabel}</div>}
           </div>
         )}
         <StyledTextBox
@@ -191,13 +189,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           <div className="flex mb-8 items-center">
             <label
               htmlFor={id}
-              className={clsx("flex-grow-1 text-xsmall", labelClass)}
+              className={clsx("grow text-xsmall", labelClass)}
             >
               {label}
             </label>
-            {afterLabel && (
-              <div className="flex-grow-0 flex-shrink-0">{afterLabel}</div>
-            )}
+            {afterLabel && <div className="grow-0 shrink-0">{afterLabel}</div>}
           </div>
         )}
         <StyledTextarea

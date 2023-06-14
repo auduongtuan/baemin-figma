@@ -105,6 +105,14 @@ export const localeSlice = createSlice({
         ),
       ];
     },
+    removeLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
+      state.localeItems = [
+        ...state.localeItems.filter(
+          (localeItem) =>
+            !action.payload.map((item) => item.key).includes(localeItem.key)
+        ),
+      ];
+    },
     updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
       state.localeItems = [...action.payload];
     },
@@ -113,7 +121,7 @@ export const localeSlice = createSlice({
       action: PayloadAction<LocaleItem & { oldKey?: string }>
     ) => {
       const { oldKey, ...updatedItem } = action.payload;
-      state.localeItems = cloneDeep(state.localeItems).map((item) => {
+      const newLocalItems = cloneDeep(state.localeItems).map((item) => {
         if (
           (oldKey && item.key == oldKey) ||
           (!oldKey && item.key == updatedItem.key)
@@ -123,10 +131,8 @@ export const localeSlice = createSlice({
           return item;
         }
       });
+      state.localeItems = newLocalItems;
     },
-    // setmatchedItem: (state, action) => {
-    //   state.matchedItem = action.payload;
-    // }
   },
 });
 
@@ -139,6 +145,7 @@ export const {
   updateLocaleItems,
   updateTextInLocaleSelection,
   removeLocaleItem,
+  removeLocaleItems,
   updateTextsInLocaleSelection,
 } = localeSlice.actions;
 export default localeSlice.reducer;

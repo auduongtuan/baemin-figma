@@ -4,7 +4,8 @@ export * from "./Accordion";
 
 export { default as Button } from "./Button";
 export * from "./Button";
-
+export { default as IconButton } from "./IconButton";
+export * from "./IconButton";
 export { default as Collapsible } from "./Collapsible";
 export * from "./Collapsible";
 
@@ -52,3 +53,4 @@ export * from "./Skeleton";
 
 export { default as Empty } from "./Empty";
 export * from "./Empty";
+export * from "./icons";

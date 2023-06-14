@@ -234,7 +234,7 @@ const ImportDialog = () => {
                               <div className="truncate">{item.key}</div>
                             </Collapsible.Trigger>
                             <Collapsible.Content>
-                              <div className="py-8 pl-16 flex flex-column gap-4">
+                              <div className="py-8 pl-16 flex flex-col gap-4">
                                 {languages.map(
                                   (lang) =>
                                     lang in item && (

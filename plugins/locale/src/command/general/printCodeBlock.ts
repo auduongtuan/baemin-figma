@@ -69,8 +69,8 @@ async function printCodeBlock(
   namespaceTextNode.fontName = { family: "Roboto", style: "Bold" };
   namespaceTextNode.fontSize = 24;
   namespaceTextNode.characters = library.name;
-  namespaceTextNode.textAutoResize = "HEIGHT";
-  namespaceTextNode.layoutAlign = "STRETCH";
+  // namespaceTextNode.textAutoResize = "HEIGHT";
+  // namespaceTextNode.layoutAlign = "STRETCH";
   const namespaceInfoTextNode = figma.createText();
   namespaceInfoTextNode.name = `${library.name}`;
   namespaceInfoTextNode.fontName = { family: "Roboto", style: "Regular" };
@@ -79,8 +79,8 @@ async function printCodeBlock(
   namespaceInfoTextNode.characters = `FORMAT: ${format}  —  EXPORT AT: ${defaultDateTimeFormat()} — BY: ${
     figma.currentUser.name
   }`;
-  namespaceInfoTextNode.textAutoResize = "HEIGHT";
-  namespaceInfoTextNode.layoutAlign = "STRETCH";
+  // namespaceInfoTextNode.textAutoResize = "HEIGHT";
+  // namespaceInfoTextNode.layoutAlign = "STRETCH";
   namespaceFrame.appendChild(namespaceTextNode);
   namespaceFrame.appendChild(namespaceInfoTextNode);
   localeCodeBlock.appendChild(namespaceFrame);
@@ -101,7 +101,7 @@ async function printCodeBlock(
     langFrame.resize(700, 800);
     langFrame.layoutGrow = 1;
     langFrame.layoutMode = "VERTICAL";
-    langFrame.counterAxisSizingMode = "AUTO";
+    langFrame.counterAxisSizingMode = "FIXED";
     langFrame.itemSpacing = 16;
     langFrame.name = `${LANGUAGE_LIST[lang]}`;
 
@@ -110,8 +110,8 @@ async function printCodeBlock(
     headingTextNode.fontName = { family: "Roboto", style: "Bold" };
     headingTextNode.fontSize = 16;
     headingTextNode.characters = LANGUAGE_LIST[lang];
-    headingTextNode.textAutoResize = "HEIGHT";
-    headingTextNode.layoutAlign = "STRETCH";
+    // headingTextNode.textAutoResize = "HEIGHT";
+    // headingTextNode.layoutAlign = "STRETCH";
 
     langFrame.appendChild(headingTextNode);
     const codeTextNode = figma.createText();
@@ -131,6 +131,8 @@ async function printCodeBlock(
     // updateCodeHighlighter(codeTextNode, tokensObject[lang]);
     localeCodes.appendChild(langFrame);
   });
+  namespaceInfoTextNode.layoutAlign = "STRETCH";
+  namespaceTextNode.layoutAlign = "STRETCH";
   figma.notify("Code generated");
 }
 export default printCodeBlock;

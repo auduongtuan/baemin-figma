@@ -1,18 +1,24 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React from "react";
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
-import { Collapsible, Empty } from "ds";
+import { Empty, IconButton, Tooltip } from "ds";
 import { LocaleItem } from "../../../lib";
-import LocaleItemRecord from "./LocaleItemRecord";
 import { useLocaleItems } from "../../hooks/locale";
 import LocaleItemListHeader from "./LocaleItemListHeader";
+import { useAppSelector } from "../../hooks/redux";
+import { TrashIcon } from "@radix-ui/react-icons";
+import LocaleItemListGroup from "./LocaleItemListGroup";
+import LocaleItemToolbar from "./LocaleItemToolbar";
 
 const LocaleItemList = () => {
-  const [source, setSource] = useState("all");
+  const listState = useAppSelector((state) => state.localeApp.list);
   const localeItems = useLocaleItems();
   const filteredLocaleItems = localeItems.filter((item: LocaleItem) => {
-    if (source == "all") return true;
-    return item.fromLibrary && item.fromLibrary == source;
+    const needLocal = !listState.editMode || item.isLocal;
+    if (listState.source == "all") return needLocal && true;
+    return (
+      needLocal && item.fromLibrary && item.fromLibrary == listState.source
+    );
   });
   const groupedLocaleItems = Object.entries(
     groupBy(orderBy(filteredLocaleItems, ["key"]), (item) => {
@@ -24,28 +30,18 @@ const LocaleItemList = () => {
   const defaultExpanded =
     filteredLocaleItems.length < 32 || groupedLocaleItems.length < 4;
   return (
-    <div
-      className=""
-      css={`
-        position: relative;
-      `}
-    >
-      <LocaleItemListHeader source={source} setSource={setSource} />
-      <div
-        className="p-16 flex gap-8 flex-column"
-        css={`
-          min-height: calc(100% - 41px);
-        `}
-      >
+    <div className="relative flex flex-col grow">
+      <LocaleItemListHeader />
+      <div className="flex flex-col gap-8 p-16 grow">
         {localeItems && (
-          <h4 className="mt-0 --flex-grow-1 font-medium text-secondary">
-            {filteredLocaleItems.length}{" "}
+          <h4 className="mt-0 font-medium --grow text-secondary">
+            {filteredLocaleItems.length} {listState.editMode && "editable "}
             {pluralize("item", filteredLocaleItems.length)}
           </h4>
         )}
         {localeItems && localeItems.length == 0 && (
           <Empty
-            className="flex-grow-1 h-full"
+            className="h-full grow"
             title={"No items yet"}
             description={"Import or add your i18n items to use the plugin."}
           ></Empty>
@@ -53,27 +49,15 @@ const LocaleItemList = () => {
         {localeItems &&
           groupedLocaleItems &&
           groupedLocaleItems.map(([name, items]) => (
-            <Collapsible key={source + name} defaultOpen={defaultExpanded}>
-              <Collapsible.Trigger
-                css={`
-                  font-weight: var(--font-weight-medium);
-                `}
-              >
-                {name || "Ungrouped"} ({items.length})
-              </Collapsible.Trigger>
-              <Collapsible.Content
-                css={`
-                  padding-left: 16px;
-                  padding-bottom: 8px;
-                `}
-              >
-                {items.map((item) => (
-                  <LocaleItemRecord item={item} group={name} />
-                ))}
-              </Collapsible.Content>
-            </Collapsible>
+            <LocaleItemListGroup
+              key={listState.source + name}
+              defaultExpanded={defaultExpanded}
+              name={name}
+              items={items}
+            />
           ))}
       </div>
+      {listState.editMode && <LocaleItemToolbar />}
     </div>
   );
 };

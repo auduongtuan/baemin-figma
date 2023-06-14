@@ -129,7 +129,7 @@ const Select = ({
           <button
             type="button"
             className={clsx("select-menu__button", {
-              "flex-shrink-1": inline,
+              shrink: inline,
             })}
             {...getToggleButtonProps()}
             disabled={disabled}
@@ -144,7 +144,7 @@ const Select = ({
             >
               {selectedItem ? (
                 <span
-                  className="flex flex-shrink-1 gap-4 items-center"
+                  className="flex shrink gap-4 items-center"
                   css={`
                     svg {
                       width: 12px;
@@ -154,9 +154,7 @@ const Select = ({
                   `}
                 >
                   {selectedItem.icon && selectedItem.icon}
-                  <span className="flex-shrink-1 truncate">
-                    {selectedItem.name}
-                  </span>
+                  <span className="shrink truncate">{selectedItem.name}</span>
                 </span>
               ) : (
                 placeholder

@@ -42,26 +42,11 @@ const Locale = ({}) => {
   return !isReady ? (
     <MainSekeleton />
   ) : (
-    <div
-      css={`
-        background: var(--white);
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        width: 100%;
-      `}
-    >
+    <div className="flex flex-col w-full h-screen bg-white">
       {currentDialog.type == "NEW" && <NewDialog />}
       {currentDialog.type == "DELETE" && <DeleteDialog />}
       {currentDialog.type == "EDIT" && <EditDialog />}
-      <section
-        css={`
-          flex-shrink: 1;
-          flex-grow: 1;
-          width: 100%;
-          overflow: scroll;
-        `}
-      >
+      <section className="flex flex-col w-full overflow-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (
           <SelectionEditor />
         ) : (

@@ -121,7 +121,7 @@ export const localeSlice = createSlice({
       action: PayloadAction<LocaleItem & { oldKey?: string }>
     ) => {
       const { oldKey, ...updatedItem } = action.payload;
-      state.localeItems = cloneDeep(state.localeItems).map((item) => {
+      const newLocalItems = cloneDeep(state.localeItems).map((item) => {
         if (
           (oldKey && item.key == oldKey) ||
           (!oldKey && item.key == updatedItem.key)
@@ -131,10 +131,8 @@ export const localeSlice = createSlice({
           return item;
         }
       });
+      state.localeItems = newLocalItems;
     },
-    // setmatchedItem: (state, action) => {
-    //   state.matchedItem = action.payload;
-    // }
   },
 });
 

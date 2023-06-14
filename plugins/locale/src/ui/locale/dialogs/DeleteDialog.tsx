@@ -12,7 +12,6 @@ import { LocaleItem, findItemByKey } from "../../../lib";
 import { useLocaleItems } from "../../hooks/locale";
 import { pluralize } from "@capaj/pluralize";
 const DeleteDialog = () => {
-  console.log("DIAGLOG");
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -31,7 +30,6 @@ const DeleteDialog = () => {
       runCommand("show_figma_notify", { message: "Item deleted" });
     }
     if (deleteSelectedItems) {
-      console.log(selectedItems);
       dispatch(removeLocaleItems(selectedItems));
       dispatch(setCurrentDialog({ opened: false }));
       dispatch(clearSelectedItems);

@@ -103,7 +103,6 @@ function KeyCombobox({
       );
     } else {
       updateText(_text.id, textProps);
-      // console.log(`Update text ${_text.id} with locale item`, localeItem);
     }
   };
   const updateSelectionOrText = (localeItemOrKey: string | LocaleItem) => {

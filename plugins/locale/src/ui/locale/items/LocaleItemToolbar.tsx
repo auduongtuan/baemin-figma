@@ -15,26 +15,28 @@ const LocaleItemToolbar = ({}) => {
         {pluralize("item", listState.selectedItems.length)} selected
       </div>
       <div className="flex gap-16 grow-0 shrink-0">
-        <Tooltip content="Move items to other library">
+        {/* <Tooltip content="Move items to other library">
           <IconButton onClick={() => {}}>
             <MoveLibraryIcon />
           </IconButton>
-        </Tooltip>
-        <Tooltip content="Delete selected items">
-          <IconButton
-            onClick={() => {
-              dispatch(
-                setCurrentDialog({
-                  type: "DELETE",
-                  opened: true,
-                  key: "__SELECTED_ITEMS",
-                })
-              );
-            }}
-          >
-            <TrashIcon />
-          </IconButton>
-        </Tooltip>
+        </Tooltip> */}
+        {listState.selectedItems.length > 0 && (
+          <Tooltip content="Delete selected items">
+            <IconButton
+              onClick={() => {
+                dispatch(
+                  setCurrentDialog({
+                    type: "DELETE",
+                    opened: true,
+                    key: "__SELECTED_ITEMS",
+                  })
+                );
+              }}
+            >
+              <TrashIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
     </div>
   );

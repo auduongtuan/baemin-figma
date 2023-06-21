@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import * as RDialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
@@ -42,9 +47,10 @@ const DialogContent = ({ children }: React.ComponentPropsWithRef<"div">) => {
   );
 };
 const DialogFooter = ({ children }: React.ComponentPropsWithRef<"footer">) => {
-  const { dialogContainerRef } = useDialogContext();
+  const { dialogContainerEl } = useDialogContext();
+  console.log("DIALOG REF", dialogContainerEl);
   return (
-    <Portal container={dialogContainerRef?.current}>
+    <Portal container={dialogContainerEl}>
       <footer
         css={`
           padding: 8px 16px;
@@ -59,15 +65,21 @@ const DialogFooter = ({ children }: React.ComponentPropsWithRef<"footer">) => {
     </Portal>
   );
 };
-interface DialogContextType
-  extends Pick<RDialog.DialogProps, "open" | "onOpenChange"> {
+interface DialogContextValue {
   holdEscape?: boolean;
-  setHoldEscape?: React.Dispatch<React.SetStateAction<boolean>>;
   onEscapeKeyDown?: RDialog.DialogContentProps["onEscapeKeyDown"];
-  setOnEscapeKeyDown?: React.Dispatch<
-    React.SetStateAction<RDialog.DialogContentProps["onEscapeKeyDown"]>
-  >;
-  dialogContainerRef?: React.RefObject<HTMLDivElement>;
+  // dialogContainerRef?: React.RefObject<HTMLDivElement | null>;
+  dialogContainerEl?: HTMLDivElement | null;
+  open?: boolean;
+  onOpenChange?: RDialog.DialogProps["onOpenChange"];
+}
+interface DialogContextType
+  extends Pick<RDialog.DialogProps, "open" | "onOpenChange">,
+    DialogContextValue {
+  setContextValue?: React.Dispatch<React.SetStateAction<DialogContextValue>>;
+  // setOnEscapeKeyDown?: React.Dispatch<
+  //   React.SetStateAction<RDialog.DialogContentProps["onEscapeKeyDown"]>
+  // >;
 }
 const DialogContext = createContext<DialogContextType>({});
 export const useDialogContext = () => {
@@ -75,21 +87,27 @@ export const useDialogContext = () => {
 };
 const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
   const { open, onOpenChange } = rest;
-  const [onEscapeKeyDown, setOnEscapeKeyDown] =
-    React.useState<RDialog.DialogContentProps["onEscapeKeyDown"]>();
-  const [holdEscape, setHoldEscape] = React.useState(false);
-  const dialogContainerRef = React.useRef<HTMLDivElement>(null);
+  const [contextValue, setContextValue] = React.useReducer(
+    (state: DialogContextValue, action: Partial<DialogContextValue>) => {
+      return {
+        ...state,
+        ...action,
+      };
+    },
+    {
+      onEscapeKeyDown: undefined,
+      holdEscape: false,
+      dialogContainerEl: null,
+      open,
+      onOpenChange,
+    }
+  );
   return (
     <RDialog.Root {...rest}>
       <DialogContext.Provider
         value={{
-          open,
-          onOpenChange,
-          onEscapeKeyDown,
-          setOnEscapeKeyDown,
-          holdEscape,
-          setHoldEscape,
-          dialogContainerRef,
+          ...contextValue,
+          setContextValue,
         }}
       >
         {children}
@@ -98,7 +116,15 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
   );
 };
 const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
-  const { holdEscape, dialogContainerRef } = useDialogContext();
+  const { holdEscape, dialogContainerEl, setContextValue } = useDialogContext();
+  const dialogContainerRef = React.useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    if (dialogContainerRef.current) {
+      setContextValue({
+        dialogContainerEl: dialogContainerRef.current,
+      });
+    }
+  }, [dialogContainerRef]);
   return (
     <RDialog.Portal>
       <RDialog.Overlay

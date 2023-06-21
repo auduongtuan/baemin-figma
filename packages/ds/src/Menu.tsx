@@ -42,7 +42,8 @@ const MenuContainer = ({ children, ...rest }) => {
     </div>
   );
 };
-export interface MenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MenuItemProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "content"> {
   selected?: boolean;
   highlighted?: boolean;
   name: React.ReactNode;
@@ -131,7 +132,7 @@ const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
         {...rest}
         ref={ref}
       >
-        <MenuIcon {...{selected, highlighted, icon}} />
+        <MenuIcon {...{ selected, highlighted, icon }} />
         <span
           css={`
             display: flex;

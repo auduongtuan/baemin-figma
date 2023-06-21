@@ -50,14 +50,7 @@ const Checkbox = forwardRef<
       {label && (
         <label
           htmlFor={checkboxId}
-          css={`
-            align-items: center;
-            color: var(--black8);
-            display: flex;
-            height: 100%;
-            line-height: var(--font-line-height);
-            user-select: none;
-          `}
+          className="flex items-center h-full user-select-none text-action"
         >
           {label}
         </label>

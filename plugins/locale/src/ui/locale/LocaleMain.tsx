@@ -12,6 +12,7 @@ import MainSekeleton from "./atoms/MainSkeleton";
 import { setConfigs } from "../state/localeAppSlice";
 import DeleteDialog from "./dialogs/DeleteDialog";
 import EditDialog from "./dialogs/EditDialog";
+import MoveLibraryDialog from "./dialogs/MoveLibraryDialog";
 const Locale = ({}) => {
   const localeSelection = useLocaleSelection();
   const dispatch = useAppDispatch();
@@ -46,6 +47,7 @@ const Locale = ({}) => {
       {currentDialog.type == "NEW" && <NewDialog />}
       {currentDialog.type == "DELETE" && <DeleteDialog />}
       {currentDialog.type == "EDIT" && <EditDialog />}
+      <MoveLibraryDialog />
       <section className="flex flex-col w-full overflow-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (
           <SelectionEditor />

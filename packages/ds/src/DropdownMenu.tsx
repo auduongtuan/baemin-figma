@@ -5,8 +5,8 @@ export interface DropdownMenuProps extends DropdownMenu.DropdownMenuProps {}
 export interface DropdownMenuContentProps
   extends DropdownMenu.DropdownMenuContentProps {}
 export interface DropdownMenuItemProps
-  extends DropdownMenu.DropdownMenuItemProps, Pick<MenuItemProps, "icon" | "content" | "selected"> {
-}
+  extends Omit<DropdownMenu.DropdownMenuItemProps, "content">,
+    Pick<MenuItemProps, "icon" | "content" | "selected"> {}
 const DropdownMenuItem = ({
   children,
   icon,
@@ -16,7 +16,12 @@ const DropdownMenuItem = ({
 }: DropdownMenuItemProps) => {
   return (
     <DropdownMenu.Item {...rest} asChild>
-      <Menu.Item name={children} icon={icon} content={content} selected={selected}></Menu.Item>
+      <Menu.Item
+        name={children}
+        icon={icon}
+        content={content}
+        selected={selected}
+      ></Menu.Item>
     </DropdownMenu.Item>
   );
 };

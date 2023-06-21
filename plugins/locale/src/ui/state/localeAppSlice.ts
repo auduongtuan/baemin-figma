@@ -5,7 +5,7 @@ import { unionWith } from "lodash-es";
 interface DialogState {
   opened: boolean;
   key?: "__SELECTED_ITEMS" | string;
-  type?: "EDIT" | "NEW" | "DELETE" | "IMPORT";
+  type?: "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
   onDone?: (localeItem: LocaleItem) => void;
 }
 
@@ -33,7 +33,7 @@ const initialState: {
   },
   list: {
     source: "all",
-    editMode: false,
+    editMode: true,
     selectedItems: [],
   },
 };

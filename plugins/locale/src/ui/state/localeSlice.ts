@@ -7,7 +7,7 @@ import {
   SavedLocaleData,
   LocaleData,
 } from "../../lib";
-import { cloneDeep, pickBy } from "lodash-es";
+import { cloneDeep, pickBy, unionWith } from "lodash-es";
 const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
@@ -114,7 +114,11 @@ export const localeSlice = createSlice({
       ];
     },
     updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
-      state.localeItems = [...action.payload];
+      state.localeItems = unionWith(
+        { ...state.localeItems },
+        { ...action.payload },
+        (a, b) => a.key === b.key
+      );
     },
     updateLocaleItem: (
       state,

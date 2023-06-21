@@ -262,45 +262,6 @@
   --size-xxxlarge: 80px;
 }
 
-// /* Global styles */
-
-// * {
-//   margin: 0;
-//   padding: 0;
-//   border: 0;
-//   font-size: 100%;
-//   font: inherit;
-//   vertical-align: baseline;
-//   box-sizing: border-box;
-// }
-// /* HTML5 display-role reset for older browsers */
-// body {
-//   line-height: 1;
-// }
-// ol,
-// ul {
-//   list-style: none;
-// }
-// blockquote,
-// q {
-//   quotes: none;
-// }
-// blockquote:before,
-// blockquote:after,
-// q:before,
-// q:after {
-//   content: "";
-//   content: none;
-// }
-// table {
-//   border-collapse: collapse;
-//   border-spacing: 0;
-// }
-
-// strong {
-//   font-weight: 500;
-// }
-
 /*  FONTS */
 @font-face {
   font-family: "Inter";
@@ -333,343 +294,8 @@
 }
 
 body {
-  // position: relative;
-  // box-sizing: border-box;
   font-family: "Inter", Arial, Helvetica, sans-serif;
-  // margin: 0;
-  // padding: 0;
-  // font-size: 12px;
-  // line-height: 16px;
 }
-
-// .font-normal {
-//   font-weight: 400;
-// }
-
-// .font-medium {
-//   font-weight: 500;
-// }
-// .font-semibold {
-//   font-weight: 600;
-// }
-
-// .text-xsmall {
-//   font-size: var(--font-size-xsmall);
-// }
-// .text-small {
-//   font-size: var(--font-size-small);
-// }
-// .text-large {
-//   font-size: var(--font-size-large);
-// }
-// .text-xlarge {
-//   font-size: var(--font-size-xlarge);
-// }
-
-// .text-left {
-//   text-align: left;
-// }
-// .text-right {
-//   text-align: right;
-// }
-// .text-center {
-//   text-align: center;
-// }
-// .text-justify {
-//   text-align: justify;
-// }
-// .text-secondary {
-//   color: var(--figma-color-text-secondary);
-// }
-
-// .truncate {
-//   white-space: nowrap;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-// }
-
-// h1,
-// h2,
-// h3,
-// h4,
-// h5,
-// h6 {
-//   font-weight: 600;
-// }
-
-// $increments: (
-//   0,
-//   2,
-//   4,
-//   8,
-//   10,
-//   12,
-//   16,
-//   20,
-//   24,
-//   28,
-//   32,
-//   36,
-//   40,
-//   48
-// ); // Adjust this to include the pixel amounts you need.
-// $directions: (top, bottom, left, right); // Leave this variable alone
-// $lg: "screen and (max-width: 1162px)";
-// $md: "screen and (max-width: 768px)";
-// $sm: "screen and (max-width: 576px)";
-
-// .flex-row {
-//   flex-direction: row !important;
-// }
-// .flex-col {
-//   flex-direction: column !important;
-// }
-// .flex-row-reverse {
-//   flex-direction: row-reverse !important;
-// }
-// .flex-col-reverse {
-//   flex-direction: column-reverse !important;
-// }
-
-// .flex-wrap {
-//   flex-wrap: wrap !important;
-// }
-// .flex-nowrap {
-//   flex-wrap: nowrap !important;
-// }
-// .flex-wrap-reverse {
-//   flex-wrap: wrap-reverse !important;
-// }
-// .flex-fill {
-//   flex: 1 1 auto !important;
-// }
-// .flex-grow-0 {
-//   flex-grow: 0 !important;
-// }
-// .flex-grow-1 {
-//   flex-grow: 1 !important;
-// }
-// .flex-shrink-0 {
-//   flex-shrink: 0 !important;
-// }
-// .flex-shrink-1 {
-//   flex-shrink: 1 !important;
-// }
-
-// .basis-auto {
-//   flex-basis: auto;
-// }
-// .justify-start {
-//   justify-content: flex-start !important;
-// }
-// .justify-end {
-//   justify-content: flex-end !important;
-// }
-// .justify-center {
-//   justify-content: center !important;
-// }
-// .justify-between {
-//   justify-content: space-between !important;
-// }
-// .justify-around {
-//   justify-content: space-around !important;
-// }
-
-// .items-start {
-//   align-items: flex-start !important;
-// }
-// .items-end {
-//   align-items: flex-end !important;
-// }
-// .items-center {
-//   align-items: center !important;
-// }
-// .items-baseline {
-//   align-items: baseline !important;
-// }
-// .items-stretch {
-//   align-items: stretch !important;
-// }
-
-// .align-content-start {
-//   align-content: flex-start !important;
-// }
-// .align-content-end {
-//   align-content: flex-end !important;
-// }
-// .align-content-center {
-//   align-content: center !important;
-// }
-// .align-content-between {
-//   align-content: space-between !important;
-// }
-// .align-content-around {
-//   align-content: space-around !important;
-// }
-// .align-content-stretch {
-//   align-content: stretch !important;
-// }
-
-// .align-self-auto {
-//   align-self: auto !important;
-// }
-// .align-self-start {
-//   align-self: flex-start !important;
-// }
-// .align-self-end {
-//   align-self: flex-end !important;
-// }
-// .align-self-center {
-//   align-self: center !important;
-// }
-// .align-self-baseline {
-//   align-self: baseline !important;
-// }
-// .align-self-stretch {
-//   align-self: stretch !important;
-// }
-
-// .grid {
-//   --gap: 16px;
-//   --col: 2;
-//   display: grid;
-//   grid-template-columns: repeat(var(--col), 1fr);
-//   gap: var(--gap);
-// }
-
-// .flex {
-//   --gap: 0;
-//   display: flex;
-//   gap: var(--gap);
-// }
-// .inline-flex {
-//   --gap: 0;
-//   display: inline-flex;
-//   gap: var(--gap);
-// }
-
-// @each $col in (2, 3, 4, 6) {
-//   .col-#{$col} {
-//     --col: #{$col} !important;
-//   }
-// }
-
-// @each $increment in $increments {
-//   .m-#{$increment} {
-//     margin: #{$increment}px !important;
-//   }
-//   .mx-#{$increment} {
-//     margin-left: #{$increment}px !important;
-//     margin-right: #{$increment}px !important;
-//   }
-//   .my-#{$increment} {
-//     margin-top: #{$increment}px !important;
-//     margin-bottom: #{$increment}px !important;
-//   }
-//   .p-#{$increment} {
-//     padding: #{$increment}px !important;
-//   }
-//   .px-#{$increment} {
-//     padding-left: #{$increment}px !important;
-//     padding-right: #{$increment}px !important;
-//   }
-//   .py-#{$increment} {
-//     padding-top: #{$increment}px !important;
-//     padding-bottom: #{$increment}px !important;
-//   }
-//   .gap-#{$increment} {
-//     --gap: #{$increment}px !important;
-//   }
-//   @each $direction in $directions {
-//     .m#{str-slice($direction, 0, 1)}-#{$increment} {
-//       margin-#{$direction}: #{$increment}px !important;
-//     }
-
-//     .p#{str-slice($direction, 0, 1)}-#{$increment} {
-//       padding-#{$direction}: #{$increment}px !important;
-//     }
-//   }
-// }
-
-// $breakpoints: (lg, md, sm);
-// $breakpoint_values: (
-//   sm: $sm,
-//   md: $md,
-//   lg: $lg,
-// );
-// @each $breakpoint in $breakpoints {
-//   @media #{map-get($breakpoint_values, $breakpoint)} {
-//     @each $increment in $increments {
-//       .#{$breakpoint}\:m-#{$increment} {
-//         margin: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:mx-#{$increment} {
-//         margin-left: #{$increment}px !important;
-//         margin-right: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:my-#{$increment} {
-//         margin-top: #{$increment}px !important;
-//         margin-bottom: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:p-#{$increment} {
-//         padding: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:px-#{$increment} {
-//         padding-left: #{$increment}px !important;
-//         padding-right: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:py-#{$increment} {
-//         padding-top: #{$increment}px !important;
-//         padding-bottom: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:w-#{$increment} {
-//         width: #{$increment}px !important;
-//       }
-//       .#{$breakpoint}\:h-#{$increment} {
-//         height: #{$increment}px !important;
-//       }
-//       @each $direction in $directions {
-//         .#{$breakpoint}\:m#{str-slice($direction, 0, 1)}-#{$increment} {
-//           margin-#{$direction}: #{$increment}px !important;
-//         }
-
-//         .#{$breakpoint}\:p#{str-slice($direction, 0, 1)}-#{$increment} {
-//           padding-#{$direction}: #{$increment}px !important;
-//         }
-//       }
-//     }
-//   }
-// }
-
-// .first\:pt-0 {
-//   &:first-child {
-//     padding-top: 0 !important;
-//   }
-// }
-
-// .last\:pb-0 {
-//   &:last-child {
-//     padding-bottom: 0 !important;
-//   }
-// }
-
-// .first\:mt-0 {
-//   &:first-child {
-//     margin-top: 0 !important;
-//   }
-// }
-
-// .last\:mb-0 {
-//   &:last-child {
-//     margin-bottom: 0 !important;
-//   }
-// }
-
-// .last\:mr-0 {
-//   &:last-child {
-//     margin-right: 0 !important;
-//   }
-// }
 
 body {
   font-size: 12px;
@@ -687,8 +313,7 @@ textarea {
   height: 0;
 }
 
-// *custom
-
+/*  *custom */
 .input__field.show-border {
   border-color: var(--black1);
 }
@@ -704,14 +329,6 @@ textarea {
 label {
   display: block;
 }
-
-// .relative {
-//   position: relative;
-// }
-
-// .absolute {
-//   position: relative;
-// }
 
 .menu-item {
   background: var(--white);
@@ -733,21 +350,7 @@ label {
     background: var(--grey);
   }
 }
-// .w-half {
-//   width: 50%;
-// }
-// .w-full {
-//   width: 100%;
-// }
-// .max-w-full {
-//   max-width: 100%;
-// }
-// .min-h-full {
-//   min-height: 100%;
-// }
-// .min-w-0 {
-//   min-width: 0;
-// }
+
 .label {
   font-size: var(--font-size-xsmall);
   font-weight: var(--font-weight-normal);
@@ -803,12 +406,6 @@ label {
     box-shadow: none;
   }
 
-  /* unchecked */
-  /*
-	&__box:focus + &__label:before {
-		border: 1px solid var(--white);
-	    box-shadow: 0 0 0 2px var(--blue);
-	}*/
   &__box:disabled + &__label {
     color: var(--black);
     opacity: 0.3;
@@ -822,11 +419,7 @@ label {
     background-position: 1px 2px;
     border: 1px solid var(--blue);
   }
-  /*
-	&__box:checked:focus + &__label:before {
-		border: 1px solid var(--white);
-	    box-shadow: 0 0 0 2px var(--blue);
-	}*/
+
   &__box:checked:disabled + &__label:before {
     border: 1px solid transparent;
     background-color: var(--black8);
@@ -919,15 +512,14 @@ label {
   }
 }
 
-// select menu
-
+/*  select menu */
 select.select-menu {
   display: none;
 }
 .select-menu {
   position: relative;
 
-  // button
+  /*  button */
   &__button {
     display: flex;
     align-items: center;
@@ -952,12 +544,10 @@ select.select-menu {
     }
     &:disabled:hover,
     &--disabled:hover {
-      // justify-content: flex-start;
+      /*  justify-content: flex-start; */
       border-color: transparent;
     }
-    // * {
-    //   pointer-events: none;
-    // }
+    /*  * { */ /*    pointer-events: none; */ /*  } */
   }
   &__button:hover &__label--placeholder {
     color: var(--black8);
@@ -990,14 +580,14 @@ select.select-menu {
     color: var(--black3);
   }
 
-  //label w/ placeholder modifier
+  /* label w/ placeholder modifier */
   &__label {
     font-size: var(--font-size-xsmall);
     font-weight: var(--font-weight-normal);
     letter-spacing: var(--font-letter-spacing-neg-xsmall);
     line-height: var(--line-height);
     color: var(--black8);
-    // margin-right: 6px;
+    /*  margin-right: 6px; */
     margin-top: -2px;
     white-space: nowrap;
     overflow-x: hidden;
@@ -1008,7 +598,7 @@ select.select-menu {
     }
   }
 
-  //caret / chevron
+  /* caret / chevron */
   &__caret {
     flex-shrink: 0;
     flex-grow: 0;
@@ -1023,7 +613,7 @@ select.select-menu {
     opacity: 0.3;
   }
 
-  //icon - we will render the icon component but we override some additional styles
+  /* icon - we will render the icon component but we override some additional styles */
   .icon {
     margin-left: -8px;
     margin-top: -2px;
@@ -1031,11 +621,10 @@ select.select-menu {
     opacity: 0.3;
   }
 
-  //menu
+  /* menu */
   &__menu {
-    // display: none;
     position: absolute;
-    // top: 0;
+
     left: 0;
     width: 100%;
     background-color: var(--hud);
@@ -1047,8 +636,6 @@ select.select-menu {
     overflow-x: overlay;
     overflow-y: auto;
     top: calc(100% + 1px);
-    //   &--active {
-    // display: block;
   }
 
   &__menu::-webkit-scrollbar {
@@ -1070,7 +657,7 @@ select.select-menu {
     box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
   }
 
-  //item
+  /* item */
   &__item {
     align-items: center;
     color: var(--white);
@@ -1081,7 +668,7 @@ select.select-menu {
     font-weight: var(--font-weight-normal);
     letter-spacing: var(--font-letter-spacing-neg-xsmall);
     line-height: var(--font-line-height);
-    // height: var(--size-small);
+    /*  height: var(--size-small); */
     padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
     user-select: none;
     outline: none;
@@ -1118,8 +705,7 @@ select.select-menu {
       color: var(--figma-color-text-onbrand-secondary);
     }
 
-    // flex-grow: 1;
-    // flex-shrink: 0;
+    /*  flex-grow: 1; */ /*  flex-shrink: 0; */
   }
   &__item-icon {
     width: var(--size-xsmall);
@@ -1141,7 +727,7 @@ select.select-menu {
     background-color: var(--blue);
   }
 
-  //divider
+  /* divider */
   &__divider-label {
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-normal);

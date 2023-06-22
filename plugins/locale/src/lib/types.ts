@@ -41,10 +41,13 @@ export type SavedLocaleItem = {
 } & {
   [key in Lang]?: LocaleItemContent;
 };
-
+// [libraryId, key]
+export type LocaleItemId = [string, string];
 export type LocaleItem = SavedLocaleItem & {
   fromLibrary?: string;
   isLocal?: boolean;
+  // [libraryId, key]
+  duplicated?: boolean;
 };
 
 export type LocaleTextVariables = { [key: string]: number | string };

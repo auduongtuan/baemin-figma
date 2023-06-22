@@ -122,14 +122,32 @@ export async function getLocaleData() {
         //   (a, b) => a.key == b.key
         // );
       }
-      combinedLocaleData.localeItems = unionWith(
-        localeData.localeItems.map((item: LocaleItem) => ({
-          ...item,
-          fromLibrary: localeDataNode.id,
-          isLocal: isLocalNode,
-        })),
-        combinedLocaleData.localeItems,
-        (a, b) => a.key == b.key
+      // old load code
+      // combinedLocaleData.localeItems = unionWith(
+      //   localeData.localeItems.map((item: LocaleItem) => ({
+      //     ...item,
+      //     fromLibrary: localeDataNode.id,
+      //     isLocal: isLocalNode,
+      //   })),
+      //   combinedLocaleData.localeItems,
+      //   (a, b) => a.key == b.key
+      // );
+      // new load code with duplicated feature
+      combinedLocaleData.localeItems = localeData.localeItems.reduce(
+        (acc: LocaleItem[], item: SavedLocaleItem) => {
+          const duplicated = acc.find((accItem) => accItem.key === item.key);
+          if (duplicated) {
+            duplicated.duplicated = true;
+          }
+          acc.push({
+            ...item,
+            fromLibrary: localeDataNode.id,
+            isLocal: isLocalNode,
+            ...(duplicated ? { duplicated: true } : {}),
+          });
+          return acc;
+        },
+        combinedLocaleData.localeItems
       );
     } catch (e) {
       console.log(e);
@@ -151,8 +169,8 @@ export async function saveLocaleData(localeData: LocaleData) {
       const libraryItems =
         libraryNode.id in libraryGroups ? libraryGroups[libraryNode.id] : [];
       const items: SavedLocaleItem[] = libraryItems.map((item) => {
-        // remove from library and isLocal
-        const { fromLibrary, isLocal, ...rest } = item;
+        // remove from library and isLocal and duplicated
+        const { fromLibrary, isLocal, duplicated, ...rest } = item;
         return rest;
       });
       setData(libraryNode, {

@@ -1,37 +1,33 @@
-import React, { useEffect, useCallback, useMemo } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { updateLocaleItem } from "../../state/localeSlice";
-import { Controller } from "react-hook-form";
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import {
+  Button,
+  Checkbox,
+  Dialog,
+  IconButton,
+  Select,
+  Switch,
   TextBox,
   Textarea,
-  Button,
-  Switch,
-  Checkbox,
-  Select,
   Tooltip,
-  IconButton,
-  Dialog,
 } from "ds";
-import { debounce, get, isString } from "lodash-es";
-import { LANGUAGE_LIST, LocaleItem, findItemByKey } from "../../../lib";
-import { runCommand } from "../../uiHelper";
-import { setCurrentDialog } from "../../state/localeAppSlice";
-import useLocaleForm from "./useLocaleForm";
-import {
-  getDefaultLocalLibraryId,
-  getLibrary,
-  getLibraryOptions,
-  updateTextsOfItem,
-} from "../../state/helpers";
-import { addLocaleItem } from "../../state/localeSlice";
+import { get, isString } from "lodash-es";
+import { useCallback, useEffect, useMemo } from "react";
+import { Controller } from "react-hook-form";
+import { LANGUAGE_LIST, Lang, LocaleItem, findItemByKey } from "../../../lib";
 import {
   useLanguages,
   useLocaleItems,
   useLocaleSelection,
 } from "../../hooks/locale";
+import { getLibraryOptions, isIdAvailable } from "../../state/helpers";
 import EditInfo from "./../atoms/EditInfo";
-import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import {
+  addItemHandler,
+  quickUpdateItemHandler,
+  updateItemHandler,
+} from "./itemHandler";
+import { debounce } from "lodash-es";
+import useLocaleForm, { FormValues } from "./useLocaleForm";
 
 function LocaleItemForm({
   item,
@@ -51,7 +47,6 @@ function LocaleItemForm({
     [item, localeItems, localeSelection]
   );
   const languages = useLanguages();
-  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -60,105 +55,36 @@ function LocaleItemForm({
     formState: { errors },
     getValues,
     watchHasPlurals,
-  } = useLocaleForm({ item: localeItem, quickEdit: saveOnChange });
-  // reset when key is change
-  const isKeyAvailable = useCallback(
-    (key) => {
-      const foundItem = localeItems.find(
-        (item) => item.key === key && item.isLocal
-      );
-      if (!foundItem) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    [localeItems]
-  );
-  const defaultLocalLibraryId = getDefaultLocalLibraryId();
-  const getContent = (
-    type: "create" | "update" | "quick-update" = "create",
-    data = null
-  ): LocaleItem => {
-    const { key, hasPlurals, prioritized, fromLibrary, ...content } =
-      data || getValues();
-    const currentDate = new Date();
+  } = useLocaleForm({ item: localeItem });
 
-    const initalData = {
-      ...(localeItem
-        ? {
-            createdAt: localeItem.createdAt || currentDate.toJSON(),
-            prioritized: localeItem.prioritized,
-            imported: localeItem.imported,
-          }
-        : {
-            createdAt: currentDate.toJSON(),
-          }),
-      key: key,
-      fromLibrary: fromLibrary || defaultLocalLibraryId,
-      isLocal: getLibrary(fromLibrary)?.local || false,
-      updatedAt: currentDate.toJSON(),
-      ...(type != "quick-update" ? { prioritized: prioritized || false } : {}),
-    };
-    return languages.reduce((acc, lang: string) => {
-      if (lang in hasPlurals && lang in content && content[lang]) {
-        acc[lang] = hasPlurals[lang] ? content[lang] : content[lang].one;
-      }
-      return acc;
-    }, initalData);
-  };
   // save on submit
   const updateLocaleItemHandler = useCallback(() => {
-    const oldKey = getValues("oldKey");
-    const localeItemData = getContent("update");
-    dispatch(setCurrentDialog({ type: "EDIT", opened: false }));
-    dispatch(updateLocaleItem({ ...localeItemData, oldKey }));
-    if (localeSelection) updateTextsOfItem(oldKey, localeItemData);
-    runCommand("show_figma_notify", { message: "Item updated" });
-  }, [localeSelection, localeItems]);
-
-  const updateLocaleItemDebounce = useMemo(
-    () =>
-      debounce((data) => {
-        dispatch(updateLocaleItem(data));
-        // update selected text also
-        if (localeSelection) updateTextsOfItem(null, data);
-      }, 300),
-    [localeSelection, localeItems]
-  );
-  useEffect(() => {
-    return () => {
-      updateLocaleItemDebounce.cancel();
-    };
+    updateItemHandler(getValues());
   }, []);
-  // save on Change
+
+  const quickUpdateItemDebounce = useMemo(
+    () => debounce((data: FormValues) => quickUpdateItemHandler(data), 300),
+    []
+  );
   useEffect(() => {
     if (saveOnChange) {
       const watcher = watch((data) => {
-        if (localeItem && data.key) {
-          // console.log("Update item using debounce!", data);
-          const localeItemData = getContent("quick-update", data);
-          updateLocaleItemDebounce(localeItemData);
-        }
+        quickUpdateItemDebounce(data as FormValues);
       });
       return () => {
         watcher.unsubscribe();
       };
     }
-  }, [watch, localeItem, saveOnChange, watchHasPlurals]);
+  }, []);
 
   // add new key
   const addNewKey = useCallback(() => {
-    const localeItemData = getContent("create");
-    dispatch(addLocaleItem(localeItemData));
+    const localeItemData = addItemHandler(getValues());
     if (onDone && typeof onDone == "function") onDone(localeItemData);
-    runCommand("show_figma_notify", { message: "Item created" });
-  }, [localeSelection]);
+  }, []);
 
-  const localeLibraries = useAppSelector(
-    (state) => state.locale.localeLibraries
-  );
   const submitFn = handleSubmit(item ? updateLocaleItemHandler : addNewKey);
+
   return (
     <form onSubmit={submitFn}>
       {showTitle && item && saveOnChange && (
@@ -176,6 +102,7 @@ function LocaleItemForm({
         </header>
       )}
       <input type="hidden" {...register("oldKey")} />
+      <input type="hidden" {...register("oldFromLibrary")} />
       <div>
         {!saveOnChange && (
           <TextBox
@@ -187,7 +114,8 @@ function LocaleItemForm({
               required: true,
               validate: {
                 available: (v) =>
-                  (localeItem && v == localeItem.key) || isKeyAvailable(v),
+                  (localeItem && v == localeItem.key) ||
+                  isIdAvailable([v, getValues("fromLibrary")]),
               },
             })}
             afterLabel={
@@ -233,7 +161,7 @@ function LocaleItemForm({
             </div>
           </div>
         )}
-        {languages.map((lang) => (
+        {languages.map((lang: Lang) => (
           <>
             <div className="relative mt-12">
               <Textarea
@@ -245,7 +173,7 @@ function LocaleItemForm({
                     render={({ field }) => (
                       <div>
                         <Switch
-                          {...field}
+                          // {...field}
                           label="Plural"
                           checked={field.value}
                           onCheckedChange={field.onChange}
@@ -281,7 +209,7 @@ function LocaleItemForm({
             control={control}
             render={({ field }) => (
               <Checkbox
-                {...field}
+                // {...field}
                 label="Prioritize this when text duplication occurs"
                 checked={field.value}
                 onCheckedChange={field.onChange}

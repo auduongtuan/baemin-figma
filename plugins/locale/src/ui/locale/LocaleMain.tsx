@@ -9,7 +9,7 @@ import NewDialog from "./dialogs/NewDialog";
 import io from "figma-helpers/io";
 import { useLocaleSelection } from "../hooks/locale";
 import MainSekeleton from "./atoms/MainSkeleton";
-import { setConfigs } from "../state/localeAppSlice";
+import { setConfigs, setCurrentDialog } from "../state/localeAppSlice";
 import DeleteDialog from "./dialogs/DeleteDialog";
 import EditDialog from "./dialogs/EditDialog";
 import MoveLibraryDialog from "./dialogs/MoveLibraryDialog";
@@ -37,6 +37,11 @@ const Locale = ({}) => {
       dispatch(setTextsInLocaleSelection(data.texts));
     });
   }, []);
+  useEffect(() => {
+    // setTimeout(() => {
+    //   dispatch(setCurrentDialog({ type: "MOVE_LIBRARY", opened: true }));
+    // }, 200);
+  }, []);
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
@@ -47,7 +52,7 @@ const Locale = ({}) => {
       {currentDialog.type == "NEW" && <NewDialog />}
       {currentDialog.type == "DELETE" && <DeleteDialog />}
       {currentDialog.type == "EDIT" && <EditDialog />}
-      <MoveLibraryDialog />
+      {currentDialog.type == "MOVE_LIBRARY" && <MoveLibraryDialog />}
       <section className="flex flex-col w-full overflow-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (
           <SelectionEditor />

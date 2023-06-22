@@ -6,7 +6,9 @@ import {
   LocaleItem,
   SavedLocaleData,
   LocaleData,
-} from "../../lib";
+  isSameItem,
+  LocaleItemId,
+} from "@lib";
 import { cloneDeep, pickBy, unionWith } from "lodash-es";
 const initialState: LocaleData = {
   sheetName: null,
@@ -101,7 +103,7 @@ export const localeSlice = createSlice({
     removeLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
       state.localeItems = [
         ...state.localeItems.filter(
-          (localeItem) => localeItem.key != action.payload.key
+          (localeItem) => !isSameItem(localeItem, action.payload)
         ),
       ];
     },
@@ -113,6 +115,7 @@ export const localeSlice = createSlice({
         ),
       ];
     },
+    // gonna need to check again
     updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
       state.localeItems = unionWith(
         { ...state.localeItems },
@@ -122,19 +125,25 @@ export const localeSlice = createSlice({
     },
     updateLocaleItem: (
       state,
-      action: PayloadAction<LocaleItem & { oldKey?: string }>
+      action: PayloadAction<LocaleItem & { id: LocaleItemId }>
     ) => {
-      const { oldKey, ...updatedItem } = action.payload;
+      const { id, ...updatedItem } = action.payload;
+      const [oldFromLibrary, oldKey] = id;
       const newLocalItems = cloneDeep(state.localeItems).map((item) => {
+        // only change key or library at a time
         if (
-          (oldKey && item.key == oldKey) ||
-          (!oldKey && item.key == updatedItem.key)
+          item.key == oldKey &&
+          item.fromLibrary == oldFromLibrary
+          // ||
+          // (!oldKey &&
+          //   item.key == updatedItem.key &&
+          //   item.fromLibrary == updatedItem.fromLibrary)
         ) {
           return cloneDeep(updatedItem);
-        } else {
-          return item;
         }
+        return item;
       });
+      console.log("run update", action.payload.id);
       state.localeItems = newLocalItems;
     },
   },

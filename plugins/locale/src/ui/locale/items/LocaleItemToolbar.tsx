@@ -4,12 +4,20 @@ import { IconButton, LibraryIcon, MoveLibraryIcon, Tooltip } from "ds";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
+import { Transition } from "@headlessui/react";
 
 const LocaleItemToolbar = ({}) => {
   const listState = useAppSelector((state) => state.localeApp.list);
   const dispatch = useAppDispatch();
   return (
-    <div className="sticky bottom-0 left-0 flex items-center w-full px-16 py-8 bg-white border-t border-divider">
+    <Transition
+      show={listState.editMode}
+      className="transition-[opacity,transform] duration-150 sticky left-0 bottom-8 flex items-center w-calc(100%-16px) px-16 py-8 mx-8 bg-white border rounded-md shadow-sm border-divider"
+      enterFrom="translate-y-32 opacity-0"
+      enterTo="-translate-y-0 opacity-100"
+      leaveFrom="-translate-y-0 opacity-100"
+      leaveTo="translate-y-32 opacity-0"
+    >
       <div className="grow">
         {listState.selectedItems.length}{" "}
         {pluralize("item", listState.selectedItems.length)} selected
@@ -51,7 +59,7 @@ const LocaleItemToolbar = ({}) => {
           </>
         )}
       </div>
-    </div>
+    </Transition>
   );
 };
 export default LocaleItemToolbar;

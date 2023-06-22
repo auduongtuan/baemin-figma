@@ -1,9 +1,9 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { IconButton, Tooltip, Tag, Checkbox } from "ds";
-import { Crosshair2Icon } from "@radix-ui/react-icons";
+import { IconButton, Tooltip, Tag, Checkbox, DuplicationIcon } from "ds";
+import { ComponentInstanceIcon, Crosshair2Icon } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
-import { LocaleItem } from "../../../lib";
+import { LocaleItem, getStringContent } from "@lib";
 import { getLibraryName } from "../../state/helpers";
 import { DeleteDialogTrigger } from "../dialogs/DeleteDialog";
 import { EditDialogTrigger } from "../dialogs/EditDialog";
@@ -11,6 +11,7 @@ import {
   addSelectedItems,
   removeSelectedItems,
 } from "../../state/localeAppSlice";
+import { useConfigs } from "@ui/hooks/locale";
 const LocaleItemRecord = ({
   item,
   action = true,
@@ -24,16 +25,18 @@ const LocaleItemRecord = ({
     (state) => state.localeApp.list
   );
   const dispatch = useAppDispatch();
+  const { defaultLanguage } = useConfigs();
   return (
-    <div className="border-b border-divider py-8 last:border-b-0 last:pb-0">
-      <div className="text-left font-normal flex w-full gap-8 text-small group">
-        <div className="w-full shrink basis-auto flex min-w-0 items-center">
+    <div className="py-8 border-b border-divider last:border-b-0 last:pb-0">
+      <div className="flex w-full gap-8 font-normal text-left text-small group">
+        <div className="flex items-center w-full min-w-0 shrink basis-auto">
           <div className="flex gap-8">
             {editMode && (
               <Checkbox
                 disabled={!item.isLocal}
                 checked={selectedItems.includes(item)}
                 onCheckedChange={(checked) => {
+                  console.log(item);
                   if (checked) {
                     dispatch(addSelectedItems([item]));
                   } else {
@@ -42,14 +45,34 @@ const LocaleItemRecord = ({
                 }}
               />
             )}
-            <div className="grow truncate">
-              {group
-                ? item.key.replace(new RegExp(`^${group}\.`), "")
-                : item.key}
-            </div>
+            <Tooltip
+              content={
+                <>
+                  {defaultLanguage in item &&
+                    getStringContent(item[defaultLanguage])}
+                </>
+              }
+            >
+              <div className="truncate grow">
+                {group
+                  ? item.key.replace(new RegExp(`^${group}\.`), "")
+                  : item.key}
+              </div>
+            </Tooltip>
           </div>
 
-          <div className="grow-0 shrink-0 inline-flex items-center">
+          <div className="inline-flex items-center grow-0 shrink-0">
+            {item?.duplicated && (
+              <Tooltip
+                content={
+                  <>{`This key has dupplications in other libraries.`}</>
+                }
+              >
+                <DuplicationIcon className="ml-4 text-component">
+                  Duplicated
+                </DuplicationIcon>
+              </Tooltip>
+            )}
             {!item.isLocal && (
               <Tooltip
                 content={
@@ -62,13 +85,13 @@ const LocaleItemRecord = ({
                   </>
                 }
               >
-                <Tag className="ml-4">EXT</Tag>
+                <ComponentInstanceIcon className="ml-4 text-component" />
               </Tooltip>
             )}
           </div>
         </div>
         {action && (
-          <div className="opacity-0 group-hover:opacity-100 flex gap-12 grow-0 shrink-0">
+          <div className="flex gap-12 opacity-0 group-hover:opacity-100 grow-0 shrink-0">
             {item.isLocal && (
               <>
                 <EditDialogTrigger item={item} />

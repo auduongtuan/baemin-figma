@@ -4,7 +4,7 @@ import { Pencil2Icon } from "@radix-ui/react-icons";
 import LocaleItemForm from "../form/LocaleItemForm";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useAppSelector, useAppDispatch } from "../../hooks/redux";
-import { LocaleItem, findItemByKey } from "../../../lib";
+import { LocaleItem, findItemById, findItemByKey } from "../../../lib";
 import EditInfo from "../atoms/EditInfo";
 import { useLocaleItems } from "../../hooks/locale";
 const EditDialog = () => {
@@ -15,8 +15,10 @@ const EditDialog = () => {
   const items = useLocaleItems();
   const item = useMemo(
     () =>
-      currentDialog.key ? findItemByKey(currentDialog.key, items) : undefined,
-    [currentDialog]
+      currentDialog.key && currentDialog.key != "__SELECTED_ITEMS"
+        ? findItemById(currentDialog.key, items)
+        : undefined,
+    [currentDialog.key]
   );
   return item ? (
     <Dialog
@@ -51,7 +53,7 @@ export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {
             setCurrentDialog({
               type: "EDIT",
               opened: true,
-              key: item.key,
+              key: [item.fromLibrary, item.key],
             })
           )
         }

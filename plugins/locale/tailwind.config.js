@@ -26,6 +26,7 @@ export default {
         action: "rgba(0,0,0,0.8)",
         secondary: "var(--figma-color-text-secondary)",
         brand: "var(--figma-color-bg-brand)",
+        component: "var(--figma-color-bg-component)",
       },
       backgroundColor: {
         hover: "var(--figma-color-bg-hover)",

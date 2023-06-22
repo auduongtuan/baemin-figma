@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Lang, LocaleItem, Configs } from "../../lib";
+import { Lang, LocaleItem, Configs, LocaleItemId, isSameItem } from "../../lib";
 import configs from "figma-helpers/configs";
 import { unionWith } from "lodash-es";
 interface DialogState {
   opened: boolean;
-  key?: "__SELECTED_ITEMS" | string;
+  // [libraryId, key]
+  key?: "__SELECTED_ITEMS" | LocaleItemId;
   type?: "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
   onDone?: (localeItem: LocaleItem) => void;
 }
@@ -69,13 +70,16 @@ export const localeAppSlice = createSlice({
         selectedItems: unionWith(
           [...state.list.selectedItems],
           action.payload,
-          (a, b) => a.key === b.key
+          (a, b) => isSameItem(a, b)
         ),
       };
     },
     removeSelectedItems: (state, action: PayloadAction<LocaleItem[]>) => {
       const filtered = [...state.list.selectedItems].filter(
-        (item) => !action.payload.map((item) => item.key).includes(item.key)
+        (item) =>
+          !action.payload
+            .map((item) => item.key + item.fromLibrary)
+            .includes(item.key + item.fromLibrary)
       );
       state.list = {
         ...state.list,

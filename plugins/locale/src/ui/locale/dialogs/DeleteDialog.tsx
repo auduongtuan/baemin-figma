@@ -8,19 +8,19 @@ import {
   clearSelectedItems,
   setCurrentDialog,
 } from "../../state/localeAppSlice";
-import { LocaleItem, findItemByKey } from "../../../lib";
+import { LocaleItem, findItemByKey, findItemById } from "../../../lib";
 import { useLocaleItems } from "../../hooks/locale";
 import { pluralize } from "@capaj/pluralize";
+import { getLibraryName } from "@ui/state/helpers";
 const DeleteDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
-  console.log(currentDialog);
   const items = useLocaleItems();
   const { selectedItems } = useAppSelector((state) => state.localeApp.list);
   const item =
     currentDialog.key != "__SELECTED_ITEMS"
-      ? findItemByKey(currentDialog.key, items)
+      ? findItemById(currentDialog.key, items)
       : undefined;
   const deleteSelectedItems = currentDialog.key == "__SELECTED_ITEMS";
   const deleteLocaleItemHandler = useCallback(() => {
@@ -51,7 +51,12 @@ const DeleteDialog = () => {
       <Dialog.Panel title="Delete locale item">
         <Dialog.Content>
           Are you sure you want to delete{" "}
-          {!deleteSelectedItems && item && <strong>{item.key}</strong>}
+          {!deleteSelectedItems && item && (
+            <>
+              <strong>{item.key}</strong> from{" "}
+              {getLibraryName(item.fromLibrary)}
+            </>
+          )}
           {deleteSelectedItems &&
             selectedItems &&
             `${selectedItems.length} ${pluralize(
@@ -82,7 +87,7 @@ export const DeleteDialogTrigger = ({ item }: { item: LocaleItem }) => {
             setCurrentDialog({
               type: "DELETE",
               opened: true,
-              key: item.key,
+              key: [item.fromLibrary, item.key],
             })
           )
         }

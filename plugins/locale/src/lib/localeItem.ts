@@ -4,6 +4,7 @@ import { getTextPropsByCharacters } from "./localeText";
 import {
   LocaleItem,
   LocaleItemContent,
+  LocaleItemId,
   LocaleItemPluralContent,
   LocaleLibrary,
 } from "./types";
@@ -11,8 +12,27 @@ import configs from "figma-helpers/configs";
 
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems
-    ? localeItems.find((item) => "key" in item && item.key == key)
+    ? localeItems.find(
+        (item) => "key" in item && item.key == key && !item?.duplicated
+      )
     : null;
+}
+
+export function findItemById(
+  id: LocaleItemId,
+  localeItems: LocaleItem[]
+): LocaleItem | null {
+  const [libraryId, key] = id;
+  return localeItems
+    ? localeItems.find(
+        (item) =>
+          "key" in item && item.key == key && item.fromLibrary == libraryId
+      )
+    : null;
+}
+
+export function isSameItem(item1: LocaleItem, item2: LocaleItem) {
+  return item1.key == item2.key && item1.fromLibrary == item2.fromLibrary;
 }
 
 export function findItemByCharacters(

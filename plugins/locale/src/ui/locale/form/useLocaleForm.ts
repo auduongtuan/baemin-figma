@@ -5,19 +5,32 @@ import {
   useLocaleItems,
   useLocaleSelection,
 } from "../../hooks/locale";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Lang, LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
 import { removeVietnameseAccent } from "../../../lib/helpers";
 import { snakeCase } from "lodash-es";
-import { getDefaultLocalLibraryId } from "../../state/helpers";
-function useLocaleForm({
-  item,
-  quickEdit,
-}: {
-  item: LocaleItem;
-  quickEdit?: boolean;
-}) {
+import { getDefaultLocalLibraryId, getLanguages } from "../../state/helpers";
+
+type LangContent = Partial<
+  Record<
+    Lang,
+    {
+      one?: string;
+      other?: string;
+    }
+  >
+>;
+export type FormValues = LangContent & {
+  fromLibrary: string;
+  key: string;
+  hasPlurals: { [key in Lang]?: boolean };
+  prioritized: boolean;
+  oldKey: string;
+  oldFromLibrary: string;
+};
+
+function useLocaleForm({ item }: { item: LocaleItem }) {
   const {
     register,
     handleSubmit,
@@ -27,8 +40,15 @@ function useLocaleForm({
     formState: { errors },
     setValue,
     getValues,
-  } = useForm();
-  const watchHasPlurals = watch("hasPlurals", { en: false, vi: false });
+  } = useForm<FormValues>();
+  const watchHasPlurals = useWatch({
+    control,
+    name: "hasPlurals",
+    defaultValue: getLanguages().reduce(
+      (acc, lang) => ({ ...acc, [lang]: false }),
+      {}
+    ),
+  });
   const isEdit = item ? true : false;
   const localeSelection = useLocaleSelection();
   const languages = useLanguages();
@@ -40,24 +60,31 @@ function useLocaleForm({
           setValue("oldKey", item.key);
           setValue("key", item.key);
         }
+        if (inputName == "fromLibrary") {
+          setValue("oldFromLibrary", item.fromLibrary);
+          setValue("fromLibrary", item.fromLibrary);
+        }
+        if (inputName == "prioritized") {
+          setValue(inputName, item[inputName]);
+        }
         // language
-        else if (languages.includes(inputName as Lang)) {
+        if (languages.includes(inputName as Lang)) {
+          const lang = inputName as Lang;
           const itemContent = item[inputName];
           if (isPlurals(itemContent)) {
-            setValue(`hasPlurals.${inputName}`, true);
-            setValue(`${inputName}.one`, itemContent.one);
-            setValue(`${inputName}.other`, itemContent.other);
+            setValue(`hasPlurals.${lang}`, true);
+            setValue(`${lang}.one`, itemContent.one);
+            setValue(`${lang}.other`, itemContent.other);
           } else {
-            setValue(`hasPlurals.${inputName}`, false);
-            setValue(`${inputName}.one`, itemContent);
+            setValue(`hasPlurals.${lang}`, false);
+            setValue(`${lang}.one`, itemContent);
           }
-        } else if (inputName == "prioritized" || inputName == "fromLibrary") {
-          setValue(inputName, item[inputName]);
         }
       }
     } else {
       reset({
         oldKey: "",
+        oldFromLibrary: "",
         key: "",
         ...languages.reduce((acc, lang) => {
           acc[lang] = null;
@@ -68,7 +95,7 @@ function useLocaleForm({
         fromLibrary: getDefaultLocalLibraryId(),
       });
     }
-  }, [item]);
+  }, []);
   // setup values for new form
   useEffect(() => {
     if (!item && localeSelection && localeSelection.texts[0]) {
@@ -87,7 +114,7 @@ function useLocaleForm({
         setValue(`${lang}.one`, "");
       });
     }
-  }, [localeSelection]);
+  }, []);
 
   return {
     register,

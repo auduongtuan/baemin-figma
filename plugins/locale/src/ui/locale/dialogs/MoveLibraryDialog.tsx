@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Checkbox, Dialog, RadioGroup, SectionTitle, Select, Button } from "ds";
@@ -7,12 +7,13 @@ import { getLibraryOptions } from "../../state/helpers";
 import { useLocaleItems } from "@ui/hooks/locale";
 import LocaleItemReview from "../items/LocaleItemReview";
 import { unionWith } from "lodash-es";
+import { runCommand } from "@ui/uiHelper";
 const MoveLibraryDialog = () => {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog
   );
   const dispatch = useAppDispatch();
-  console.log("aaaaaaa");
+  console.log("Render Move Dialog");
   const libraryOptions = getLibraryOptions();
   const { control, setValue, getValues, handleSubmit } = useForm({
     defaultValues: {
@@ -20,19 +21,24 @@ const MoveLibraryDialog = () => {
       duplication: "CANCEL",
     },
   });
-  const selectedItems = useLocaleItems().filter((item) => item.isLocal);
+  const selectedItems = useAppSelector(
+    (state) => state.localeApp.list.selectedItems
+  );
   const localeItems = useLocaleItems();
 
-  const submit = () => {
+  const submit = useCallback(() => {
     const { toLibrary, duplication } = getValues();
     const libraryItems = localeItems.filter(
       (item) => item.fromLibrary == toLibrary
     );
-    console.log(libraryItems);
     const duplicatedItems = selectedItems.filter((selectedItem) =>
       libraryItems.find((libraryItem) => libraryItem.key == selectedItem.key)
     );
+    console.log({ libraryItems, selectedItems, duplicatedItems });
     if (duplicatedItems.length > 0 && duplication == "CANCEL") {
+      runCommand("show_figma_notify", {
+        message: "Moving process is canceled",
+      });
       return;
     }
     if (duplicatedItems.length > 0 && duplication == "OVERWRITE") {
@@ -40,11 +46,11 @@ const MoveLibraryDialog = () => {
     }
     if (duplicatedItems.length > 0 && duplication == "SKIP") {
     }
-  };
+  }, [localeItems]);
   return (
     <Dialog
-      // open={currentDialog.type == "MOVE_LIBRARY" && currentDialog.opened}
-      open
+      open={currentDialog.type == "MOVE_LIBRARY" && currentDialog.opened}
+      // open
       onOpenChange={(open) =>
         dispatch(setCurrentDialog({ type: "MOVE_LIBRARY", opened: open }))
       }

@@ -8,7 +8,7 @@ import {
 import { FormValues } from "./useLocaleForm";
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
-const getLocaleItemFromContent = (
+const getItemFromFormValues = (
   type: "create" | "update" | "quick-update" = "create",
   data: Optional<FormValues, "oldFromLibrary" | "oldKey"> = null,
   localeItem: LocaleItem = null
@@ -45,4 +45,4 @@ const getLocaleItemFromContent = (
   }, initalData);
 };
 
-export default getLocaleItemFromContent;
+export default getItemFromFormValues;

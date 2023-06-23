@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, {
+  Fragment,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
 import * as RDialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes } from "styled-components";
@@ -30,6 +36,7 @@ const contentShow = keyframes`
 const DialogContent = ({ children }: React.ComponentPropsWithRef<"div">) => {
   return (
     <div
+      className="relative p-16 overflow-auto grow"
       css={`
         overflow: auto;
         flex-grow: 1;
@@ -71,8 +78,12 @@ const DialogContext = createContext<DialogContextType>({});
 export const useDialogContext = () => {
   return useContext(DialogContext);
 };
-const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
-  const { open, onOpenChange } = rest;
+const Dialog = ({
+  children,
+  open,
+  onOpenChange,
+  ...rest
+}: RDialog.DialogProps) => {
   const [contextValue, setContextValue] = React.useReducer(
     (state: DialogContextValue, action: Partial<DialogContextValue>) => {
       return {
@@ -88,8 +99,9 @@ const Dialog = ({ children, ...rest }: RDialog.DialogProps) => {
       onOpenChange,
     }
   );
+  console.log(open);
   return (
-    <RDialog.Root {...rest}>
+    <RDialog.Root open={open} onOpenChange={onOpenChange} {...rest}>
       <DialogContext.Provider
         value={{
           ...contextValue,
@@ -105,74 +117,68 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
   const { open, holdEscape, dialogContainerEl, setContextValue } =
     useDialogContext();
   const dialogContainerRef = React.useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (dialogContainerRef.current) {
-      setContextValue({
-        dialogContainerEl: dialogContainerRef.current,
-      });
-    }
-  }, [dialogContainerRef.current]);
+  // useEffect(() => {
+  //   if (dialogContainerRef.current) {
+  //     setContextValue({
+  //       dialogContainerEl: dialogContainerRef.current,
+  //     });
+  //   }
+  // }, [dialogContainerRef.current]);
+  const setDialogRef = useCallback((node: HTMLDivElement) => {
+    setContextValue({
+      dialogContainerEl: node,
+    });
+  }, []);
   return (
     <RDialog.Portal>
-      <Transition show={open}>
-        <RDialog.Overlay
-          asChild
-          // css={`
-          //   background: rgba(0, 0, 0, 0.6);
-          //   position: fixed;
-          //   inset: 0;
-          //   animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-          //   z-index: 40;
-          // `}
-        >
-          <Transition.Child
-            className="fixed inset-0 z-40 transition-opacity duration-400 bg-black/60"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          ></Transition.Child>
-        </RDialog.Overlay>
-        <RDialog.Content
-          onPointerDownOutside={(e) => {
+      <RDialog.Overlay
+        forceMount
+        asChild
+        // css={`
+        //   background: rgba(0, 0, 0, 0.6);
+        //   position: fixed;
+        //   inset: 0;
+        //   animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
+        //   z-index: 40;
+        // `}
+      >
+        <Transition
+          show={open}
+          appear={true}
+          className="fixed inset-0 z-40 transition-all ease-in duration-400 bg-black/60"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        ></Transition>
+      </RDialog.Overlay>
+      <RDialog.Content
+        onPointerDownOutside={(e) => {
+          e.preventDefault();
+        }}
+        onEscapeKeyDown={(e) => {
+          if (holdEscape) {
             e.preventDefault();
-          }}
-          onEscapeKeyDown={(e) => {
-            if (holdEscape) {
-              e.preventDefault();
-            }
-          }}
-          {...rest}
-          asChild
+          }
+        }}
+        {...rest}
+        forceMount
+        // asChild
+      >
+        <div
+          className={
+            " z-50 fixed w-full h-full top-0 left-0 flex justify-center items-center"
+          }
         >
-          <Transition.Child
-            className="transition-all duration-300 bg-white rounded-md overflow-hidden shadow-xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col z-50 focus:outline-none"
-            // css={`
-            //   background-color: var(--figma-color-bg);
-            //   border-radius: 6px;
-            //   overflow: hidden;
-            //   /* box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
-            //     hsl(206 22% 7% / 20%) 0px 10px 20px -15px; */
-            //   position: fixed;
-            //   top: 50%;
-            //   left: 50%;
-            //   transform: translate(-50%, -50%);
-            //   width: 90vw;
-            //   max-width: calc(100vw - 48px);
-            //   max-height: calc(100vh - 48px);
-            //   display: flex;
-            //   flex-direction: column;
-            //   z-index: 50;
-            //   animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-            //   &:focus {
-            //     outline: none;
-            //   }
-            // `}
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-            ref={dialogContainerRef}
+          <Transition
+            show={open}
+            appear={true}
+            className="transition-all duration-400 bg-white rounded-md overflow-hidden  shadow-xl w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col focus:outline-none"
+            enterFrom="opacity-0 translate-y-64"
+            enterTo="opacity-100 translate-y-0"
+            leaveFrom="opacity-100 scale-100 translate-y-0"
+            leaveTo="opacity-0 scale-0 translate-y-64"
+            ref={setDialogRef}
           >
             {title && (
               <header
@@ -210,9 +216,9 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
           Make changes to your profile here. Click save when you're done.
         </RDialog.Description> */}
             {children}
-          </Transition.Child>
-        </RDialog.Content>
-      </Transition>
+          </Transition>
+        </div>
+      </RDialog.Content>
     </RDialog.Portal>
   );
 };

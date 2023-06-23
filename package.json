@@ -59,7 +59,7 @@
     "tailwind-merge": "^1.13.2"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "^1.62.0",
+    "@figma/plugin-typings": "^1.68.0",
     "@swc/plugin-styled-components": "^1.5.61",
     "@types/events": "^3.0.0",
     "@types/js-beautify": "^1.13.3",

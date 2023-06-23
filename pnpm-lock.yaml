@@ -136,8 +136,8 @@ importers:
         version: 1.13.2
     devDependencies:
       '@figma/plugin-typings':
-        specifier: ^1.62.0
-        version: 1.62.0
+        specifier: ^1.68.0
+        version: 1.68.0
       '@swc/plugin-styled-components':
         specifier: ^1.5.61
         version: 1.5.61
@@ -808,8 +808,8 @@ packages:
     dev: true
     optional: true
 
-  /@figma/plugin-typings@1.62.0:
-    resolution: {integrity: sha512-Pv1DZqsuJJbzVsqgCz1fPPxEdQ1o521jbcMw1MDyM9oerw7QltM8TluR5BrGgBi6Zc8zXE6J6ZuUbzz/x7Bh6A==}
+  /@figma/plugin-typings@1.68.0:
+    resolution: {integrity: sha512-hT+iqf5CRRqKI7NmPdwml+Ld/mG1QM8VcZZURV2AowIy6vC3VQ2iIIT5d7ulDnQU+WzQDvaGaDAw/J5X6tQ2Ww==}
     dev: true
 
   /@floating-ui/core@0.7.3:

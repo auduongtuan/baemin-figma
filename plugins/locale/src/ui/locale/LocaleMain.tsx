@@ -53,7 +53,7 @@ const Locale = ({}) => {
       {currentDialog.type == "DELETE" && <DeleteDialog />}
       {currentDialog.type == "EDIT" && <EditDialog />}
       <MoveLibraryDialog />
-      <section className="flex flex-col w-full overflow-scroll shrink grow">
+      <section className="flex flex-col w-full overflow-y-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (
           <SelectionEditor />
         ) : (

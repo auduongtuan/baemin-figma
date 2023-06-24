@@ -61,7 +61,7 @@ io.on("set_configs", async (msg) => {
     io.send("set_configs");
   }
 });
-figma.on("run", ({ command, parameters }: RunEvent) => {
+figma.on("run", (runEvent: RunEvent) => {
   configs
     .fetch({
       languages: INITIAL_LANGUAGES,

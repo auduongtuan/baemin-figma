@@ -36,7 +36,6 @@ const LocaleItemRecord = ({
                 disabled={!item.isLocal}
                 checked={selectedItems.includes(item)}
                 onCheckedChange={(checked) => {
-                  console.log(item);
                   if (checked) {
                     dispatch(addSelectedItems([item]));
                   } else {

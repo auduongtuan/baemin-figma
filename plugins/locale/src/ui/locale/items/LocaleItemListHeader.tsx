@@ -43,9 +43,7 @@ const LocaleItemListHeader = () => {
             </Tooltip>
             <Tooltip content="Add new item">
               <IconButton
-                onClick={() =>
-                  dispatch(setCurrentDialog({ type: "NEW", opened: true }))
-                }
+                onClick={() => dispatch(setCurrentDialog({ type: "NEW" }))}
               >
                 <PlusIcon />
               </IconButton>

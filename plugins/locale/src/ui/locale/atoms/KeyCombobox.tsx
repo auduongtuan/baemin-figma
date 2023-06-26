@@ -73,7 +73,6 @@ function KeyCombobox({
         onSelect: () => {
           dispatch(
             setCurrentDialog({
-              opened: true,
               type: "NEW",
               onDone: (localeItem: LocaleItem) => {
                 updateSelectionOrText(localeItem);

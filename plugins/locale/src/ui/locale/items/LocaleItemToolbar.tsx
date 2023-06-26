@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { pluralize } from "@capaj/pluralize";
 import { IconButton, LibraryIcon, MoveLibraryIcon, Tooltip } from "ds";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
@@ -27,12 +27,11 @@ const LocaleItemToolbar = ({}) => {
           <>
             <Tooltip content="Move items to other library">
               <IconButton
-                onClick={() => {
-                  console.log("test");
+                onClick={(e) => {
+                  e.preventDefault();
                   dispatch(
                     setCurrentDialog({
                       type: "MOVE_LIBRARY",
-                      opened: true,
                       key: "__SELECTED_ITEMS",
                     })
                   );
@@ -43,11 +42,11 @@ const LocaleItemToolbar = ({}) => {
             </Tooltip>
             <Tooltip content="Delete selected items">
               <IconButton
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   dispatch(
                     setCurrentDialog({
                       type: "DELETE",
-                      opened: true,
                       key: "__SELECTED_ITEMS",
                     })
                   );

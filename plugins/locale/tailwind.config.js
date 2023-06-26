@@ -25,6 +25,7 @@ export default {
       colors: {
         action: "rgba(0,0,0,0.8)",
         secondary: "var(--figma-color-text-secondary)",
+        danger: "var(--figma-color-text-danger)",
         brand: "var(--figma-color-bg-brand)",
         component: "var(--figma-color-bg-component)",
       },

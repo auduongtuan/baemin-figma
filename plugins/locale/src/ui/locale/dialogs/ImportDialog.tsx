@@ -6,7 +6,10 @@ import { LocaleItem, getStringContent } from "../../../lib";
 import { flat } from "../../../lib/helpers";
 import { useLanguages, useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { setCurrentDialog } from "../../state/localeAppSlice";
+import {
+  closeCurrentDialog,
+  setCurrentDialog,
+} from "../../state/localeAppSlice";
 import { setLocaleData } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
 import {
@@ -109,11 +112,7 @@ const ImportDialog = () => {
         localeItems: newLocaleItems,
       })
     );
-    dispatch(
-      setCurrentDialog({
-        opened: false,
-      })
-    );
+    dispatch(closeCurrentDialog());
     dispatchImportState({ type: "RESET" });
     runCommand("show_figma_notify", {
       message: `${importState.items.length} ${pluralize(
@@ -178,91 +177,92 @@ const ImportDialog = () => {
   }, [importState.files, importState.options]);
   return (
     <Dialog
-      open={currentDialog.type == "IMPORT" && currentDialog.opened}
+      open={currentDialog.type == "IMPORT"}
       // open={true}
       onOpenChange={(open) => {
-        if (!open) dispatchImportState({ type: "RESET" });
-        dispatch(setCurrentDialog({ type: "IMPORT", opened: open }));
+        if (!open) {
+          dispatchImportState({ type: "RESET" });
+          dispatch(closeCurrentDialog());
+        }
       }}
     >
       <Dialog.Panel title="Import locale items">
-        <Dialog.Content>
-          {importState.items && importState.items.length > 0 ? (
-            <div>
-              <h4 className="mt-0 mb-8 font-medium text-secondary">
-                Import options
-              </h4>
+        {importState.items && importState.items.length > 0 ? (
+          <div>
+            <h4 className="mt-0 mb-8 font-medium text-secondary">
+              Import options
+            </h4>
 
-              <Select
-                // inline
-                // maxWidth={"120px"}
-                label="Library"
-                value={importState.options.libraryId}
-                onChange={(value) => {
-                  dispatchImportState({
-                    type: "CHANGE_OPTIONS",
-                    options: { libraryId: value },
-                  });
-                }}
-                options={getLibraryOptions()}
-              />
-              <Checkbox
-                checked={importState.options.override}
-                onCheckedChange={(checked) =>
-                  dispatchImportState({
-                    type: "CHANGE_OPTIONS",
-                    options: { override: checked == true },
-                  })
-                }
-                label="Override local items if duplicated"
-                className="mt-8"
-              />
-              <h4 className="mt-16 mb-8 font-medium text-secondary">
-                Review items
-              </h4>
-              {groupedLocaleItems &&
-                groupedLocaleItems.map(([name, items]) => (
-                  <Collapsible defaultOpen={importState.items.length < 12}>
-                    <Collapsible.Trigger>
-                      {name || "Ungrouped"} ({items.length})
-                    </Collapsible.Trigger>
-                    <Collapsible.Content className="pl-16">
-                      {items.map((item) => (
-                        <>
-                          <Collapsible defaultOpen={false}>
-                            <Collapsible.Trigger>
-                              <div className="truncate">{item.key}</div>
-                            </Collapsible.Trigger>
-                            <Collapsible.Content>
-                              <div className="py-8 pl-16 flex flex-col gap-4">
-                                {languages.map(
-                                  (lang) =>
-                                    lang in item && (
-                                      <div className="truncate">
-                                        {getStringContent(item[lang])}
-                                      </div>
-                                    )
-                                )}
-                              </div>
-                            </Collapsible.Content>
-                          </Collapsible>
-                          <Divider />
-                        </>
-                      ))}
-                    </Collapsible.Content>
-                  </Collapsible>
-                ))}
-            </div>
-          ) : (
-            <Dropzone
-              onDrop={onDrop}
-              description="Drag and drop JSON language files here, or click to select files"
-              accept={{
-                "application/json": [".json"],
+            <Select
+              // inline
+              // maxWidth={"120px"}
+              label="Library"
+              value={importState.options.libraryId}
+              onChange={(value) => {
+                dispatchImportState({
+                  type: "CHANGE_OPTIONS",
+                  options: { libraryId: value },
+                });
               }}
+              options={getLibraryOptions()}
             />
-          )}
-        </Dialog.Content>
+            <Checkbox
+              checked={importState.options.override}
+              onCheckedChange={(checked) =>
+                dispatchImportState({
+                  type: "CHANGE_OPTIONS",
+                  options: { override: checked == true },
+                })
+              }
+              label="Override local items if duplicated"
+              className="mt-8"
+            />
+            <h4 className="mt-16 mb-8 font-medium text-secondary">
+              Review items
+            </h4>
+            {groupedLocaleItems &&
+              groupedLocaleItems.map(([name, items]) => (
+                <Collapsible defaultOpen={importState.items.length < 12}>
+                  <Collapsible.Trigger>
+                    {name || "Ungrouped"} ({items.length})
+                  </Collapsible.Trigger>
+                  <Collapsible.Content className="pl-16">
+                    {items.map((item) => (
+                      <>
+                        <Collapsible defaultOpen={false}>
+                          <Collapsible.Trigger>
+                            <div className="truncate">{item.key}</div>
+                          </Collapsible.Trigger>
+                          <Collapsible.Content>
+                            <div className="flex flex-col gap-4 py-8 pl-16">
+                              {languages.map(
+                                (lang) =>
+                                  lang in item && (
+                                    <div className="truncate">
+                                      {getStringContent(item[lang])}
+                                    </div>
+                                  )
+                              )}
+                            </div>
+                          </Collapsible.Content>
+                        </Collapsible>
+                        <Divider />
+                      </>
+                    ))}
+                  </Collapsible.Content>
+                </Collapsible>
+              ))}
+          </div>
+        ) : (
+          <Dropzone
+            onDrop={onDrop}
+            description="Drag and drop JSON language files here, or click to select files"
+            accept={{
+              "application/json": [".json"],
+            }}
+          />
+        )}
+
         {importState.items && importState.items.length > 0 && (
           <Dialog.Footer>
             <Button onClick={importLocaleItemsHandler}>Import</Button>

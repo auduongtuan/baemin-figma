@@ -10,6 +10,7 @@ import {
   LocaleData,
   LocaleItem,
   SavedLocaleItem,
+  addDuplicatedPropToItems,
 } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
@@ -122,7 +123,7 @@ export async function getLocaleData() {
         //   (a, b) => a.key == b.key
         // );
       }
-      // old load code
+      // Old load code
       // combinedLocaleData.localeItems = unionWith(
       //   localeData.localeItems.map((item: LocaleItem) => ({
       //     ...item,
@@ -132,21 +133,20 @@ export async function getLocaleData() {
       //   combinedLocaleData.localeItems,
       //   (a, b) => a.key == b.key
       // );
-      // new load code with duplicated feature
+
+      // New load code with duplicated feature
       combinedLocaleData.localeItems = localeData.localeItems.reduce(
         (acc: LocaleItem[], item: SavedLocaleItem) => {
-          const duplicated = acc.find((accItem) => accItem.key === item.key);
-          if (duplicated) {
-            duplicated.duplicated = true;
-          }
           acc.push({
             ...item,
             fromLibrary: localeDataNode.id,
             isLocal: isLocalNode,
-            ...(duplicated ? { duplicated: true } : {}),
           });
           return acc;
         },
+        combinedLocaleData.localeItems
+      );
+      combinedLocaleData.localeItems = addDuplicatedPropToItems(
         combinedLocaleData.localeItems
       );
     } catch (e) {

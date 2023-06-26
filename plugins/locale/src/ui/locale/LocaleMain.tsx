@@ -37,21 +37,13 @@ const Locale = ({}) => {
       dispatch(setTextsInLocaleSelection(data.texts));
     });
   }, []);
-  useEffect(() => {
-    // setTimeout(() => {
-    //   dispatch(setCurrentDialog({ type: "MOVE_LIBRARY", opened: true }));
-    // }, 200);
-  }, []);
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
   return !isReady ? (
     <MainSekeleton />
   ) : (
     <div className="flex flex-col w-full h-screen bg-white">
-      {currentDialog.type == "NEW" && <NewDialog />}
-      {currentDialog.type == "DELETE" && <DeleteDialog />}
-      {currentDialog.type == "EDIT" && <EditDialog />}
+      <NewDialog />
+      <DeleteDialog />
+      <EditDialog />
       <MoveLibraryDialog />
       <section className="flex flex-col w-full overflow-y-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (

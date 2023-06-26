@@ -9,12 +9,14 @@ import {
   TextBox,
   Textarea,
   Tooltip,
+  useDialogContext,
 } from "ds";
 import { get, isString } from "lodash-es";
 import { useCallback, useEffect, useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { LANGUAGE_LIST, Lang, LocaleItem, findItemByKey } from "../../../lib";
 import {
+  useDialog,
   useLanguages,
   useLocaleItems,
   useLocaleSelection,
@@ -33,12 +35,12 @@ function LocaleItemForm({
   item,
   showTitle = false,
   saveOnChange = false,
-  onDone,
+  onDone: onDoneProp,
 }: {
   showTitle?: boolean;
   saveOnChange?: boolean;
   item?: LocaleItem | string;
-  onDone?: (item: LocaleItem) => void;
+  onDone?: (localeItem: LocaleItem) => void;
 }) {
   const localeItems = useLocaleItems();
   const localeSelection = useLocaleSelection();
@@ -47,6 +49,9 @@ function LocaleItemForm({
     [item, localeItems, localeSelection]
   );
   const languages = useLanguages();
+  const { onDone: dialogOnDone } = useDialog();
+  const { closeDialog } = useDialogContext();
+  const onDone = onDoneProp || dialogOnDone;
   const {
     register,
     handleSubmit,
@@ -83,8 +88,14 @@ function LocaleItemForm({
     if (onDone && typeof onDone == "function") onDone(localeItemData);
   }, []);
 
-  const submitFn = handleSubmit(item ? updateLocaleItemHandler : addNewKey);
-
+  const submitFn = handleSubmit(() => {
+    if (item) {
+      updateLocaleItemHandler();
+    } else {
+      addNewKey();
+    }
+    if (!saveOnChange) closeDialog();
+  });
   return (
     <form onSubmit={submitFn}>
       {showTitle && item && saveOnChange && (

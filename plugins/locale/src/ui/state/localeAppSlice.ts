@@ -3,7 +3,6 @@ import { Lang, LocaleItem, Configs, LocaleItemId, isSameItem } from "../../lib";
 import configs from "figma-helpers/configs";
 import { unionWith } from "lodash-es";
 interface DialogState {
-  opened: boolean;
   // [libraryId, key]
   key?: "__SELECTED_ITEMS" | LocaleItemId;
   type?: "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
@@ -21,10 +20,9 @@ const initialState: {
   };
 } = {
   currentDialog: {
-    opened: false,
     key: null,
     type: null,
-    onDone: undefined,
+    onDone: null,
   },
   isWorking: false,
   configs: {
@@ -42,6 +40,13 @@ export const localeAppSlice = createSlice({
   name: "localeApp",
   initialState: initialState,
   reducers: {
+    closeCurrentDialog: (state) => {
+      state.currentDialog = {
+        key: null,
+        type: null,
+        onDone: null,
+      };
+    },
     setCurrentDialog: (state, action: PayloadAction<DialogState>) => {
       state.currentDialog = { ...state.currentDialog, ...action.payload };
     },
@@ -93,6 +98,7 @@ export const localeAppSlice = createSlice({
 });
 
 export const {
+  closeCurrentDialog,
   setCurrentDialog,
   setIsWorking,
   setConfigs,

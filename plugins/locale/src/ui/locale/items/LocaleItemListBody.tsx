@@ -3,11 +3,17 @@ import { pluralize } from "@capaj/pluralize";
 import { Empty } from "ds";
 import { LocaleItem } from "@lib";
 import { useLocaleItems } from "@ui/hooks/locale";
-import { useAppSelector } from "@ui/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@ui/hooks/redux";
 import LocaleItemListGroup from "./LocaleItemListGroup";
+import { useEffect } from "react";
+import { clearSelectedItems } from "@ui/state/localeAppSlice";
 const LocaleItemListBody = () => {
   const listState = useAppSelector((state) => state.localeApp.list);
   const localeItems = useLocaleItems();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(clearSelectedItems());
+  }, [localeItems]);
   const filteredLocaleItems = localeItems.filter((item: LocaleItem) => {
     const needLocal = !listState.editMode || item.isLocal;
     if (listState.source == "all") return needLocal && true;

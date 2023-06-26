@@ -42,7 +42,7 @@ export type SavedLocaleItem = {
   [key in Lang]?: LocaleItemContent;
 };
 // [libraryId, key]
-export type LocaleItemId = [string, string];
+export type LocaleItemId = [LocaleItem["fromLibrary"], LocaleItem["key"]];
 export type LocaleItem = SavedLocaleItem & {
   fromLibrary?: string;
   isLocal?: boolean;

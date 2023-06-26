@@ -113,3 +113,15 @@ export function filterItemsByLibrary(
   );
   return filteredLocaleItems;
 }
+export function addDuplicatedPropToItems(items: LocaleItem[]) {
+  const keyCounter = items.reduce<{ [key: string]: number }>((acc, item) => {
+    if (item.key) {
+      acc[item.key] = acc[item.key] ? acc[item.key] + 1 : 1;
+    }
+    return acc;
+  }, {});
+  return items.map((item) => ({
+    ...item,
+    duplicated: keyCounter[item.key] > 1,
+  }));
+}

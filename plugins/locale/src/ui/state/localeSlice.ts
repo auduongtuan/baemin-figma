@@ -8,6 +8,7 @@ import {
   LocaleData,
   isSameItem,
   LocaleItemId,
+  addDuplicatedPropToItems,
 } from "@lib";
 import { cloneDeep, pickBy, unionWith } from "lodash-es";
 const initialState: LocaleData = {
@@ -101,27 +102,96 @@ export const localeSlice = createSlice({
       state.localeItems = [...state.localeItems, action.payload];
     },
     removeLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.localeItems = [
+      state.localeItems = addDuplicatedPropToItems([
         ...state.localeItems.filter(
           (localeItem) => !isSameItem(localeItem, action.payload)
         ),
-      ];
+      ]);
+      // state.localeItems = cloneDeep(state.localeItems);
     },
     removeLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
-      state.localeItems = [
+      state.localeItems = addDuplicatedPropToItems([
         ...state.localeItems.filter(
           (localeItem) =>
             !action.payload.map((item) => item.key).includes(localeItem.key)
         ),
-      ];
+      ]);
     },
-    // gonna need to check again
-    updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
-      state.localeItems = unionWith(
-        { ...state.localeItems },
-        { ...action.payload },
-        (a, b) => a.key === b.key
+
+    moveLocaleItemsToLibrary: (
+      state,
+      action: PayloadAction<{
+        itemsToMove: LocaleItem[];
+        libraryId: string;
+        skipDuplicated: boolean;
+      }>
+    ) => {
+      const { itemsToMove, libraryId, skipDuplicated: skip } = action.payload;
+
+      // destination library
+      const libraryItems = state.localeItems.filter(
+        (item) => item.fromLibrary == libraryId
       );
+      // duplicated items
+      const selectedItems = itemsToMove.reduce<{
+        duplicated: LocaleItem[];
+        nonDuplicated: LocaleItem[];
+      }>(
+        (acc, item) => {
+          const found = libraryItems.find(
+            (libraryItem) => libraryItem.key == item.key
+          );
+          if (found) {
+            acc.duplicated.push(item);
+          } else {
+            acc.nonDuplicated.push(item);
+          }
+          return acc;
+        },
+        { duplicated: [], nonDuplicated: [] }
+      );
+      const duplicatedItemKeys = selectedItems.duplicated.map(
+        (duplicatedItem) => duplicatedItem.key
+      );
+
+      function isItemInCollection(
+        itemToCheck: LocaleItem,
+        items: LocaleItem[]
+      ) {
+        const found = items.find(
+          (item) =>
+            item.key == itemToCheck.key &&
+            item.fromLibrary == itemToCheck.fromLibrary
+        );
+        return found !== undefined && found !== null;
+      }
+      const newLocalItems = cloneDeep(state.localeItems).reduce<LocaleItem[]>(
+        (acc, item) => {
+          // only change key or library at a time
+          if (isItemInCollection(item, selectedItems.nonDuplicated)) {
+            acc.push(cloneDeep({ ...item, fromLibrary: libraryId }));
+            return acc;
+          }
+          if (skip === false) {
+            if (isItemInCollection(item, selectedItems.duplicated)) {
+              acc.push(cloneDeep({ ...item, fromLibrary: libraryId }));
+              return acc;
+            }
+            // delete original item
+            if (
+              item.fromLibrary === libraryId &&
+              duplicatedItemKeys.includes(item.key)
+            ) {
+              return acc;
+            }
+          }
+          // not a item in items to move
+          acc.push(item);
+          return acc;
+        },
+        []
+      );
+      state.localeItems = addDuplicatedPropToItems(newLocalItems);
     },
     updateLocaleItem: (
       state,
@@ -144,7 +214,7 @@ export const localeSlice = createSlice({
         return item;
       });
       console.log("run update", action.payload.id);
-      state.localeItems = newLocalItems;
+      state.localeItems = addDuplicatedPropToItems(newLocalItems);
     },
   },
 });
@@ -155,10 +225,10 @@ export const {
   updateLocaleItem,
   updateLocaleSelection,
   setLocaleData,
-  updateLocaleItems,
   updateTextInLocaleSelection,
   removeLocaleItem,
   removeLocaleItems,
   updateTextsInLocaleSelection,
+  moveLocaleItemsToLibrary,
 } = localeSlice.actions;
 export default localeSlice.reducer;

@@ -15,6 +15,7 @@ import LocaleItemReview from "../items/LocaleItemReview";
 import { runCommand } from "@ui/uiHelper";
 import { moveLocaleItemsToLibrary } from "@ui/state/localeSlice";
 import { pluralize } from "@capaj/pluralize";
+import { cloneDeep } from "lodash-es";
 const MoveLibraryForm = () => {
   const dispatch = useAppDispatch();
   const libraryOptions = getLibraryOptions();
@@ -31,10 +32,12 @@ const MoveLibraryForm = () => {
   const toLibrary = useWatch({ control, name: "toLibrary" });
   const itemsWillBeMoved = useMemo(
     () =>
-      selectedItems.filter(
-        (selectedItem) => selectedItem.fromLibrary != toLibrary
+      cloneDeep(
+        selectedItems.filter(
+          (selectedItem) => selectedItem.fromLibrary != toLibrary
+        )
       ),
-    [selectedItems, toLibrary]
+    [toLibrary]
   );
   const duplicatedItems = useMemo(
     () =>
@@ -43,11 +46,12 @@ const MoveLibraryForm = () => {
           (item) => item.fromLibrary == toLibrary && item.key == movedItem.key
         )
       ),
-    [localeItems, itemsWillBeMoved]
+    [itemsWillBeMoved]
   );
   const { closeDialog } = useDialog();
   const submit = useCallback(() => {
     const { toLibrary, duplication } = getValues();
+    closeDialog();
     dispatch(
       moveLocaleItemsToLibrary({
         itemsToMove: itemsWillBeMoved,
@@ -55,7 +59,6 @@ const MoveLibraryForm = () => {
         skipDuplicated: duplication == "SKIP",
       })
     );
-    closeDialog();
     runCommand("show_figma_notify", {
       message: "Items moved successfully",
     });
@@ -139,7 +142,7 @@ const MoveLibraryForm = () => {
         {itemsWillBeMoved.length > 0 ? (
           <Button onClick={handleSubmit(submit)}>Move</Button>
         ) : (
-          <Button onClick={closeDialog}>Close</Button>
+          <Button onClick={() => closeDialog()}>Close</Button>
         )}
       </Dialog.Footer>
     </>

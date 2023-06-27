@@ -56,9 +56,9 @@ export function useDialog(checkOpen: (state: DialogState) => boolean = null) {
         })
       );
     },
-    closeDialog: () => {
+    closeDialog: (callback: Function = null) => {
       if (context && context.closeDialog) {
-        context.closeDialog();
+        context.closeDialog(callback);
       }
     },
   };

@@ -1,6 +1,7 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import {
   addLocaleItem,
+  addLocaleItems,
   setLocaleData,
   updateLocaleItem,
   removeLocaleItem,
@@ -15,6 +16,7 @@ listenerMiddleware.startListening({
   matcher: isAnyOf(
     setLocaleData,
     addLocaleItem,
+    addLocaleItems,
     updateLocaleItem,
     removeLocaleItem,
     removeLocaleItems,

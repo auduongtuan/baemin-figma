@@ -1,5 +1,4 @@
 import React, {
-  Fragment,
   createContext,
   useCallback,
   useContext,
@@ -7,11 +6,10 @@ import React, {
 } from "react";
 import * as RDialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { keyframes } from "styled-components";
 import { IconButton } from "./IconButton";
 import { Portal } from "@radix-ui/react-portal";
 import { Transition } from "@headlessui/react";
-interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
+interface DialogPanelProps extends React.ComponentPropsWithoutRef<"div"> {
   title?: string;
   buttons?: React.ReactNode;
 }
@@ -35,6 +33,7 @@ interface DialogContextValue {
   internalOpen?: boolean;
   onOpenChange?: RDialog.DialogProps["onOpenChange"];
   closeDialog?: (callback?: Function) => void;
+  afterClose?: Function;
 }
 interface DialogContextType
   extends Pick<RDialog.DialogProps, "open" | "onOpenChange">,
@@ -48,12 +47,16 @@ const DialogContext = createContext<DialogContextType>({});
 export const useDialogContext = () => {
   return useContext(DialogContext);
 };
+export interface DialogProps extends RDialog.DialogProps {
+  afterClose?: Function;
+}
 const Dialog = ({
   children,
   open,
   onOpenChange,
+  afterClose,
   ...rest
-}: RDialog.DialogProps) => {
+}: DialogProps) => {
   const [contextValue, setContextValue] = React.useReducer(
     (state: DialogContextValue, action: Partial<DialogContextValue>) => {
       return {
@@ -67,6 +70,7 @@ const Dialog = ({
       dialogContainerEl: null,
       open,
       onOpenChange,
+      afterClose,
       closeDialog: (callback: Function = null) => {
         setContextValue({
           internalOpen: false,
@@ -116,7 +120,23 @@ const Dialog = ({
     </RDialog.Root>
   );
 };
-const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
+const DialogProvider = ({
+  value,
+  children,
+}: {
+  value: DialogContextType;
+  children: React.ReactNode;
+}) => {
+  return (
+    <DialogContext.Provider value={value}>{children}</DialogContext.Provider>
+  );
+};
+const DialogPanel = ({
+  title,
+  children,
+  buttons,
+  ...rest
+}: DialogPanelProps) => {
   const {
     open,
     internalOpen,
@@ -124,6 +144,7 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
     holdEscape,
     dialogContainerEl,
     setContextValue,
+    afterClose,
   } = useDialogContext();
 
   const setDialogRef = useCallback((node: HTMLDivElement) => {
@@ -137,7 +158,10 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
         <Transition
           show={internalOpen}
           afterLeave={() => {
-            setTimeout(() => onOpenChange(false), 0);
+            setTimeout(() => {
+              onOpenChange(false);
+              afterClose && afterClose();
+            }, 0);
           }}
           unmount={false}
         >
@@ -179,25 +203,8 @@ const DialogPanel = ({ title, children, buttons, ...rest }: DialogProps) => {
                 ref={setDialogRef}
               >
                 {title && (
-                  <header
-                    css={`
-                      flex-grow: 0;
-                      flex-shrink: 0;
-                      display: flex;
-                      padding: 12px 16px;
-                      align-items: center;
-                      border-bottom: 1px solid #eee;
-                      background: var(--figma-color-bg);
-                    `}
-                  >
-                    <RDialog.Title
-                      css={`
-                        font-weight: var(--font-weight-medium);
-                        font-size: var(--font-size-large);
-                        flex-grow: 1;
-                        margin: 0;
-                      `}
-                    >
+                  <header className="flex items-center px-16 py-12 border-b grow-0 shrink-0 border-divider bg-default">
+                    <RDialog.Title className="m-0 font-medium text-large grow">
                       {title}
                     </RDialog.Title>
                     <div className="flex items-center gap-8 grow-0 shrink-0">
@@ -229,4 +236,5 @@ export default Object.assign(Dialog, {
   Panel: DialogPanel,
   Trigger: RDialog.Trigger,
   Footer: DialogFooter,
+  Provider: DialogProvider,
 });

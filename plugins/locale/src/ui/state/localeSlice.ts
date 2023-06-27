@@ -50,7 +50,7 @@ export const localeSlice = createSlice({
   name: "locale",
   initialState,
   reducers: {
-    setLocaleData: (state, action: PayloadAction<SavedLocaleData>) => {
+    setLocaleData: (state, action: PayloadAction<LocaleData>) => {
       if ("sheetId" in action.payload) state.sheetId = action.payload.sheetId;
       if ("sheetName" in action.payload)
         state.sheetName = action.payload.sheetName;
@@ -99,7 +99,10 @@ export const localeSlice = createSlice({
     },
 
     addLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.localeItems = [...state.localeItems, action.payload];
+      state.localeItems = addDuplicatedPropToItems([
+        ...state.localeItems,
+        action.payload,
+      ]);
     },
     removeLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
       state.localeItems = addDuplicatedPropToItems([
@@ -117,7 +120,24 @@ export const localeSlice = createSlice({
         ),
       ]);
     },
-
+    addLocaleItems: (
+      state,
+      action: PayloadAction<{
+        itemsToAdd: LocaleItem[];
+        skipDuplicated: boolean;
+      }>
+    ) => {
+      const { itemsToAdd, skipDuplicated } = action.payload;
+      const compareFn = (a: LocaleItem, b: LocaleItem) =>
+        a.key == b.key && a.fromLibrary == b.fromLibrary;
+      let newLocaleItems: LocaleItem[];
+      if (skipDuplicated) {
+        newLocaleItems = unionWith(state.localeItems, itemsToAdd, compareFn);
+      } else {
+        newLocaleItems = unionWith(itemsToAdd, state.localeItems, compareFn);
+      }
+      state.localeItems = addDuplicatedPropToItems(newLocaleItems);
+    },
     moveLocaleItemsToLibrary: (
       state,
       action: PayloadAction<{
@@ -213,7 +233,6 @@ export const localeSlice = createSlice({
         }
         return item;
       });
-      console.log("run update", action.payload.id);
       state.localeItems = addDuplicatedPropToItems(newLocalItems);
     },
   },
@@ -222,6 +241,7 @@ export const localeSlice = createSlice({
 export const {
   setTextsInLocaleSelection,
   addLocaleItem,
+  addLocaleItems,
   updateLocaleItem,
   updateLocaleSelection,
   setLocaleData,

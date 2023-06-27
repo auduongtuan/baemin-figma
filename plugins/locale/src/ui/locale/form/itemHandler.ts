@@ -1,7 +1,6 @@
 import { FormValues } from "./useLocaleForm";
 import getItemFromFormValues from "./getItemFromFormValues";
 import { store } from "@ui/state/store";
-import { closeCurrentDialog, setCurrentDialog } from "@ui/state/localeAppSlice";
 import { addLocaleItem, updateLocaleItem } from "@ui/state/localeSlice";
 import { getLocaleSelection } from "@ui/state/helpers";
 import { updateTextsOfItem } from "@ui/state/helpers";
@@ -24,7 +23,6 @@ export function quickUpdateItemHandler(values: FormValues) {
   const { oldKey, oldFromLibrary, ...otherFormValues } = values;
   const localeSelection = getLocaleSelection();
   const localeItemData = getItemFromFormValues("quick-update", otherFormValues);
-  console.log(localeItemData);
   store.dispatch(
     updateLocaleItem({ ...localeItemData, id: [oldFromLibrary, oldKey] })
   );

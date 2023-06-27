@@ -3,10 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Button, useDialogContext } from "ds";
 import { removeLocaleItem, removeLocaleItems } from "../../state/localeSlice";
 import { runCommand } from "../../uiHelper";
-import {
-  clearSelectedItems,
-  closeCurrentDialog,
-} from "../../state/localeAppSlice";
+import { clearSelectedItems } from "../../state/localeAppSlice";
 import { findItemById } from "../../../lib";
 import { useLocaleItems } from "../../hooks/locale";
 import { pluralize } from "@capaj/pluralize";

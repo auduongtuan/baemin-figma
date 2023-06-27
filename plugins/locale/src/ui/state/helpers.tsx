@@ -80,16 +80,16 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
   store.dispatch(
     updateTextsInLocaleSelection(
       texts.map((text) => {
-        const characters =
-          getParseText(
-            {
-              ...text,
-              item: item,
-              lang: text.lang,
-              variables: text.variables,
-            },
-            localeItems
-          ).characters || undefined;
+        const parsedText = getParseText(
+          {
+            ...text,
+            item: item,
+            lang: text.lang,
+            variables: text.variables,
+          },
+          localeItems
+        );
+        const characters = parsedText ? parsedText.characters : undefined;
         return {
           ...text,
           key: item.key,

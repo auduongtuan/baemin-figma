@@ -1,8 +1,4 @@
 import { useCallback, useMemo } from "react";
-import {
-  closeCurrentDialog,
-  setCurrentDialog,
-} from "../../state/localeAppSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import {
   Dialog,
@@ -14,13 +10,12 @@ import {
 } from "ds";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { getLibraryOptions } from "../../state/helpers";
-import { useLocaleItems } from "@ui/hooks/locale";
+import { useDialog, useLocaleItems } from "@ui/hooks/locale";
 import LocaleItemReview from "../items/LocaleItemReview";
 import { runCommand } from "@ui/uiHelper";
 import { moveLocaleItemsToLibrary } from "@ui/state/localeSlice";
 import { pluralize } from "@capaj/pluralize";
 const MoveLibraryForm = () => {
-  console.log("MoveLibraryForm");
   const dispatch = useAppDispatch();
   const libraryOptions = getLibraryOptions();
   const selectedItems = useAppSelector(
@@ -50,9 +45,7 @@ const MoveLibraryForm = () => {
       ),
     [localeItems, itemsWillBeMoved]
   );
-  const close = useCallback(() => {
-    dispatch(closeCurrentDialog());
-  }, []);
+  const { closeDialog } = useDialog();
   const submit = useCallback(() => {
     const { toLibrary, duplication } = getValues();
     dispatch(
@@ -62,7 +55,7 @@ const MoveLibraryForm = () => {
         skipDuplicated: duplication == "SKIP",
       })
     );
-    dispatch(closeCurrentDialog());
+    closeDialog();
     runCommand("show_figma_notify", {
       message: "Items moved successfully",
     });
@@ -146,7 +139,7 @@ const MoveLibraryForm = () => {
         {itemsWillBeMoved.length > 0 ? (
           <Button onClick={handleSubmit(submit)}>Move</Button>
         ) : (
-          <Button onClick={close}>Close</Button>
+          <Button onClick={closeDialog}>Close</Button>
         )}
       </Dialog.Footer>
     </>

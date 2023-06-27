@@ -5,16 +5,16 @@ import {
   LocaleItem,
   LocaleItemContent,
   LocaleItemId,
+  LocaleItemOptionalDuplicated,
   LocaleItemPluralContent,
+  LocaleItemWithDuplicated,
   LocaleLibrary,
 } from "./types";
 import configs from "figma-helpers/configs";
 
 export function findItemByKey(key: string, localeItems: LocaleItem[]) {
   return localeItems
-    ? localeItems.find(
-        (item) => "key" in item && item.key == key && !item?.duplicated
-      )
+    ? localeItems.find((item) => "key" in item && item.key == key)
     : null;
 }
 
@@ -113,7 +113,9 @@ export function filterItemsByLibrary(
   );
   return filteredLocaleItems;
 }
-export function addDuplicatedPropToItems(items: LocaleItem[]) {
+export function addDuplicatedPropToItems(
+  items: LocaleItem[]
+): LocaleItemWithDuplicated[] {
   const keyCounter = items.reduce<{ [key: string]: number }>((acc, item) => {
     if (item.key) {
       acc[item.key] = acc[item.key] ? acc[item.key] + 1 : 1;

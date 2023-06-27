@@ -14,6 +14,7 @@ import TextareaAutosize, {
   TextareaAutosizeProps,
 } from "react-textarea-autosize";
 import { twMerge } from "tailwind-merge";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
@@ -109,14 +110,18 @@ export const ErrorMessage = ({
   children,
   className,
   ...props
-}: ComponentPropsWithRef<"p">) => {
+}: ComponentPropsWithRef<"div">) => {
   return (
-    <p
+    <div
       {...props}
-      className={twMerge("text-danger text-xsmall mt-8", className)}
+      className={clsx(
+        "text-danger text-xsmall",
+        twMerge("mt-8 flex", className)
+      )}
     >
-      {children}
-    </p>
+      <ExclamationTriangleIcon className="w-[12px] h-[12px] mt-3 mr-6 grow-0 shrink-0" />
+      <p className="m-0">{children}</p>
+    </div>
   );
 };
 

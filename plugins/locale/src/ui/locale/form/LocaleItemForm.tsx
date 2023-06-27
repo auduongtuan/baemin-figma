@@ -9,7 +9,6 @@ import {
   TextBox,
   Textarea,
   Tooltip,
-  useDialogContext,
 } from "ds";
 import { get, isString } from "lodash-es";
 import { useCallback, useEffect, useMemo } from "react";
@@ -49,8 +48,10 @@ function LocaleItemForm({
     [item, localeItems, localeSelection]
   );
   const languages = useLanguages();
-  const { onDone: dialogOnDone } = useDialog();
-  const { closeDialog } = useDialogContext();
+  const {
+    state: { onDone: dialogOnDone },
+    closeDialog,
+  } = useDialog();
   const onDone = onDoneProp || dialogOnDone;
   const {
     register,

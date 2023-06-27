@@ -2,35 +2,22 @@ import { useMemo } from "react";
 import { Dialog, IconButton, Tooltip } from "ds";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import LocaleItemForm from "../form/LocaleItemForm";
-import {
-  closeCurrentDialog,
-  setCurrentDialog,
-} from "../../state/localeAppSlice";
-import { useAppSelector, useAppDispatch } from "../../hooks/redux";
 import { LocaleItem, findItemById } from "../../../lib";
 import EditInfo from "../atoms/EditInfo";
-import { useLocaleItems } from "../../hooks/locale";
+import { useDialog, useLocaleItems } from "../../hooks/locale";
 
 const EditDialog = () => {
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
-  const dispatch = useAppDispatch();
+  const { dialogProps, state } = useDialog((state) => state.type == "EDIT");
   const items = useLocaleItems();
   const item = useMemo(
     () =>
-      currentDialog.key && currentDialog.key != "__SELECTED_ITEMS"
-        ? findItemById(currentDialog.key, items)
+      state.key && state.key != "__SELECTED_ITEMS"
+        ? findItemById(state.key, items)
         : undefined,
-    [currentDialog.key]
+    [state.key]
   );
   return (
-    <Dialog
-      open={currentDialog.type == "EDIT"}
-      onOpenChange={(open) => {
-        if (!open) dispatch(closeCurrentDialog());
-      }}
-    >
+    <Dialog {...dialogProps}>
       <Dialog.Panel
         title="Edit locale item"
         buttons={<EditInfo localeItem={item} />}
@@ -48,17 +35,15 @@ const EditDialog = () => {
   );
 };
 export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {
-  const dispatch = useAppDispatch();
+  const { openDialog } = useDialog();
   return (
     <Tooltip content="Edit locale item">
       <IconButton
         onClick={() =>
-          dispatch(
-            setCurrentDialog({
-              type: "EDIT",
-              key: [item.fromLibrary, item.key],
-            })
-          )
+          openDialog({
+            type: "EDIT",
+            key: [item.fromLibrary, item.key],
+          })
         }
       >
         <Pencil2Icon></Pencil2Icon>

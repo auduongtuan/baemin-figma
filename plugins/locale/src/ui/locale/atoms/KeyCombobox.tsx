@@ -50,7 +50,7 @@ function KeyCombobox({
       : []),
     ...(localeItems &&
       localeItems.reduce((acc, item) => {
-        if (item?.duplicated) return acc;
+        // if (item?.duplicated) return acc;
         acc.push({
           id: item.key,
           value: item.key,
@@ -92,6 +92,7 @@ function KeyCombobox({
     const localeItem = isString(localeItemOrKey)
       ? findItemByKey(localeItemOrKey, localeItems)
       : localeItemOrKey;
+    if (!localeItem) return;
     const textProps = {
       item: localeItem,
       key: localeItem.key,

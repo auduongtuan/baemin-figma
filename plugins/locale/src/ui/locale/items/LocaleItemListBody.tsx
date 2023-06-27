@@ -1,12 +1,18 @@
 import { groupBy, orderBy } from "lodash-es";
 import { pluralize } from "@capaj/pluralize";
-import { Empty } from "ds";
+import { Checkbox, Empty, SectionTitle, getCheckedState } from "ds";
 import { LocaleItem } from "@lib";
 import { useLocaleItems } from "@ui/hooks/locale";
 import { useAppDispatch, useAppSelector } from "@ui/hooks/redux";
 import LocaleItemListGroup from "./LocaleItemListGroup";
 import { useEffect } from "react";
-import { clearSelectedItems } from "@ui/state/localeAppSlice";
+import {
+  addSelectedItems,
+  clearSelectedItems,
+  removeSelectedItems,
+} from "@ui/state/localeAppSlice";
+import EditModeCheckbox from "./EditModeCheckbox";
+import clsx from "clsx";
 const LocaleItemListBody = () => {
   const listState = useAppSelector((state) => state.localeApp.list);
   const localeItems = useLocaleItems();
@@ -31,12 +37,22 @@ const LocaleItemListBody = () => {
   const defaultExpanded =
     filteredLocaleItems.length < 32 || groupedLocaleItems.length < 4;
   return (
-    <div className="flex flex-col gap-8 p-16 grow">
+    <div
+      className={clsx(
+        `flex flex-col gap-8 p-16 grow`,
+        listState.editMode && "pb-[52px]"
+      )}
+    >
       {localeItems && (
-        <h4 className="mt-0 font-medium --grow text-secondary">
-          {filteredLocaleItems.length} {listState.editMode && "editable "}
-          {pluralize("item", filteredLocaleItems.length)}
-        </h4>
+        <div className="flex items-center gap-8">
+          {listState.editMode && (
+            <EditModeCheckbox items={filteredLocaleItems} />
+          )}
+          <SectionTitle>
+            {filteredLocaleItems.length} {listState.editMode && "editable "}
+            {pluralize("item", filteredLocaleItems.length)}
+          </SectionTitle>
+        </div>
       )}
       {localeItems && localeItems.length == 0 && (
         <Empty

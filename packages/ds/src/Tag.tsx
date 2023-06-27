@@ -6,7 +6,7 @@ const Tag = forwardRef<HTMLSpanElement, React.ComponentPropsWithoutRef<"span">>(
       <span
         ref={forwardedRef}
         className={twMerge(
-          "text-component text-[7.5px] border-1 border-component px-2 py-1 rounded-sm",
+          "text-component text-[7.5px] border border-component px-2 py-1 rounded-sm",
           className
         )}
         {...rest}

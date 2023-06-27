@@ -30,6 +30,7 @@ export default {
         component: "var(--figma-color-bg-component)",
       },
       backgroundColor: {
+        default: "var(--figma-color-bg)",
         hover: "var(--figma-color-bg-hover)",
       },
       textColor: {

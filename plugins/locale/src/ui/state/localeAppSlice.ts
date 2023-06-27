@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Lang, LocaleItem, Configs, LocaleItemId, isSameItem } from "../../lib";
 import configs from "figma-helpers/configs";
 import { unionWith } from "lodash-es";
-interface DialogState {
+export interface DialogState {
   // [libraryId, key]
   key?: "__SELECTED_ITEMS" | LocaleItemId;
   type?: "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
@@ -32,7 +32,7 @@ const initialState: {
   },
   list: {
     source: "all",
-    editMode: true,
+    editMode: false,
     selectedItems: [],
   },
 };

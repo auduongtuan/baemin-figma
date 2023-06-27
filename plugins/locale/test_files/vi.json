@@ -1,0 +1,18 @@
+{
+  "nav_title": {
+    "intro_feature_menu": "Thực đơn nổi bật là gì?",
+    "preview_photo": "Xem Trước Ảnh"
+  },
+  "empty": {
+    "title": {
+      "common": "",
+      "reported_order": "",
+      "reported_rider": ""
+    },
+    "description": {
+      "common": "Không có gì ở đây bạn ơi!",
+      "reported_order": "Tuyệt vời!\nBạn không có đơn khiếu nại nào!",
+      "reported_rider": "Tuyệt vời!\nBạn không có khiếu nại tài xế nào!"
+    }
+  }
+}

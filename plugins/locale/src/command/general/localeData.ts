@@ -11,6 +11,7 @@ import {
   LocaleItem,
   SavedLocaleItem,
   addDuplicatedPropToItems,
+  LocaleLibrary,
 } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
@@ -70,8 +71,9 @@ const getDataNodes = async () => {
 export async function getLocaleData() {
   // const localeData = await figma.clientStorage.getAsync('localeData');
   // setNodeData(mainLocaleDataFrame, `${PREFIX}main_document_id`, figma.root.id);
-  let combinedLocaleData: SavedLocaleData = {
+  let combinedLocaleData: LocaleData = {
     localeItems: [],
+    localeLibraries: [],
   };
   const dataNodes = await getDataNodes();
   dataNodes.all.reverse().forEach((localeDataNode, i) => {
@@ -81,9 +83,6 @@ export async function getLocaleData() {
       let localeData = JSON.parse(nodeLocaleData);
       // if
 
-      if (!("localeLibraries" in combinedLocaleData)) {
-        combinedLocaleData.localeLibraries = [];
-      }
       combinedLocaleData.localeLibraries.unshift({
         id: localeDataNode.id,
         name: localeDataNode.name,

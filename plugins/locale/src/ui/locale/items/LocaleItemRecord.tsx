@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { IconButton, Tooltip, Tag, Checkbox, DuplicationIcon } from "ds";
 import { ComponentInstanceIcon, Crosshair2Icon } from "@radix-ui/react-icons";
@@ -26,6 +26,15 @@ const LocaleItemRecord = ({
   );
   const dispatch = useAppDispatch();
   const { defaultLanguage } = useConfigs();
+  const itemKey = useMemo(
+    () => (group ? item.key.replace(new RegExp(`^${group}\.`), "") : item.key),
+    [item, group]
+  );
+  const itemContentDemo = useMemo(
+    () =>
+      defaultLanguage in item ? getStringContent(item[defaultLanguage]) : "",
+    [defaultLanguage, item]
+  );
   return (
     <div className="py-8 border-b border-divider last:border-b-0 last:pb-0">
       <div className="flex w-full gap-8 font-normal text-left text-small group">
@@ -44,20 +53,13 @@ const LocaleItemRecord = ({
                 }}
               />
             )}
-            <Tooltip
-              content={
-                <>
-                  {defaultLanguage in item &&
-                    getStringContent(item[defaultLanguage])}
-                </>
-              }
-            >
-              <div className="truncate grow">
-                {group
-                  ? item.key.replace(new RegExp(`^${group}\.`), "")
-                  : item.key}
-              </div>
-            </Tooltip>
+            {itemContentDemo ? (
+              <Tooltip content={<>{itemContentDemo}</>}>
+                <div className="truncate grow">{itemKey}</div>
+              </Tooltip>
+            ) : (
+              <div className="truncate grow">{itemKey}</div>
+            )}
           </div>
 
           <div className="inline-flex items-center grow-0 shrink-0">

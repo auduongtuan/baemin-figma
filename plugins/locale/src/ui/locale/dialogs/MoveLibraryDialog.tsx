@@ -5,18 +5,11 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Dialog } from "ds";
 import MoveLibraryForm from "./MoveLibraryForm";
+import { useDialog } from "@ui/hooks/locale";
 const MoveLibraryDialog = () => {
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
-  const dispatch = useAppDispatch();
+  const { dialogProps } = useDialog((state) => state.type == "MOVE_LIBRARY");
   return (
-    <Dialog
-      open={currentDialog.type == "MOVE_LIBRARY"}
-      onOpenChange={(open) => {
-        if (!open) dispatch(closeCurrentDialog());
-      }}
-    >
+    <Dialog {...dialogProps}>
       <Dialog.Panel title="Move items to other library">
         <MoveLibraryForm />
       </Dialog.Panel>

@@ -1,0 +1,18 @@
+{
+  "nav_title": {
+    "intro_feature_menu": "What is Featured Menu? DUPPPPP",
+    "preview_photo": "Preview Photo"
+  },
+  "empty": {
+    "title": {
+      "common": "",
+      "reported_order": "",
+      "reported_rider": ""
+    },
+    "description": {
+      "common": "There is nothing here",
+      "reported_order": "Awesome!\nYou have no reported orders!",
+      "reported_rider": "Awesome!\nYou have no reported rider!"
+    }
+  }
+}

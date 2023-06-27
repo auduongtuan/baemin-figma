@@ -19,7 +19,7 @@ const LocaleItemToolbar = ({}) => {
         leaveFrom="-translate-y-0 opacity-100"
         leaveTo="translate-y-32 opacity-0"
       >
-        <div className="flex items-center w-calc(100%-16px) px-16 py-8 pb-8 mx-8 bg-default border rounded-md shadow-md border-divider">
+        <div className="flex items-center w-calc(100%-16px) px-16 py-8 pb-8 mx-8 bg-default border rounded-md shadow-sm border-divider">
           <div className="grow">
             {listState.selectedItems.length}{" "}
             {pluralize("item", listState.selectedItems.length)} selected

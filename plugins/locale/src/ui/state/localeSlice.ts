@@ -6,8 +6,11 @@ import {
   LocaleItem,
   SavedLocaleData,
   LocaleData,
-} from "../../lib";
-import { cloneDeep, pickBy } from "lodash-es";
+  isSameItem,
+  LocaleItemId,
+  addDuplicatedPropToItems,
+} from "@lib";
+import { cloneDeep, pickBy, unionWith } from "lodash-es";
 const initialState: LocaleData = {
   sheetName: null,
   sheetId: null,
@@ -47,7 +50,7 @@ export const localeSlice = createSlice({
   name: "locale",
   initialState,
   reducers: {
-    setLocaleData: (state, action: PayloadAction<SavedLocaleData>) => {
+    setLocaleData: (state, action: PayloadAction<LocaleData>) => {
       if ("sheetId" in action.payload) state.sheetId = action.payload.sheetId;
       if ("sheetName" in action.payload)
         state.sheetName = action.payload.sheetName;
@@ -96,42 +99,141 @@ export const localeSlice = createSlice({
     },
 
     addLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.localeItems = [...state.localeItems, action.payload];
+      state.localeItems = addDuplicatedPropToItems([
+        ...state.localeItems,
+        action.payload,
+      ]);
     },
     removeLocaleItem: (state, action: PayloadAction<LocaleItem>) => {
-      state.localeItems = [
+      state.localeItems = addDuplicatedPropToItems([
         ...state.localeItems.filter(
-          (localeItem) => localeItem.key != action.payload.key
+          (localeItem) => !isSameItem(localeItem, action.payload)
         ),
-      ];
+      ]);
+      // state.localeItems = cloneDeep(state.localeItems);
     },
     removeLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
-      state.localeItems = [
+      state.localeItems = addDuplicatedPropToItems([
         ...state.localeItems.filter(
           (localeItem) =>
             !action.payload.map((item) => item.key).includes(localeItem.key)
         ),
-      ];
+      ]);
     },
-    updateLocaleItems: (state, action: PayloadAction<LocaleItem[]>) => {
-      state.localeItems = [...action.payload];
+    addLocaleItems: (
+      state,
+      action: PayloadAction<{
+        itemsToAdd: LocaleItem[];
+        skipDuplicated: boolean;
+      }>
+    ) => {
+      const { itemsToAdd, skipDuplicated } = action.payload;
+      const compareFn = (a: LocaleItem, b: LocaleItem) =>
+        a.key == b.key && a.fromLibrary == b.fromLibrary;
+      let newLocaleItems: LocaleItem[];
+      if (skipDuplicated) {
+        newLocaleItems = unionWith(state.localeItems, itemsToAdd, compareFn);
+      } else {
+        newLocaleItems = unionWith(itemsToAdd, state.localeItems, compareFn);
+      }
+      state.localeItems = addDuplicatedPropToItems(newLocaleItems);
+    },
+    moveLocaleItemsToLibrary: (
+      state,
+      action: PayloadAction<{
+        itemsToMove: LocaleItem[];
+        libraryId: string;
+        skipDuplicated: boolean;
+      }>
+    ) => {
+      const { itemsToMove, libraryId, skipDuplicated: skip } = action.payload;
+
+      // destination library
+      const libraryItems = state.localeItems.filter(
+        (item) => item.fromLibrary == libraryId
+      );
+      // duplicated items
+      const selectedItems = itemsToMove.reduce<{
+        duplicated: LocaleItem[];
+        nonDuplicated: LocaleItem[];
+      }>(
+        (acc, item) => {
+          const found = libraryItems.find(
+            (libraryItem) => libraryItem.key == item.key
+          );
+          if (found) {
+            acc.duplicated.push(item);
+          } else {
+            acc.nonDuplicated.push(item);
+          }
+          return acc;
+        },
+        { duplicated: [], nonDuplicated: [] }
+      );
+      const duplicatedItemKeys = selectedItems.duplicated.map(
+        (duplicatedItem) => duplicatedItem.key
+      );
+
+      function isItemInCollection(
+        itemToCheck: LocaleItem,
+        items: LocaleItem[]
+      ) {
+        const found = items.find(
+          (item) =>
+            item.key == itemToCheck.key &&
+            item.fromLibrary == itemToCheck.fromLibrary
+        );
+        return found !== undefined && found !== null;
+      }
+      const newLocalItems = cloneDeep(state.localeItems).reduce<LocaleItem[]>(
+        (acc, item) => {
+          // only change key or library at a time
+          if (isItemInCollection(item, selectedItems.nonDuplicated)) {
+            acc.push(cloneDeep({ ...item, fromLibrary: libraryId }));
+            return acc;
+          }
+          if (skip === false) {
+            if (isItemInCollection(item, selectedItems.duplicated)) {
+              acc.push(cloneDeep({ ...item, fromLibrary: libraryId }));
+              return acc;
+            }
+            // delete original item
+            if (
+              item.fromLibrary === libraryId &&
+              duplicatedItemKeys.includes(item.key)
+            ) {
+              return acc;
+            }
+          }
+          // not a item in items to move
+          acc.push(item);
+          return acc;
+        },
+        []
+      );
+      state.localeItems = addDuplicatedPropToItems(newLocalItems);
     },
     updateLocaleItem: (
       state,
-      action: PayloadAction<LocaleItem & { oldKey?: string }>
+      action: PayloadAction<LocaleItem & { id: LocaleItemId }>
     ) => {
-      const { oldKey, ...updatedItem } = action.payload;
+      const { id, ...updatedItem } = action.payload;
+      const [oldFromLibrary, oldKey] = id;
       const newLocalItems = cloneDeep(state.localeItems).map((item) => {
+        // only change key or library at a time
         if (
-          (oldKey && item.key == oldKey) ||
-          (!oldKey && item.key == updatedItem.key)
+          item.key == oldKey &&
+          item.fromLibrary == oldFromLibrary
+          // ||
+          // (!oldKey &&
+          //   item.key == updatedItem.key &&
+          //   item.fromLibrary == updatedItem.fromLibrary)
         ) {
           return cloneDeep(updatedItem);
-        } else {
-          return item;
         }
+        return item;
       });
-      state.localeItems = newLocalItems;
+      state.localeItems = addDuplicatedPropToItems(newLocalItems);
     },
   },
 });
@@ -139,13 +241,14 @@ export const localeSlice = createSlice({
 export const {
   setTextsInLocaleSelection,
   addLocaleItem,
+  addLocaleItems,
   updateLocaleItem,
   updateLocaleSelection,
   setLocaleData,
-  updateLocaleItems,
   updateTextInLocaleSelection,
   removeLocaleItem,
   removeLocaleItems,
   updateTextsInLocaleSelection,
+  moveLocaleItemsToLibrary,
 } = localeSlice.actions;
 export default localeSlice.reducer;

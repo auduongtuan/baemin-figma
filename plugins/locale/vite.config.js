@@ -18,6 +18,8 @@ export default defineConfig({
   resolve: {
     alias: {
       ds: path.resolve(__dirname, "../../packages/ds/src"),
+      "@lib": path.resolve(__dirname, "./src/lib"),
+      "@ui": path.resolve(__dirname, "./src/ui"),
     },
   },
   build: {

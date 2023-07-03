@@ -1,59 +1,49 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Dialog, IconButton, Tooltip } from "ds";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import LocaleItemForm from "../form/LocaleItemForm";
-import { setCurrentDialog } from "../../state/localeAppSlice";
-import { useAppSelector, useAppDispatch } from "../../hooks/redux";
-import { LocaleItem, findItemByKey } from "../../../lib";
+import { LocaleItem, findItemById } from "../../../lib";
 import EditInfo from "../atoms/EditInfo";
-import { useLocaleItems } from "../../hooks/locale";
+import { useDialog, useLocaleItems } from "../../hooks/locale";
+
 const EditDialog = () => {
-  const currentDialog = useAppSelector(
-    (state) => state.localeApp.currentDialog
-  );
-  const dispatch = useAppDispatch();
+  const { dialogProps, state } = useDialog((state) => state.type == "EDIT");
   const items = useLocaleItems();
   const item = useMemo(
     () =>
-      currentDialog.key ? findItemByKey(currentDialog.key, items) : undefined,
-    [currentDialog]
+      state.key && state.key != "__SELECTED_ITEMS"
+        ? findItemById(state.key, items)
+        : undefined,
+    [state.key]
   );
-  return item ? (
-    <Dialog
-      open={currentDialog.type == "EDIT" && currentDialog.opened}
-      onOpenChange={(open) => {
-        dispatch(setCurrentDialog({ opened: open }));
-      }}
-    >
+  return (
+    <Dialog {...dialogProps}>
       <Dialog.Panel
         title="Edit locale item"
         buttons={<EditInfo localeItem={item} />}
       >
-        <Dialog.Content>
+        {item ? (
           <LocaleItemForm
             key={item.key + "_edit"}
             item={item}
             showTitle={false}
             saveOnChange={false}
           />
-        </Dialog.Content>
+        ) : null}
       </Dialog.Panel>
     </Dialog>
-  ) : null;
+  );
 };
 export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {
-  const dispatch = useAppDispatch();
+  const { openDialog } = useDialog();
   return (
     <Tooltip content="Edit locale item">
       <IconButton
         onClick={() =>
-          dispatch(
-            setCurrentDialog({
-              type: "EDIT",
-              opened: true,
-              key: item.key,
-            })
-          )
+          openDialog({
+            type: "EDIT",
+            key: [item.fromLibrary, item.key],
+          })
         }
       >
         <Pencil2Icon></Pencil2Icon>

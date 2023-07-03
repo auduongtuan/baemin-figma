@@ -31,7 +31,7 @@ const AppBar = () => {
 
   // console.log("Navigator", navigator.clipboard);
   return (
-    <footer className="justify-between flex bg-white border-t border-divider w-full py-12 px-16 grow-0 shrink-0 ">
+    <footer className="flex justify-between w-full px-16 py-12 bg-white border-t border-divider grow-0 shrink-0 ">
       <div className="grow">
         <span className="text-secondary">
           v{import.meta.env.VITE_PLUGIN_VERSION}
@@ -39,11 +39,11 @@ const AppBar = () => {
         {/* {isWorking && <WorkingIcon showText />} */}
         {/* <WorkingIcon /> */}
       </div>
-      <div className="flex grow-0 shrink-0 gap-16">
+      <div className="flex gap-16 grow-0 shrink-0">
         <Tooltip content="Import JSON files">
           <IconButton
             onClick={() => {
-              dispatch(setCurrentDialog({ type: "IMPORT", opened: true }));
+              dispatch(setCurrentDialog({ type: "IMPORT" }));
             }}
           >
             <UploadIcon />

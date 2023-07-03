@@ -49,8 +49,9 @@ function KeyCombobox({
         ]
       : []),
     ...(localeItems &&
-      localeItems.map((item) => {
-        return {
+      localeItems.reduce((acc, item) => {
+        // if (item?.duplicated) return acc;
+        acc.push({
           id: item.key,
           value: item.key,
           name: item.key,
@@ -61,8 +62,9 @@ function KeyCombobox({
               : "",
           altContent:
             altLanguage in item ? getStringContent(item[altLanguage]) : "",
-        };
-      })),
+        });
+        return acc;
+      }, [])),
     ...[
       {
         id: "add_new_item",
@@ -71,7 +73,6 @@ function KeyCombobox({
         onSelect: () => {
           dispatch(
             setCurrentDialog({
-              opened: true,
               type: "NEW",
               onDone: (localeItem: LocaleItem) => {
                 updateSelectionOrText(localeItem);
@@ -91,6 +92,7 @@ function KeyCombobox({
     const localeItem = isString(localeItemOrKey)
       ? findItemByKey(localeItemOrKey, localeItems)
       : localeItemOrKey;
+    if (!localeItem) return;
     const textProps = {
       item: localeItem,
       key: localeItem.key,

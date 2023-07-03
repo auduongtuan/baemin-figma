@@ -10,6 +10,8 @@ import {
   LocaleData,
   LocaleItem,
   SavedLocaleItem,
+  addDuplicatedPropToItems,
+  LocaleLibrary,
 } from "../../lib";
 import { isFrame } from "figma-helpers";
 import { createDataBlock } from "./dataBlock";
@@ -69,8 +71,9 @@ const getDataNodes = async () => {
 export async function getLocaleData() {
   // const localeData = await figma.clientStorage.getAsync('localeData');
   // setNodeData(mainLocaleDataFrame, `${PREFIX}main_document_id`, figma.root.id);
-  let combinedLocaleData: SavedLocaleData = {
+  let combinedLocaleData: LocaleData = {
     localeItems: [],
+    localeLibraries: [],
   };
   const dataNodes = await getDataNodes();
   dataNodes.all.reverse().forEach((localeDataNode, i) => {
@@ -80,9 +83,6 @@ export async function getLocaleData() {
       let localeData = JSON.parse(nodeLocaleData);
       // if
 
-      if (!("localeLibraries" in combinedLocaleData)) {
-        combinedLocaleData.localeLibraries = [];
-      }
       combinedLocaleData.localeLibraries.unshift({
         id: localeDataNode.id,
         name: localeDataNode.name,
@@ -122,14 +122,31 @@ export async function getLocaleData() {
         //   (a, b) => a.key == b.key
         // );
       }
-      combinedLocaleData.localeItems = unionWith(
-        localeData.localeItems.map((item: LocaleItem) => ({
-          ...item,
-          fromLibrary: localeDataNode.id,
-          isLocal: isLocalNode,
-        })),
-        combinedLocaleData.localeItems,
-        (a, b) => a.key == b.key
+      // Old load code
+      // combinedLocaleData.localeItems = unionWith(
+      //   localeData.localeItems.map((item: LocaleItem) => ({
+      //     ...item,
+      //     fromLibrary: localeDataNode.id,
+      //     isLocal: isLocalNode,
+      //   })),
+      //   combinedLocaleData.localeItems,
+      //   (a, b) => a.key == b.key
+      // );
+
+      // New load code with duplicated feature
+      combinedLocaleData.localeItems = localeData.localeItems.reduce(
+        (acc: LocaleItem[], item: SavedLocaleItem) => {
+          acc.push({
+            ...item,
+            fromLibrary: localeDataNode.id,
+            isLocal: isLocalNode,
+          });
+          return acc;
+        },
+        combinedLocaleData.localeItems
+      );
+      combinedLocaleData.localeItems = addDuplicatedPropToItems(
+        combinedLocaleData.localeItems
       );
     } catch (e) {
       console.log(e);
@@ -151,8 +168,8 @@ export async function saveLocaleData(localeData: LocaleData) {
       const libraryItems =
         libraryNode.id in libraryGroups ? libraryGroups[libraryNode.id] : [];
       const items: SavedLocaleItem[] = libraryItems.map((item) => {
-        // remove from library and isLocal
-        const { fromLibrary, isLocal, ...rest } = item;
+        // remove from library and isLocal and duplicated
+        const { fromLibrary, isLocal, duplicated, ...rest } = item;
         return rest;
       });
       setData(libraryNode, {

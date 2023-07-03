@@ -7,6 +7,7 @@ import {
 } from "../../state/localeAppSlice";
 import { LocaleItem } from "../../../lib";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import EditModeCheckbox from "./EditModeCheckbox";
 const LocaleItemListGroup = ({
   defaultExpanded,
   name,
@@ -28,33 +29,13 @@ const LocaleItemListGroup = ({
     >
       <Collapsible.Trigger className="font-medium">
         <div className="flex gap-8">
-          {listState.editMode && (
-            <Checkbox
-              disabled={items.every((item) => !item.isLocal)}
-              checked={currentChecked}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              onCheckedChange={(checked) => {
-                if (checked === true) {
-                  dispatch(
-                    addSelectedItems(items.filter((item) => item.isLocal))
-                  );
-                }
-                if (checked === false) {
-                  dispatch(
-                    removeSelectedItems(items.filter((item) => item.isLocal))
-                  );
-                }
-              }}
-            />
-          )}
+          {listState.editMode && <EditModeCheckbox items={items} />}
           <span className="grow">
             {name || "Ungrouped"} ({items.length})
           </span>
         </div>
       </Collapsible.Trigger>
-      <Collapsible.Content className="pl-16 pb-8">
+      <Collapsible.Content className="pb-8 pl-16">
         {items.map((item) => (
           <LocaleItemRecord item={item} group={name} />
         ))}

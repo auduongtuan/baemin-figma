@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
 import clsx from "clsx";
@@ -28,9 +28,11 @@ export interface SelectProps {
   errorText?: React.ReactNode;
   helpText?: React.ReactNode;
   maxWidth?: number | string;
+  labelComponent?: React.ComponentType<any>;
 }
 const Select = ({
   label,
+  labelComponent: LabelComponent,
   id,
   defaultValue = "",
   value,
@@ -78,7 +80,7 @@ const Select = ({
     }
     // return changes;
   };
-  const { setHoldEscape } = useDialogContext();
+  const { setContextValue } = useDialogContext();
 
   const {
     isOpen,
@@ -99,15 +101,24 @@ const Select = ({
     },
   });
   useEffect(() => {
-    if (setHoldEscape && isOpen) {
-      setHoldEscape(isOpen);
+    if (setContextValue) {
+      if (isOpen) {
+        setContextValue({ holdEscape: isOpen });
+      } else {
+        setTimeout(() => {
+          setContextValue({ holdEscape: false });
+        });
+      }
     }
-    if (setHoldEscape && !isOpen) {
-      setTimeout(() => {
-        setHoldEscape(false);
-      });
-    }
-  }, [setHoldEscape, isOpen]);
+  }, [setContextValue, isOpen]);
+  const labelRender = useMemo(
+    () => (
+      <label htmlFor={id} className="text-xsmall" {...getLabelProps()}>
+        {label}
+      </label>
+    ),
+    [label]
+  );
 
   return (
     <div
@@ -119,11 +130,12 @@ const Select = ({
       `}
       className={`show-border ${className && className}`}
     >
-      {label && (
-        <label htmlFor={id} className="text-xsmall" {...getLabelProps()}>
-          {label}
-        </label>
-      )}
+      {label &&
+        (LabelComponent ? (
+          <LabelComponent>{labelRender}</LabelComponent>
+        ) : (
+          labelRender
+        ))}
       <Popper.Root>
         <Popper.Anchor asChild>
           <button
@@ -144,7 +156,7 @@ const Select = ({
             >
               {selectedItem ? (
                 <span
-                  className="flex shrink gap-4 items-center"
+                  className="flex items-center gap-4 shrink"
                   css={`
                     svg {
                       width: 12px;
@@ -154,7 +166,7 @@ const Select = ({
                   `}
                 >
                   {selectedItem.icon && selectedItem.icon}
-                  <span className="shrink truncate">{selectedItem.name}</span>
+                  <span className="truncate shrink">{selectedItem.name}</span>
                 </span>
               ) : (
                 placeholder

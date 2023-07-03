@@ -58,7 +58,12 @@ const SelectionEditor = () => {
         {(matchedItem || showAutoAssign || showForm) && <Divider />}
         <div className="p-16">
           {matchedItem && (
-            <LocaleItemForm saveOnChange showTitle item={matchedItem} />
+            <LocaleItemForm
+              key={matchedItem.key + matchedItem.fromLibrary}
+              saveOnChange
+              showTitle
+              item={matchedItem}
+            />
           )}
           {showAutoAssign && (
             <div className="">
@@ -77,7 +82,11 @@ const SelectionEditor = () => {
             </div>
           )}
           {showForm && (
-            <LocaleItemForm showTitle onDone={(item) => assignKey(item.key)} />
+            <LocaleItemForm
+              key="add-form"
+              showTitle
+              onDone={(item) => assignKey(item.key)}
+            />
           )}
         </div>
       </>

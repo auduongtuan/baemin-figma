@@ -2,7 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import { Tooltip } from "ds";
 // import 'figma-plugin-ds/dist/figma-plugin-ds.css'
-import "ds/ui.scss";
+import "ds/ui.css";
 import "./ui.css";
 import Locale from "./locale/LocaleMain";
 import { Provider } from "react-redux";

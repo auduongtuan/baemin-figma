@@ -28,13 +28,7 @@ const MAccordionItem = ({ title, children }) => {
           <div className="grow">{title}</div>
         </RAccordion.Trigger>
       </RAccordion.Header>
-      <RAccordion.Content
-        css={`
-          padding-left: 16px;
-        `}
-      >
-        {children}
-      </RAccordion.Content>
+      <RAccordion.Content className="pl-16">{children}</RAccordion.Content>
     </RAccordion.Item>
   );
 };

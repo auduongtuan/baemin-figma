@@ -103,15 +103,15 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
     <div>
-      <div className="text-left font-normal text-small flex w-full items-center group">
+      <div className="flex items-center w-full font-normal text-left text-small group">
         <TextIcon
-          className="text-secondary mr-8 shrink-0 grow-0"
+          className="mr-8 text-secondary shrink-0 grow-0"
           css={`
             width: 16px;
             height: 16px;
           `}
         />
-        <div className="grow shrink font-medium truncate">
+        <div className="font-medium truncate grow shrink">
           {text.characters}
         </div>
       </div>
@@ -151,7 +151,6 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                     onClick={(e) => {
                       dispatch(
                         setCurrentDialog({
-                          opened: true,
                           type: "NEW",
                           onDone: (localeItem: LocaleItem) => {
                             updateText(text.id, {

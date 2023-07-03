@@ -4,6 +4,8 @@ import React, {
   Ref,
   forwardRef,
   useEffect,
+  ComponentPropsWithoutRef,
+  ComponentPropsWithRef,
 } from "react";
 import styled, { css } from "styled-components";
 import { renderToString } from "react-dom/server";
@@ -11,6 +13,8 @@ import clsx from "clsx";
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from "react-textarea-autosize";
+import { twMerge } from "tailwind-merge";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export interface TextBoxProps extends React.ComponentPropsWithoutRef<"input"> {
   label?: React.ReactNode;
@@ -102,16 +106,40 @@ export const BaseInputStyle = css`
 const StyledTextBox = styled.input<TextBoxProps>`
   ${BaseInputStyle};
 `;
-export const ErrorMessage = styled.p`
-  color: var(--figma-color-text-danger);
-  font-size: var(--font-size-xsmall);
-  margin-top: 8px;
-`;
-export const HelpText = styled.p`
-  color: var(--figma-color-text-secondary);
-  font-size: var(--font-size-xsmall);
-  margin-top: 8px;
-`;
+export const ErrorMessage = ({
+  children,
+  className,
+  ...props
+}: ComponentPropsWithRef<"div">) => {
+  return (
+    <div
+      {...props}
+      className={clsx(
+        "text-danger text-xsmall",
+        twMerge("mt-8 flex", className)
+      )}
+    >
+      <ExclamationTriangleIcon className="w-[12px] h-[12px] mt-3 mr-6 grow-0 shrink-0" />
+      <p className="m-0">{children}</p>
+    </div>
+  );
+};
+
+export const HelpText = ({
+  children,
+  className,
+  ...props
+}: ComponentPropsWithRef<"p">) => {
+  return (
+    <p
+      {...props}
+      className={twMerge("text-secondary text-xsmall mt-8", className)}
+    >
+      {children}
+    </p>
+  );
+};
+
 export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   (
     {
@@ -134,7 +162,7 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
     return (
       <div className={className && className}>
         {label && (
-          <div className="flex mb-8 items-center">
+          <div className="flex items-center mb-8">
             <label
               htmlFor={id}
               className={clsx("grow text-xsmall", labelClass)}
@@ -186,7 +214,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={className && className}>
         {label && (
-          <div className="flex mb-8 items-center">
+          <div className="flex items-center mb-8">
             <label
               htmlFor={id}
               className={clsx("grow text-xsmall", labelClass)}

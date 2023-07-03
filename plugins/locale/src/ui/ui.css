@@ -13,6 +13,9 @@
   h6 {
     @apply font-semibold;
   }
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
 }
 button {
   cursor: auto;

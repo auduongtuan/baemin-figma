@@ -1,5 +1,10 @@
 import React from "react";
-import { LocaleTextProps, LocaleItem, getParseText } from "../../lib";
+import {
+  LocaleTextProps,
+  LocaleItem,
+  getParseText,
+  LocaleItemId,
+} from "../../lib";
 import { runCommand } from "../uiHelper";
 import { store } from "./store";
 import {
@@ -75,16 +80,16 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
   store.dispatch(
     updateTextsInLocaleSelection(
       texts.map((text) => {
-        const characters =
-          getParseText(
-            {
-              ...text,
-              item: item,
-              lang: text.lang,
-              variables: text.variables,
-            },
-            localeItems
-          ).characters || undefined;
+        const parsedText = getParseText(
+          {
+            ...text,
+            item: item,
+            lang: text.lang,
+            variables: text.variables,
+          },
+          localeItems
+        );
+        const characters = parsedText ? parsedText.characters : undefined;
         return {
           ...text,
           key: item.key,
@@ -94,13 +99,43 @@ export function updateTextsOfItem(oldKey: string, item: LocaleItem) {
     )
   );
 }
+
+export function getLocaleSelection() {
+  return store.getState().locale.localeSelection;
+}
+
+export function getItems() {
+  return store.getState().locale.localeItems;
+}
 export function getDefaultLocalLibraryId() {
   const { localeLibraries } = store.getState().locale;
   return localeLibraries.find((library) => library.local)?.id;
 }
+export function getLanguages() {
+  return store.getState().localeApp.configs.languages;
+}
 export function getLibrary(id: string) {
   const { localeLibraries } = store.getState().locale;
   return localeLibraries.find((library) => library.id == id);
+}
+// check available
+export function isIdAvailable([key, fromLibrary]: LocaleItemId) {
+  const foundItem = getItems().find(
+    (item) =>
+      item.key === key && item.isLocal && item.fromLibrary === fromLibrary
+  );
+  if (!foundItem) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function isItemDuplicated([fromLibrary, key]: LocaleItemId) {
+  const foundItem = getItems().filter(
+    (item) => item.key == key && item.fromLibrary != fromLibrary
+  );
+  return foundItem.length > 0;
 }
 export function getLibraryName(id: string) {
   const { localeLibraries } = store.getState().locale;

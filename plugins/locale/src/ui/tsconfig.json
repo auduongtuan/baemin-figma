@@ -2,7 +2,10 @@
   "extends": "tsconfig/react.json",
   "compilerOptions": {
     "paths": {
-      "ds": ["./../../../../packages/ds/src/index"]
+      "ds": ["./../../../../packages/ds/src/index"],
+      "@ui/*": ["./*"],
+      "@lib": ["./../lib/index"],
+      "@lib/*": ["./../lib/*"]
     }
   }
 }

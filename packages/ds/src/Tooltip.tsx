@@ -10,30 +10,17 @@ const Tooltip = ({
   contentProps?: RadixTooltip.TooltipContentProps;
 }) => {
   return (
-    <RadixTooltip.Root delayDuration={50}>
+    <RadixTooltip.Root delayDuration={30}>
       <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
       <RadixTooltip.Portal>
         <RadixTooltip.Content
-          css={`
-              border-radius: 2px;
-              padding: 6px 8px;
-              font-size var(----font-size-xsmall);
-              line-height: 1.2;
-              color: var(--figma-color-text-onbrand);
-              background-color: var(--black8);
-              user-select: none;
-              max-width: 240px;
-              z-index: 60;
-              /* animation-duration: 400ms;
-              animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-              will-change: transform, opacity; */
-            `}
+          className="rounded-sm px-8 py-6 text-xsmall leading-tight text-onbrand bg-black/80 select-none max-w-[240px] z-[60] backdrop-blur-sm"
           sideOffset={4}
-          collisionPadding={4}
+          collisionPadding={1}
           {...contentProps}
         >
           {content}
-          {/* <Tooltip.Arrow className="TooltipArrow" /> */}
+          <RadixTooltip.Arrow className="fill-black/80 backdrop-blur-sm" />
         </RadixTooltip.Content>
       </RadixTooltip.Portal>
     </RadixTooltip.Root>

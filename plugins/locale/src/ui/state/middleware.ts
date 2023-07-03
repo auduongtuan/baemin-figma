@@ -1,13 +1,12 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import {
   addLocaleItem,
+  addLocaleItems,
   setLocaleData,
-  updateLocaleItems,
   updateLocaleItem,
   removeLocaleItem,
-  updateTextInLocaleSelection,
-  updateTextsInLocaleSelection,
   removeLocaleItems,
+  moveLocaleItemsToLibrary,
 } from "./localeSlice";
 import type { RootState } from "./store";
 import { runCommand } from "../uiHelper";
@@ -17,10 +16,11 @@ listenerMiddleware.startListening({
   matcher: isAnyOf(
     setLocaleData,
     addLocaleItem,
+    addLocaleItems,
     updateLocaleItem,
-    updateLocaleItems,
     removeLocaleItem,
-    removeLocaleItems
+    removeLocaleItems,
+    moveLocaleItemsToLibrary
   ),
   effect: (action, listenerApi) => {
     const modifiedTime = new Date().toJSON();

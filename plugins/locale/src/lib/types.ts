@@ -12,7 +12,7 @@ export interface SavedLocaleData {
 export interface LocaleData extends SavedLocaleData {
   localeSelection?: LocaleSelection;
   localeLibraries?: LocaleLibrary[];
-  localeItems?: LocaleItem[];
+  localeItems?: LocaleItemWithDuplicated[];
 }
 
 export type LocaleLibrary = {
@@ -41,12 +41,20 @@ export type SavedLocaleItem = {
 } & {
   [key in Lang]?: LocaleItemContent;
 };
-
+// [libraryId, key]
+export type LocaleItemId = [LocaleItem["fromLibrary"], LocaleItem["key"]];
 export type LocaleItem = SavedLocaleItem & {
-  fromLibrary?: string;
-  isLocal?: boolean;
+  fromLibrary: string;
+  isLocal: boolean;
+  // [libraryId, key]
+  duplicated?: boolean;
 };
-
+export type LocaleItemOptionalDuplicated = Omit<LocaleItem, "duplicated"> & {
+  duplicated?: boolean;
+};
+export type LocaleItemWithDuplicated = Omit<LocaleItem, "duplicated"> & {
+  duplicated: boolean;
+};
 export type LocaleTextVariables = { [key: string]: number | string };
 export type LocaleTextStyles = {
   bold?: {

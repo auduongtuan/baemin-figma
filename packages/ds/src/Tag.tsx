@@ -1,19 +1,19 @@
-import React, {forwardRef} from "react";
-const Tag = forwardRef<HTMLSpanElement, React.ComponentPropsWithoutRef<"span">>(({children,...rest}, forwardedRef) => {
-  return (
-    <span
-      ref={forwardedRef}
-      css={`
-        color: var(--figma-color-bg-component);
-        font-size: 7.5px;
-        border: 1px solid var(--figma-color-bg-component);
-        padding: 1px 2px;
-        border-radius: 2px;
-      `}
-      {...rest}
-    >
-      {children}
-    </span>
-  );
-});
+import React, { forwardRef } from "react";
+import { twMerge } from "tailwind-merge";
+const Tag = forwardRef<HTMLSpanElement, React.ComponentPropsWithoutRef<"span">>(
+  ({ children, className, ...rest }, forwardedRef) => {
+    return (
+      <span
+        ref={forwardedRef}
+        className={twMerge(
+          "text-component text-[7.5px] border border-component px-2 py-1 rounded-sm",
+          className
+        )}
+        {...rest}
+      >
+        {children}
+      </span>
+    );
+  }
+);
 export default Tag;

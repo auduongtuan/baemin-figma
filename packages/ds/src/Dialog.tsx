@@ -194,7 +194,7 @@ const DialogPanel = ({
               }
             >
               <Transition.Child
-                className="transition-all duration-600 bg-white rounded-md overflow-hidden  shadow-xl w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col focus:outline-none"
+                className="transition-all duration-400 bg-white rounded-md overflow-hidden  shadow-xl w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col focus:outline-none"
                 enterFrom="opacity-0 translate-y-40"
                 enterTo="opacity-100 translate-y-0"
                 leaveFrom="opacity-100 translate-y-0"

@@ -28,6 +28,7 @@ export default {
         danger: "var(--figma-color-text-danger)",
         brand: "var(--figma-color-bg-brand)",
         component: "var(--figma-color-bg-component)",
+        onbrand: "var(--figma-color-text-onbrand)",
       },
       backgroundColor: {
         default: "var(--figma-color-bg)",

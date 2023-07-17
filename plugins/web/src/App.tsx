@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import i18next from 'i18next';
+import { useState } from "react";
+import i18next from "i18next";
 // import './App.css'
-import "ds/ui.scss";
+import "ds/src/ui.css";
 import { initReactI18next } from "react-i18next";
-import en from './i18n/en.json';
-import vi from './i18n/vi.json';
+import en from "./i18n/en.json";
+import vi from "./i18n/vi.json";
 import { useTranslation, Trans } from "react-i18next";
 i18next.use(initReactI18next).init({
-  lng: 'en', // if you're using a language detector, do not define the lng option
+  lng: "en", // if you're using a language detector, do not define the lng option
   debug: true,
-  defaultNS: 'translations',
+  defaultNS: "translations",
   resources: {
     en: {
-      translations: en
+      translations: en,
     },
     vi: {
-      translations: vi
-    }
+      translations: vi,
+    },
   },
 });
 
-import {Button} from 'ds';
+import { Button } from "ds";
 function App() {
   const { t, i18n } = useTranslation();
   return (
     <div className="App">
-      <Button variant="primary">{t('common.dish_with_count', {count: 1})}</Button>
+      <h2>{t("common.dish_with_count", { count: 1 })}</h2>
       <Button>{t("common.back")}</Button>
-      <Button>{t("welcome", {name: 'Test'})}</Button>
+      <div>{t("welcome", { name: "Test" })}</div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

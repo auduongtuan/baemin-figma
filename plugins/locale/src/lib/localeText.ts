@@ -24,7 +24,11 @@ export function applyVariablesToContent(
 ): string {
   const variables = { ...originVariables };
   function addDefaultCount() {
-    if (!("count" in variables) || !variables.count) {
+    if (
+      !("count" in variables) ||
+      variables.count === undefined ||
+      variables.count === ""
+    ) {
       variables.count = 1;
     }
     if (typeof variables.count == "string") {

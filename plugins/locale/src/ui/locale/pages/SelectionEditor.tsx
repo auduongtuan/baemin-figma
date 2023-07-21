@@ -84,6 +84,7 @@ const SelectionEditor = () => {
           {showForm && (
             <LocaleItemForm
               key="add-form"
+              saveOnChange={false}
               showTitle
               onDone={(item) => assignKey(item.key)}
             />

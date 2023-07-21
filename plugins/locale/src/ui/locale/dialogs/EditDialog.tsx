@@ -18,10 +18,7 @@ const EditDialog = () => {
   );
   return (
     <Dialog {...dialogProps}>
-      <Dialog.Panel
-        title="Edit locale item"
-        buttons={<EditInfo localeItem={item} />}
-      >
+      <Dialog.Panel title="Edit item" buttons={<EditInfo localeItem={item} />}>
         {item ? (
           <LocaleItemForm
             key={item.key + "_edit"}
@@ -37,7 +34,7 @@ const EditDialog = () => {
 export const EditDialogTrigger = ({ item }: { item: LocaleItem }) => {
   const { openDialog } = useDialog();
   return (
-    <Tooltip content="Edit locale item">
+    <Tooltip content="Edit item">
       <IconButton
         onClick={() =>
           openDialog({

@@ -51,6 +51,7 @@ function LocaleItemForm({
   const {
     state: { onDone: dialogOnDone },
     closeDialog,
+    context,
   } = useDialog();
   const onDone = onDoneProp || dialogOnDone;
   const {
@@ -97,6 +98,30 @@ function LocaleItemForm({
     }
     if (!saveOnChange) closeDialog();
   });
+
+  const renderFooter = () => {
+    return (
+      <footer className="flex items-center justify-between">
+        <Button type="submit" onClick={submitFn}>
+          {localeItem ? "Update" : "Add"}
+        </Button>
+
+        <Controller
+          name={`fromLibrary`}
+          control={control}
+          render={({ field }) => (
+            <Select
+              inline
+              maxWidth={"120px"}
+              value={field.value}
+              onChange={field.onChange}
+              options={getLibraryOptions()}
+            />
+          )}
+        />
+      </footer>
+    );
+  };
   return (
     <form onSubmit={submitFn}>
       {showTitle && item && saveOnChange && (
@@ -109,7 +134,7 @@ function LocaleItemForm({
       )}
       {showTitle && !item && (
         <header className="mb-16">
-          <h4 className="mb-0">Add new locale item</h4>
+          <h4 className="mb-0">Add new item</h4>
           <p className="mt-8 text-secondary">No matched item found</p>
         </header>
       )}
@@ -230,29 +255,12 @@ function LocaleItemForm({
             )}
           ></Controller>
         )}
-        {!saveOnChange && (
-          <Dialog.Footer>
-            <footer className="flex items-center justify-between">
-              <Button type="submit" onClick={submitFn}>
-                {localeItem ? "Update item" : "Add item"}
-              </Button>
-
-              <Controller
-                name={`fromLibrary`}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    inline
-                    maxWidth={"120px"}
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={getLibraryOptions()}
-                  />
-                )}
-              />
-            </footer>
-          </Dialog.Footer>
-        )}
+        {!saveOnChange &&
+          (Object.keys(context).length > 0 ? (
+            <Dialog.Footer>{renderFooter()}</Dialog.Footer>
+          ) : (
+            <div className="mt-24">{renderFooter()}</div>
+          ))}
       </div>
     </form>
   );

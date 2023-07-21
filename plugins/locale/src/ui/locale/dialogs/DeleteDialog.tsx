@@ -7,7 +7,7 @@ const DeleteDialog = () => {
   const { dialogProps } = useDialog((state) => state.type == "DELETE");
   return (
     <Dialog {...dialogProps}>
-      <Dialog.Panel title="Delete locale item">
+      <Dialog.Panel title="Delete item">
         <DeleteItemForm />
       </Dialog.Panel>
     </Dialog>
@@ -16,7 +16,7 @@ const DeleteDialog = () => {
 export const DeleteDialogTrigger = ({ item }: { item: LocaleItem }) => {
   const { openDialog } = useDialog();
   return (
-    <Tooltip content="Delete this item">
+    <Tooltip content="Delete item">
       <IconButton
         onClick={() =>
           openDialog({

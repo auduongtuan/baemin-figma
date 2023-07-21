@@ -7,7 +7,7 @@ const ImportDialog = () => {
 
   return (
     <Dialog {...dialogProps}>
-      <Dialog.Panel title="Import locale items">
+      <Dialog.Panel title="Import items">
         <ImportItemForm />
       </Dialog.Panel>
     </Dialog>

@@ -23,7 +23,7 @@ const DeleteItemForm = () => {
     []
   );
   const deleteSelectedItems = currentDialog.key == "__SELECTED_ITEMS";
-  if (!item && !deleteSelectedItems) return null;
+  // if (!item && !deleteSelectedItems) return null;
   const { closeDialog } = useDialogContext();
   const dispatch = useAppDispatch();
   const deleteLocaleItemHandler = useCallback(() => {
@@ -57,7 +57,7 @@ const DeleteItemForm = () => {
         className="mt-16"
         onClick={deleteLocaleItemHandler}
       >
-        Delete item
+        Delete
       </Button>
     </>
   );

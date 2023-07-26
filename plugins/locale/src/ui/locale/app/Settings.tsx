@@ -11,7 +11,7 @@ import {
 import configs from "figma-helpers/configs";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { LANGUAGE_LIST } from "../../../lib";
+import { LANGUAGE_LIST, NUMBER_FORMAT_LIST } from "../../../lib";
 // import Prism from "prismjs";
 // import "prismjs/components/prism-json";
 // import { Token } from "prismjs";
@@ -24,7 +24,7 @@ import { useAppDispatch } from "../../hooks/redux";
 import { setConfigs } from "../../state/localeAppSlice";
 const Settings = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const { languages, defaultLanguage } = useConfigs();
+  const { languages, defaultLanguage, numberFormat } = useConfigs();
   const {
     handleSubmit,
     register,
@@ -41,12 +41,13 @@ const Settings = () => {
     reset({
       languages,
       defaultLanguage,
+      numberFormat,
     });
-  }, [languages, defaultLanguage]);
+  }, [languages, defaultLanguage, numberFormat]);
   const fieldLanguages = watch("languages");
   const dispatch = useAppDispatch();
-  const onSubmit = ({ languages, defaultLanguage }) => {
-    dispatch(setConfigs({ languages, defaultLanguage }));
+  const onSubmit = ({ languages, defaultLanguage, numberFormat }) => {
+    dispatch(setConfigs({ languages, defaultLanguage, numberFormat }));
     io.sendAndReceive("set_configs", { configs: configs.getAll() }).then(() => {
       runCommand("show_figma_notify", { message: "Settings updated." });
     });
@@ -128,6 +129,39 @@ const Settings = () => {
                   errors.defaultLanguage
                     ? "Please select default language."
                     : undefined
+                }
+              />
+            )}
+          />
+          <Controller
+            name="numberFormat"
+            control={control}
+            rules={{ required: false }}
+            defaultValue={"by-language"}
+            render={({ field }) => (
+              <Select
+                {...field}
+                className="mt-16"
+                label="Number Format"
+                contentTruncate={false}
+                options={
+                  NUMBER_FORMAT_LIST
+                    ? [
+                        {
+                          value: "by-language",
+                          name: "By language",
+                          content: "Changed by text language",
+                        },
+                      ].concat(
+                        Object.keys(NUMBER_FORMAT_LIST).map((numberFormat) => ({
+                          value: numberFormat,
+                          name: new Intl.NumberFormat(
+                            NUMBER_FORMAT_LIST[numberFormat].representative
+                          ).format(1234.56),
+                          content: NUMBER_FORMAT_LIST[numberFormat].description,
+                        }))
+                      )
+                    : []
                 }
               />
             )}

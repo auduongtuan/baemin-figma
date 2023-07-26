@@ -8,6 +8,26 @@ export const LANGUAGE_LIST = {
   fr: "French",
   de: "German",
 };
+export const NUMBER_FORMAT_LIST = {
+  "period-comma": {
+    name: "English (United States)",
+    representative: "en-US",
+    usedIn: ["en", "ko", "ja", "zh"],
+    description: "Decimal separator (.) thousands separator (,)",
+  },
+  "comma-space": {
+    name: "Français (France)",
+    representative: "fr-FR",
+    usedIn: ["fr"],
+    description: "Decimal separator (,) thousands separator ( )",
+  },
+  "comma-period": {
+    name: "Deutsch (Deutschland)",
+    representative: "de-DE",
+    usedIn: ["de", "vi"],
+    description: "Decimal separator (,) thousands separator (.)",
+  },
+};
 export const INITIAL_LANGUAGES = ["en", "vi"];
 export const INITIAL_DEFAULT_LANGUAGE = "vi";
 // export const PREFIX = "baemin_locale_";

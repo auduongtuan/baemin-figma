@@ -1,4 +1,5 @@
 import React, { ComponentPropsWithRef, ReactElement, forwardRef } from "react";
+import { twMerge } from "tailwind-merge";
 
 export interface MenuProps extends React.HTMLAttributes<HTMLDivElement> {}
 const MenuContainer = ({ children, ...rest }) => {
@@ -49,6 +50,7 @@ export interface MenuItemProps
   name: React.ReactNode;
   content?: React.ReactNode;
   icon?: React.ReactNode;
+  contentTruncate?: boolean;
 }
 const MenuIcon = ({
   children,
@@ -96,65 +98,39 @@ const MenuIcon = ({
   );
 };
 const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
-  ({ selected, highlighted = false, name, content, icon, ...rest }, ref) => {
+  (
+    {
+      selected,
+      highlighted = false,
+      name,
+      content,
+      contentTruncate = true,
+      icon,
+      ...rest
+    },
+    ref
+  ) => {
     return (
       <div
-        css={`
-          align-items: center;
-          color: var(--white);
-          cursor: default;
-          display: flex;
-          font-family: var(--font-stack);
-          font-size: var(--font-size-small);
-          font-weight: var(--font-weight-normal);
-          letter-spacing: var(--font-letter-spacing-neg-xsmall);
-          line-height: var(--font-line-height);
-          // height: var(--size-small);
-          padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
-          user-select: none;
-          outline: none;
-
-          &[disabled] {
-            color: var(--figma-color-text-oncomponent-tertiary);
-          }
-          /* &:hover, */
-          /* &:focus, */
-          &[data-highlighted] {
-            background-color: var(--blue);
-          }
-        `}
-        // className={`${selected ? "select-menu__item--selected" : ""} ${
-        //   highlighted ? "select-menu__item--highlighted" : ""
-        // }`}
+        className="flex items-center pl-8 pr-16 font-normal outline-none cursor-default select-none text-onbrand text-small disabled:text-oncomponentTeritary data-[highlighted]:bg-brand"
         data-selected={selected ? selected : undefined}
         data-highlighted={highlighted ? highlighted : undefined}
-        // {...getItemProps({ item, index, disabled: item.disabled })}
         {...rest}
         ref={ref}
       >
         <MenuIcon {...{ selected, highlighted, icon }} />
-        <span
-          css={`
-            display: flex;
-            flex-direction: column;
-            padding: var(--size-xxxsmall) 0;
-            width: calc(100% - 16px);
-            .name,
-            .content {
-              width: 100%;
-              overflow-x: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              pointer-events: none;
-            }
-            .content {
-              font-size: var(--font-size-xsmall);
-              color: var(--figma-color-text-onbrand-secondary);
-            }
-          `}
-        >
-          <span className="name">{name}</span>
-          {content && <span className="content">{content}</span>}
+        <span className="flex flex-col py-4 w-[calc(100%-16px)]">
+          <span className="w-full truncate pointer-events-none">{name}</span>
+          {content && (
+            <span
+              className={twMerge(
+                "w-full pointer-events-none text-xsmall text-onbrandSecondary leading-tight",
+                contentTruncate && "truncate"
+              )}
+            >
+              {content}
+            </span>
+          )}
         </span>
       </div>
     );

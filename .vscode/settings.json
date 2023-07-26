@@ -9,13 +9,14 @@
   "i18n-ally.localesPaths": ["plugins/web/src/i18n"],
   "i18n-ally.pathMatcher": "{locale}.json",
   "i18n-ally.preferredDelimiter": ".",
-  "i18n-ally.enabledFrameworks": ["i18next", "react"],
+  "i18n-ally.enabledFrameworks": ["react-i18next"],
   "i18n-ally.sortKeys": true,
   "i18n-ally.keepFulfilled": true,
   "i18next.i18nPaths": "plugins/web/src/i18n/",
   "react-i18n.i18nPaths": "plugins/web/src/i18n",
-  "lsp-translations.translationFiles.include": ["plugins/web/src/i18n/*.json"],
-  "i18n-ally.keystyle": "nested"
+  "react-i18next.i18nPaths": "plugins/web/src/i18n",
+  "lsp-translations.translationFiles.include": ["plugins/web/src/i18n/*.json"]
+  // "i18n-ally.keystyle": "nested"
   // "i18n-ally.translate.promptSource": true,
   // "i18n-ally.keysInUse": [
   //   "view.progress_submenu.translated_keys",

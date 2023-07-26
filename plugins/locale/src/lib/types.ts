@@ -93,4 +93,5 @@ export interface Configs {
   languages: Lang[];
   defaultLanguage: Lang;
   altLanguage: Lang;
+  numberFormat: "by-language" | "period-comma" | "comma-space" | "comma-period";
 }

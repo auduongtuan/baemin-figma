@@ -22,33 +22,10 @@ import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import EditDialog, { EditDialogTrigger } from "../dialogs/EditDialog";
-import FormulaEditor from "./FormulaEditor";
-import KeyCombobox from "./KeyCombobox";
-import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
-const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
-  className,
-  children,
-}) => {
-  return (
-    <div
-      className={clsx("flex items-center gap-8", className)}
-      css={`
-        & > .icon-group {
-          transition: opacity 0.1s;
-        }
-        & > .icon-group:not([data-activated]) {
-          opacity: 0;
-        }
-        &:hover > .icon-group,
-        & > .icon-group[date-activated] {
-          opacity: 1;
-        }
-      `}
-    >
-      {children}
-    </div>
-  );
-};
+import FormulaEditor from "../atoms/FormulaEditor";
+import KeyCombobox from "../atoms/KeyCombobox";
+import SwitchLanguageDropdownMenu from "../atoms/SwitchLanguageDropdownMenu";
+import TextEditToolbar from "./TextEditToolbar";
 const TextEditForm = ({ text }: { text: LocaleText }) => {
   const localeItems = useLocaleItems();
   const localeItem =
@@ -73,6 +50,8 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
             : undefined,
           formula: formula,
         };
+        console.log("UPDATE TEXT", textProps);
+
         updateText(text.id, {
           lang: text.lang as Lang,
           ...textProps,
@@ -93,12 +72,16 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     };
   }, [watch, text, localeItem, localeItems]);
 
-  const variableNames = getVariableNames(
-    {
-      ...text,
-      item: localeItem,
-    },
-    localeItems
+  const variableNames = useMemo(
+    () =>
+      getVariableNames(
+        {
+          ...text,
+          item: localeItem,
+        },
+        localeItems
+      ),
+    [text, localeItem, localeItems]
   );
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
@@ -117,7 +100,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
       </div>
       <div className="pl-24 mt-8">
         {!useFormula && (
-          <Toolbar>
+          <TextEditToolbar>
             <KeyCombobox
               label={""}
               value={localeItem && localeItem.key ? localeItem.key : undefined}
@@ -188,11 +171,11 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                 />
               )}
             </div>
-          </Toolbar>
+          </TextEditToolbar>
         )}
         {useFormula && (
           <div>
-            <Toolbar className="mb-4">
+            <TextEditToolbar className="mb-4">
               <Switch
                 label="Formula"
                 checked={useFormula}
@@ -214,7 +197,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                   }}
                 />
               </div>
-            </Toolbar>
+            </TextEditToolbar>
             <Controller
               control={control}
               name="formula"
@@ -234,7 +217,10 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         )}
         {variableNames && (
           <div>
-            {variableNames.map((name) => {
+            {variableNames.map((variableName) => {
+              // use count for formattedCount
+              const name =
+                variableName == "formattedCount" ? "count" : variableName;
               const value = get(text.variables, name);
               return (
                 <Controller

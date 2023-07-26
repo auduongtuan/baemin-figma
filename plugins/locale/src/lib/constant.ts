@@ -14,18 +14,30 @@ export const NUMBER_FORMAT_LIST = {
     representative: "en-US",
     usedIn: ["en", "ko", "ja", "zh"],
     description: "Decimal separator (.) thousands separator (,)",
+    sep: {
+      decimal: ".",
+      thousands: ",",
+    },
   },
   "comma-space": {
     name: "Français (France)",
     representative: "fr-FR",
     usedIn: ["fr"],
     description: "Decimal separator (,) thousands separator ( )",
+    sep: {
+      decimal: ",",
+      thousands: " ",
+    },
   },
   "comma-period": {
     name: "Deutsch (Deutschland)",
     representative: "de-DE",
     usedIn: ["de", "vi"],
     description: "Decimal separator (,) thousands separator (.)",
+    sep: {
+      decimal: ",",
+      thousands: ".",
+    },
   },
 };
 export const INITIAL_LANGUAGES = ["en", "vi"];

@@ -57,7 +57,7 @@ const SelectionEditor = () => {
         <MultipleTextEditor />
         {(matchedItem || showAutoAssign || showForm) && <Divider />}
         <div className="p-16">
-          {matchedItem && (
+          {matchedItem && matchedItem.isLocal && (
             <LocaleItemForm
               key={matchedItem.key + matchedItem.fromLibrary}
               saveOnChange

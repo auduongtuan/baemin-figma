@@ -234,19 +234,33 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         )}
         {variableNames && (
           <div>
-            {variableNames.map((name) => (
-              <Textarea
-                className="mt-8"
-                maxRows={6}
-                label={
-                  <>
-                    <span>{name}</span> <Tag>VAR</Tag>
-                  </>
-                }
-                defaultValue={text.variables ? get(text.variables, name) : ""}
-                {...register(`variables.${name}`)}
-              />
-            ))}
+            {variableNames.map((name) => {
+              const value = get(text.variables, name);
+              return (
+                <Controller
+                  control={control}
+                  name={`variables.${name}`}
+                  defaultValue={value}
+                  render={({ field: { onChange, onBlur, value, ref } }) => {
+                    return (
+                      <Textarea
+                        className="mt-8"
+                        maxRows={6}
+                        label={
+                          <>
+                            <span>{name}</span> <Tag>VAR</Tag>
+                          </>
+                        }
+                        onBlur={onBlur} // notify when input is touched
+                        onChange={onChange} // send value to hook form
+                        value={value}
+                        ref={ref}
+                      />
+                    );
+                  }}
+                />
+              );
+            })}
           </div>
         )}
       </div>

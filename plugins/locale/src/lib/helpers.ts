@@ -97,7 +97,7 @@ export const placeholders = function (
     var val = get(data, match.trim());
 
     // Replace
-    if (!val) return "{{" + match + "}}";
+    if (val === undefined || val === null) return "{{" + match + "}}";
     return val;
   });
 

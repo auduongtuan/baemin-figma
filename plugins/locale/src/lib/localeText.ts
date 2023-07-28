@@ -46,7 +46,10 @@ export function applyVariablesToContent(
     variables.count !== "" &&
     variables.count !== null
   ) {
-    const numberFormat: Configs["numberFormat"] = configs.get("numberFormat");
+    const numberFormat: Configs["numberFormat"] = configs.get(
+      "numberFormat",
+      "by-language"
+    );
     let sep: { decimal: string; thousands: string };
     if (numberFormat == "by-language") {
       const format = Object.keys(NUMBER_FORMAT_LIST).find((key) =>

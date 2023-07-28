@@ -1,42 +1,17 @@
 import React, { ComponentPropsWithRef, ReactElement, forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
-
+// position: absolute;
+// left: 0;
+// top: calc(100% + 1px);
 export interface MenuProps extends React.HTMLAttributes<HTMLDivElement> {}
-const MenuContainer = ({ children, ...rest }) => {
+const MenuContainer = ({ className, children, ...rest }: MenuProps) => {
   return (
     <div
       // style={{width: menuWidth}}
-      css={`
-        /* position: absolute; */
-        /* left: 0; */
-        background-color: var(--hud);
-        box-shadow: var(--shadow-hud);
-        padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
-        border-radius: var(--border-radius-small);
-        margin: 0;
-        z-index: 1000;
-        overflow-x: overlay;
-        overflow-y: auto;
-        /* top: calc(100% + 1px); */
-        &::-webkit-scrollbar {
-          width: 12px;
-          background-color: transparent;
-          background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=);
-          background-repeat: repeat;
-          background-size: 100% auto;
-        }
-        &::-webkit-scrollbar-track {
-          border: solid 3px transparent;
-          -webkit-box-shadow: inset 0 0 10px 10px transparent;
-          box-shadow: inset 0 0 10px 10px transparent;
-        }
-        &::-webkit-scrollbar-thumb {
-          border: solid 3px transparent;
-          border-radius: 6px;
-          -webkit-box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-          box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-        }
-      `}
+      className={twMerge(
+        "bg-hud shadow-hud rounded-sm m-0 py-8 z-[1000] overflow-x-['overlay'] overflow-y-auto invisible-scrollbar",
+        className
+      )}
       {...rest}
     >
       {children}
@@ -101,7 +76,7 @@ const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
   (
     {
       selected,
-      highlighted = false,
+      highlighted: externalHighlighted,
       name,
       content,
       contentTruncate = true,
@@ -110,11 +85,18 @@ const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
     },
     ref
   ) => {
+    const [hovered, setHovered] = React.useState(false);
+    const highlighted =
+      typeof externalHighlighted === "boolean" ? externalHighlighted : hovered;
     return (
       <div
         className="flex items-center pl-8 pr-16 font-normal outline-none cursor-default select-none text-onbrand text-small disabled:text-oncomponentTeritary data-[highlighted]:bg-brand"
         data-selected={selected ? selected : undefined}
         data-highlighted={highlighted ? highlighted : undefined}
+        onMouseOver={() => {
+          setHovered(true);
+        }}
+        onMouseLeave={() => setHovered(false)}
         {...rest}
         ref={ref}
       >
@@ -142,4 +124,8 @@ const MenuTrigger = forwardRef<
 >(({ className, ...rest }, forwardedRef) => {
   return <button ref={forwardedRef} {...rest}></button>;
 });
-export default Object.assign(MenuContainer, { Item: MenuItem, Icon: MenuIcon });
+export default Object.assign(MenuContainer, {
+  Trigger: MenuTrigger,
+  Item: MenuItem,
+  Icon: MenuIcon,
+});

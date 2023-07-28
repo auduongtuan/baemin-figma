@@ -15,6 +15,9 @@ export default {
         checked: 'state="checked"',
         indeterminate: 'state="indeterminate"',
       },
+      boxShadow: {
+        hud: "var(--shadow-hud)",
+      },
       spacing: spacingScale,
       fontSize: {
         xsmall: "11px",
@@ -35,6 +38,7 @@ export default {
       backgroundColor: {
         default: "var(--figma-color-bg)",
         hover: "var(--figma-color-bg-hover)",
+        hud: "var(--hud)",
       },
       textColor: {
         "icon-onbrand": "var(--figma-color-icon-onbrand)",

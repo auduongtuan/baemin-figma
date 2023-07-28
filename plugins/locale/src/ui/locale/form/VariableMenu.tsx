@@ -1,27 +1,7 @@
 import { useState } from "react";
-import { DashboardIcon } from "@radix-ui/react-icons";
-import {
-  IconButton,
-  Switch,
-  Textarea,
-  Tooltip,
-  DropdownMenu,
-  Menu,
-  BracketIcon,
-} from "ds";
-import { get } from "lodash-es";
-import { Controller } from "react-hook-form";
-import { LANGUAGE_LIST } from "../../../lib";
-import { useLanguages } from "@ui/hooks/locale";
+import { IconButton, Tooltip, Menu, BracketIcon } from "ds";
+import { COMMON_VARIABLE_NAMES } from "../../../lib";
 import * as Popover from "@radix-ui/react-popover";
-import { Portal } from "@radix-ui/react-portal";
-function typeInTextarea(newText: string, el = document.activeElement) {
-  console.log(el);
-  if (el.tagName != "textarea") return;
-  const textEl = el as HTMLTextAreaElement;
-  const [start, end] = [textEl.selectionStart, textEl.selectionEnd];
-  textEl.setRangeText(newText, start, end, "select");
-}
 
 const VariableMenu = ({
   open: externalOpen,
@@ -31,7 +11,7 @@ const VariableMenu = ({
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onSelect?: (variableName: string) => void;
+  onSelect?: (variableName: string, textareaEl: HTMLTextAreaElement) => void;
   textareaEl?: HTMLTextAreaElement;
 }) => {
   const [internalOpen, setOpen] = useState(false);
@@ -44,16 +24,11 @@ const VariableMenu = ({
         onOpenChange && onOpenChange(open);
       }}
     >
-      <Tooltip content="Common variables">
+      <Tooltip content="Add common variable">
         <Popover.Trigger asChild>
           <IconButton
-            className="absolute bottom-9 right-8"
+            className={`bg-default absolute bottom-9 right-8 opacity-0 group-hover:opacity-100 aria-expanded:opacity-100 transition-opacity duration-100`}
             onMouseDown={(e) => e.preventDefault()}
-            // onClick={(e) => {
-            //   e.preventDefault();
-            //   setOpen(!open);
-            //   onOpenChange && onOpenChange(!open);
-            // }}
           >
             <BracketIcon />
           </IconButton>
@@ -71,24 +46,21 @@ const VariableMenu = ({
               maxHeight: "var(--radix-popover-available-height)",
             }}
           >
-            {["{{count}}", "{{formattedCount}}", "{{number}}"].map(
-              (variableName) => {
-                return (
-                  <Menu.Item
-                    // selected={text && text.lang == lang}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onSelect && onSelect(variableName);
-                      console.log(onSelect);
-                      setOpen(false);
-                      onOpenChange && onOpenChange(false);
-                    }}
-                    name={variableName}
-                  />
-                );
-              }
-            )}
+            {COMMON_VARIABLE_NAMES.map((variableName) => {
+              return (
+                <Menu.Item
+                  // selected={text && text.lang == lang}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelect && onSelect(variableName, textareaEl);
+                    setOpen(false);
+                    onOpenChange && onOpenChange(false);
+                  }}
+                  name={variableName}
+                />
+              );
+            })}
           </Menu>
         </Popover.Content>
       </Popover.Portal>

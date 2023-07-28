@@ -4,10 +4,9 @@ import {
   PlusCircledIcon,
   TextIcon,
 } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import { IconButton, Switch, Tag, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Lang,
@@ -21,7 +20,7 @@ import { useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import EditDialog, { EditDialogTrigger } from "../dialogs/EditDialog";
+import { EditDialogTrigger } from "../dialogs/EditDialog";
 import FormulaEditor from "../atoms/FormulaEditor";
 import KeyCombobox from "../atoms/KeyCombobox";
 import SwitchLanguageDropdownMenu from "../atoms/SwitchLanguageDropdownMenu";
@@ -50,13 +49,11 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
             : undefined,
           formula: formula,
         };
-        console.log("UPDATE TEXT", textProps);
-
         updateText(text.id, {
           lang: text.lang as Lang,
           ...textProps,
         });
-      }, 300),
+      }, 200),
     [localeItems, text]
   );
   useEffect(() => {
@@ -219,8 +216,11 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
           <div>
             {variableNames.map((variableName) => {
               // use count for formattedCount
-              const name =
-                variableName == "formattedCount" ? "count" : variableName;
+              const name = (() => {
+                if (variableName == "formattedCount") return "count";
+                if (variableName == "formattedNumber") return "number";
+                return variableName;
+              })();
               const value = get(text.variables, name);
               return (
                 <Controller

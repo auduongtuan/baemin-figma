@@ -4,29 +4,42 @@ import { forwardRef, useCallback, useState } from "react";
 const LocaleItemTextarea = forwardRef<
   HTMLTextAreaElement,
   TextareaProps & {
-    onVariableSelect?: (variableName: string) => void;
+    onVariableSelect?: (
+      variableName: string,
+      textareaEl: HTMLTextAreaElement
+    ) => void;
   }
 >(({ onVariableSelect, ...rest }, ref) => {
   const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
+  const [variableMenuOpen, setVariableMenuOpen] = useState(false);
   const textareaRef = useCallback(
-    (node) => {
+    (node: HTMLTextAreaElement) => {
       if (node !== null) {
         setTextareaEl(node);
       }
     },
     [setTextareaEl]
   );
-  console.log("textareaEl", textareaEl);
   return (
-    <div className="relative">
+    <div className="relative group">
       <Textarea
         {...rest}
         ref={(node) => {
           textareaRef(node);
           if (typeof ref == "function") ref(node);
         }}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
-      <VariableMenu onSelect={onVariableSelect} textareaEl={textareaEl} />
+      {(variableMenuOpen || isFocused) && (
+        <VariableMenu
+          open={variableMenuOpen}
+          onOpenChange={setVariableMenuOpen}
+          onSelect={onVariableSelect}
+          textareaEl={textareaEl}
+        />
+      )}
     </div>
   );
 });

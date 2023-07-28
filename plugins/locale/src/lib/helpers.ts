@@ -165,3 +165,17 @@ export function formatNumber(
     .replace(/(\d)(?=(\d{3})+(?:\$\d+)?$)/g, `$1${thousandSep}`)
     .replace("$", decimalSep);
 }
+export function parseFloatOpts(str: string | number) {
+  if (typeof str === "number") {
+    return str;
+  }
+  const ar = str.replace(/\s/g, "").split(/\.|,/);
+  let value = "";
+  for (let i = 0; i < ar.length; i++) {
+    if (i > 0 && i == ar.length - 1) {
+      value += ".";
+    }
+    value += ar[i];
+  }
+  return Number(value);
+}

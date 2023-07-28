@@ -10,7 +10,6 @@ export const LANGUAGE_LIST = {
 };
 export const NUMBER_FORMAT_LIST = {
   "period-comma": {
-    name: "English (United States)",
     representative: "en-US",
     usedIn: ["en", "ko", "ja", "zh"],
     description: "Decimal separator (.) thousands separator (,)",
@@ -19,18 +18,7 @@ export const NUMBER_FORMAT_LIST = {
       thousands: ",",
     },
   },
-  "comma-space": {
-    name: "Français (France)",
-    representative: "fr-FR",
-    usedIn: ["fr"],
-    description: "Decimal separator (,) thousands separator ( )",
-    sep: {
-      decimal: ",",
-      thousands: " ",
-    },
-  },
   "comma-period": {
-    name: "Deutsch (Deutschland)",
     representative: "de-DE",
     usedIn: ["de", "vi"],
     description: "Decimal separator (,) thousands separator (.)",
@@ -39,7 +27,22 @@ export const NUMBER_FORMAT_LIST = {
       thousands: ".",
     },
   },
+  "comma-space": {
+    representative: "fr-FR",
+    usedIn: ["fr"],
+    description: "Decimal separator (,) thousands separator ( )",
+    sep: {
+      decimal: ",",
+      thousands: " ",
+    },
+  },
 };
+export const COMMON_VARIABLE_NAMES = [
+  "{{formattedCount}}",
+  "{{formattedNumber}}",
+  "{{count}}",
+  "{{number}}",
+];
 export const INITIAL_LANGUAGES = ["en", "vi"];
 export const INITIAL_DEFAULT_LANGUAGE = "vi";
 // export const PREFIX = "baemin_locale_";

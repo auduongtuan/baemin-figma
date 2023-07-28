@@ -1,8 +1,7 @@
 import configs from "figma-helpers/configs";
-import { escapeRegExp, isObject } from "lodash-es";
+import { escapeRegExp } from "lodash-es";
 import {
   compareTimeDesc,
-  formatNumber,
   isNumeric,
   matchAll,
   placeholders,
@@ -17,10 +16,12 @@ import {
   LocaleTextProps,
   LocaleTextVariables,
   LocaleText,
-  Configs,
 } from "./types";
 import { findItemByKey } from "./localeItem";
-import { NUMBER_FORMAT_LIST } from "./constant";
+import {
+  deformatNumbersInVariables,
+  formatNumbersInVariables,
+} from "./localeTextVariable";
 export function applyVariablesToContent(
   localeItemContent: LocaleItemContent,
   originVariables: LocaleTextVariables,
@@ -39,39 +40,10 @@ export function applyVariablesToContent(
       variables.count = parseInt(variables.count);
     }
   }
-  // formatted count
-  if (
-    "count" in variables &&
-    variables.count !== undefined &&
-    variables.count !== "" &&
-    variables.count !== null
-  ) {
-    const numberFormat: Configs["numberFormat"] = configs.get(
-      "numberFormat",
-      "by-language"
-    );
-    let sep: { decimal: string; thousands: string };
-    if (numberFormat == "by-language") {
-      const format = Object.keys(NUMBER_FORMAT_LIST).find((key) =>
-        NUMBER_FORMAT_LIST[key].usedIn.includes(lang)
-      );
-      if (format) {
-        sep = NUMBER_FORMAT_LIST[format]?.sep;
-      }
-    } else {
-      sep = NUMBER_FORMAT_LIST[numberFormat]?.sep;
-    }
-    if (sep) {
-      variables.formattedCount = formatNumber(
-        variables.count,
-        sep.decimal,
-        sep.thousands
-      );
-    }
-  }
   // PLURAL FORM
   if (isPlurals(localeItemContent)) {
     addDefaultCount();
+    formatNumbersInVariables(variables, lang);
     if (variables.count == 1 && "one" in localeItemContent) {
       return placeholders(localeItemContent.one || "", variables);
     }
@@ -85,6 +57,7 @@ export function applyVariablesToContent(
       if (variableNames.includes("count")) {
         addDefaultCount();
       }
+      formatNumbersInVariables(variables, lang);
       return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
@@ -144,12 +117,14 @@ export function getTextPropsByCharacters(
           }
         });
       });
+    const variables = { ...foundVariables };
+    deformatNumbersInVariables(variables);
     if (item) {
       return {
         item,
         key: item.key,
         lang: foundLang as Lang,
-        variables: foundVariables,
+        variables,
       };
     }
   }

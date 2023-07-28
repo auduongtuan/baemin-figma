@@ -41,8 +41,20 @@ const LocaleItemLangFields = ({ hasPlural, lang }) => {
             }
             value={field.value}
             onChange={field.onChange}
-            onVariableSelect={(variableName) => {
-              setValue(`${lang}.one`, `${field.value}${variableName}`);
+            onVariableSelect={(variableName, textareaEl) => {
+              const selectionStart = textareaEl.selectionStart;
+              const selectionEnd = textareaEl.selectionEnd;
+              const oldValue = field.value as string;
+              const newValue =
+                oldValue.slice(0, selectionStart) +
+                variableName +
+                oldValue.slice(selectionEnd);
+              setValue(`${lang}.one`, newValue);
+              setTimeout(() => {
+                textareaEl.selectionStart =
+                  selectionStart + variableName.length;
+                textareaEl.selectionEnd = selectionStart + variableName.length;
+              }, 0);
             }}
             ref={field.ref}
           />
@@ -61,9 +73,7 @@ const LocaleItemLangFields = ({ hasPlural, lang }) => {
               className="mt-12"
               value={field.value}
               onChange={field.onChange}
-              onVariableSelect={(variableName) => {
-                console.log("variableName", variableName);
-              }}
+              onVariableSelect={(variableName) => {}}
               ref={field.ref}
             />
           )}

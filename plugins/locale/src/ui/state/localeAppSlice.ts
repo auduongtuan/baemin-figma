@@ -5,12 +5,14 @@ import { unionWith } from "lodash-es";
 export interface DialogState {
   // [libraryId, key]
   key?: "__SELECTED_ITEMS" | LocaleItemId;
-  type?: "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
+  type?: "VIEW" | "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
   onDone?: (localeItem: LocaleItem) => void;
 }
 
 const initialState: {
   currentDialog: DialogState;
+  isReady: boolean;
+  isDevMode: boolean;
   isWorking: boolean;
   configs: Configs;
   list: {
@@ -25,6 +27,8 @@ const initialState: {
     onDone: null,
   },
   isWorking: false,
+  isReady: false,
+  isDevMode: null,
   configs: {
     languages: [],
     defaultLanguage: null,
@@ -53,6 +57,12 @@ export const localeAppSlice = createSlice({
     },
     setIsWorking: (state, action: PayloadAction<boolean>) => {
       state.isWorking = action.payload;
+    },
+    setIsReady: (state, action: PayloadAction<boolean>) => {
+      state.isReady = action.payload;
+    },
+    setIsDevMode: (state, action: PayloadAction<boolean>) => {
+      state.isDevMode = action.payload;
     },
     setConfigs: (state, action: PayloadAction<{ [key: string]: any }>) => {
       const newConfigs = { ...state.configs, ...action.payload };
@@ -102,6 +112,8 @@ export const {
   closeCurrentDialog,
   setCurrentDialog,
   setIsWorking,
+  setIsReady,
+  setIsDevMode,
   setConfigs,
   setSource,
   addSelectedItems,

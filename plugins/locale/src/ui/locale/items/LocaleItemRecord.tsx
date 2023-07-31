@@ -11,7 +11,8 @@ import {
   addSelectedItems,
   removeSelectedItems,
 } from "../../state/localeAppSlice";
-import { useConfigs } from "@ui/hooks/locale";
+import { useConfigs, useIsDevMode } from "@ui/hooks/locale";
+import { ViewDialogTrigger } from "../dialogs/ViewDialog";
 const LocaleItemRecord = ({
   item,
   action = true,
@@ -25,6 +26,7 @@ const LocaleItemRecord = ({
     (state) => state.localeApp.list
   );
   const dispatch = useAppDispatch();
+  const isDevMode = useIsDevMode();
   const { defaultLanguage } = useConfigs();
   const itemKey = useMemo(
     () => (group ? item.key.replace(new RegExp(`^${group}\.`), "") : item.key),
@@ -81,8 +83,12 @@ const LocaleItemRecord = ({
                     {`From an external library (${getLibraryName(
                       item.fromLibrary as string
                     )}).`}
-                    <br />
-                    {`To edit it, open the original file.`}
+                    {!isDevMode && (
+                      <>
+                        <br />
+                        {`To edit it, open the original file.`}
+                      </>
+                    )}
                   </>
                 }
               >
@@ -93,25 +99,29 @@ const LocaleItemRecord = ({
         </div>
         {action && (
           <div className="flex gap-12 opacity-0 group-hover:opacity-100 grow-0 shrink-0">
-            {item.isLocal && (
+            {item.isLocal && !isDevMode ? (
               <>
                 <EditDialogTrigger item={item} />
                 <DeleteDialogTrigger item={item} />
               </>
+            ) : (
+              <ViewDialogTrigger item={item} />
             )}
-            <Tooltip content="Select texts with this key">
-              <IconButton
-                onClick={(e: React.MouseEvent<HTMLElement>) => {
-                  runCommand("show_figma_notify", {
-                    message: `Finding texts with key ${item.key}...`,
-                  });
-                  runCommand("select_texts", { key: item.key });
-                  e.stopPropagation();
-                }}
-              >
-                <Crosshair2Icon></Crosshair2Icon>
-              </IconButton>
-            </Tooltip>
+            {!isDevMode && (
+              <Tooltip content="Select texts with this key">
+                <IconButton
+                  onClick={(e: React.MouseEvent<HTMLElement>) => {
+                    runCommand("show_figma_notify", {
+                      message: `Finding texts with key ${item.key}...`,
+                    });
+                    runCommand("select_texts", { key: item.key });
+                    e.stopPropagation();
+                  }}
+                >
+                  <Crosshair2Icon></Crosshair2Icon>
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
         )}
       </div>

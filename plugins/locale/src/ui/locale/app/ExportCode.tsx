@@ -33,6 +33,7 @@ import { LocaleText } from "../../../lib";
 import { compareTimeAsc } from "../../../lib/helpers";
 import { filterItemsByLibrary } from "../../../lib";
 import { getLibraryOptions } from "../../state/helpers";
+import { getLangJSON } from "./exportJson";
 const printCodeBlock = (
   localeItems: LocaleItem[],
   library: LocaleLibrary,
@@ -54,40 +55,10 @@ const printCodeBlock = (
     filteredLocaleItems = localeItems;
   }
   configs.get("languages").forEach((lang) => {
-    const langJSON = js_beautify(
-      JSON.stringify(
-        filterItemsByLibrary(filteredLocaleItems, library)
-          .sort(
-            (a, b) =>
-              compareTimeAsc(a.updatedAt, b.updatedAt) ||
-              compareTimeAsc(a.createdAt, b.createdAt)
-            // cu truoc moi sau
-          )
-          .reduce((acc, item) => {
-            if (isPlurals(item[lang])) {
-              if (format == "i18next") {
-                Object.keys(item[lang]).forEach((quantity) => {
-                  // set one as default
-                  if (quantity === "one") {
-                    set(acc, `${item.key}`, item[lang][quantity]);
-                  } else {
-                    set(acc, `${item.key}_${quantity}`, item[lang][quantity]);
-                  }
-                });
-              } else if (format == "i18n-js") {
-                Object.keys(item[lang]).forEach((quantity) => {
-                  set(acc, `${item.key}.${quantity}`, item[lang][quantity]);
-                });
-              }
-            } else {
-              set(acc, item.key, item[lang]);
-            }
-            return acc;
-          }, {})
-      ),
-      {
-        indent_size: 2,
-      }
+    const langJSON = getLangJSON(
+      filterItemsByLibrary(filteredLocaleItems, library),
+      lang,
+      format
     );
     langJSONs[lang] = langJSON;
     // tokensObject[lang] = Prism.tokenize(

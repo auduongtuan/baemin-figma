@@ -75,6 +75,11 @@ figma.on("run", (runEvent: RunEvent) => {
           width: 360,
           height: 640,
         });
+        if (figma.editorType == "dev") {
+          io.send("dev_mode", { devMode: true });
+        } else {
+          io.send("dev_mode", { devMode: false });
+        }
         updateSelection();
       });
     });

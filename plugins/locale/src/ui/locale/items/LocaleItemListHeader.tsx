@@ -7,12 +7,13 @@ import {
   setSource,
 } from "../../state/localeAppSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { useLocaleLibraries } from "../../hooks/locale";
+import { useIsDevMode, useLocaleLibraries } from "../../hooks/locale";
 import { getLibraryOptions } from "../../state/helpers";
 import { LocaleLibrary } from "../../../lib";
 const LocaleItemListHeader = () => {
   const dispatch = useAppDispatch();
   const { source, editMode } = useAppSelector((state) => state.localeApp.list);
+  const isDevMode = useIsDevMode();
   return (
     <header className="sticky top-0 z-20 bg-white">
       <div className="flex items-center px-16 py-4">
@@ -32,23 +33,25 @@ const LocaleItemListHeader = () => {
               maxWidth="240px"
             />
           </div>
-          <div className="inline-flex items-center justify-center gap-8">
-            <Tooltip content="Toggle list edit mode">
-              <IconButton
-                pressed={editMode}
-                onClick={() => dispatch(setEditMode(!editMode))}
-              >
-                <MixerHorizontalIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip content="Add new item">
-              <IconButton
-                onClick={() => dispatch(setCurrentDialog({ type: "NEW" }))}
-              >
-                <PlusIcon />
-              </IconButton>
-            </Tooltip>
-          </div>
+          {!isDevMode && (
+            <div className="inline-flex items-center justify-center gap-8">
+              <Tooltip content="Toggle list edit mode">
+                <IconButton
+                  pressed={editMode}
+                  onClick={() => dispatch(setEditMode(!editMode))}
+                >
+                  <MixerHorizontalIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Add new item">
+                <IconButton
+                  onClick={() => dispatch(setCurrentDialog({ type: "NEW" }))}
+                >
+                  <PlusIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          )}
         </div>
       </div>
       <Divider />

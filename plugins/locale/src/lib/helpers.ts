@@ -154,3 +154,28 @@ export function isNumeric(str: string | number) {
   if (typeof str !== "string") return false;
   return /^\d+$/.test(str);
 }
+export function formatNumber(
+  number: number | string,
+  decimalSep = ".",
+  thousandSep = ","
+) {
+  return number
+    .toString()
+    .replace(".", "$")
+    .replace(/(\d)(?=(\d{3})+(?:\$\d+)?$)/g, `$1${thousandSep}`)
+    .replace("$", decimalSep);
+}
+export function parseFloatOpts(str: string | number) {
+  if (typeof str === "number") {
+    return str;
+  }
+  const ar = str.replace(/\s/g, "").split(/\.|,/);
+  let value = "";
+  for (let i = 0; i < ar.length; i++) {
+    if (i > 0 && i == ar.length - 1) {
+      value += ".";
+    }
+    value += ar[i];
+  }
+  return Number(value);
+}

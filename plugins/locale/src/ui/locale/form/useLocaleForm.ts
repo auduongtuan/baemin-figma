@@ -1,10 +1,5 @@
 import { useEffect } from "react";
-import { useAppSelector } from "../../hooks/redux";
-import {
-  useLanguages,
-  useLocaleItems,
-  useLocaleSelection,
-} from "../../hooks/locale";
+import { useLanguages, useLocaleSelection } from "../../hooks/locale";
 import { useForm, useWatch } from "react-hook-form";
 import { Lang, LocaleItem } from "../../../lib";
 import { isPlurals } from "../../../lib/localeItem";
@@ -31,16 +26,8 @@ export type FormValues = LangContent & {
 };
 
 function useLocaleForm({ item }: { item: LocaleItem }) {
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    formState: { errors },
-    setValue,
-    getValues,
-  } = useForm<FormValues>();
+  const methods = useForm<FormValues>();
+  const { control, reset, setValue } = methods;
   const watchHasPlurals = useWatch({
     control,
     name: "hasPlurals",
@@ -117,14 +104,7 @@ function useLocaleForm({ item }: { item: LocaleItem }) {
   }, []);
 
   return {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    formState: { errors },
-    setValue,
-    getValues,
+    methods,
     watchHasPlurals,
     isEdit,
   };

@@ -11,6 +11,7 @@ export interface SelectOption extends MenuItemProps {
   id?: string;
   value: any;
   name: string;
+  content?: string;
   disabled?: boolean;
 }
 export interface SelectProps {
@@ -29,6 +30,7 @@ export interface SelectProps {
   helpText?: React.ReactNode;
   maxWidth?: number | string;
   labelComponent?: React.ComponentType<any>;
+  contentTruncate?: boolean;
 }
 const Select = ({
   label,
@@ -45,6 +47,7 @@ const Select = ({
   onChange,
   helpText,
   maxWidth,
+  contentTruncate,
   ...rest
 }: SelectProps) => {
   const optionToString = (option: SelectOption) => (option ? option.name : "");
@@ -232,6 +235,7 @@ const Select = ({
                         icon={item.icon}
                         content={item.content}
                         // content={item.content}
+                        contentTruncate={contentTruncate}
                         {...getItemProps({
                           item,
                           index,

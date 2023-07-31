@@ -67,7 +67,12 @@ const printCodeBlock = (
             if (isPlurals(item[lang])) {
               if (format == "i18next") {
                 Object.keys(item[lang]).forEach((quantity) => {
-                  set(acc, `${item.key}_${quantity}`, item[lang][quantity]);
+                  // set one as default
+                  if (quantity === "one") {
+                    set(acc, `${item.key}`, item[lang][quantity]);
+                  } else {
+                    set(acc, `${item.key}_${quantity}`, item[lang][quantity]);
+                  }
                 });
               } else if (format == "i18n-js") {
                 Object.keys(item[lang]).forEach((quantity) => {

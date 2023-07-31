@@ -4,10 +4,9 @@ import {
   PlusCircledIcon,
   TextIcon,
 } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import { IconButton, Switch, Tag, Textarea, Tooltip } from "ds";
 import { debounce, get, isObject } from "lodash-es";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Lang,
@@ -21,34 +20,11 @@ import { useLocaleItems } from "../../hooks/locale";
 import { useAppDispatch } from "../../hooks/redux";
 import { updateText } from "../../state/helpers";
 import { setCurrentDialog } from "../../state/localeAppSlice";
-import EditDialog, { EditDialogTrigger } from "../dialogs/EditDialog";
-import FormulaEditor from "./FormulaEditor";
-import KeyCombobox from "./KeyCombobox";
-import SwitchLanguageDropdownMenu from "./SwitchLanguageDropdownMenu";
-const Toolbar: React.FC<React.ComponentPropsWithRef<"div">> = ({
-  className,
-  children,
-}) => {
-  return (
-    <div
-      className={clsx("flex items-center gap-8", className)}
-      css={`
-        & > .icon-group {
-          transition: opacity 0.1s;
-        }
-        & > .icon-group:not([data-activated]) {
-          opacity: 0;
-        }
-        &:hover > .icon-group,
-        & > .icon-group[date-activated] {
-          opacity: 1;
-        }
-      `}
-    >
-      {children}
-    </div>
-  );
-};
+import { EditDialogTrigger } from "../dialogs/EditDialog";
+import FormulaEditor from "../atoms/FormulaEditor";
+import KeyCombobox from "../atoms/KeyCombobox";
+import SwitchLanguageDropdownMenu from "../atoms/SwitchLanguageDropdownMenu";
+import TextEditToolbar from "./TextEditToolbar";
 const TextEditForm = ({ text }: { text: LocaleText }) => {
   const localeItems = useLocaleItems();
   const localeItem =
@@ -77,7 +53,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
           lang: text.lang as Lang,
           ...textProps,
         });
-      }, 300),
+      }, 200),
     [localeItems, text]
   );
   useEffect(() => {
@@ -93,12 +69,16 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     };
   }, [watch, text, localeItem, localeItems]);
 
-  const variableNames = getVariableNames(
-    {
-      ...text,
-      item: localeItem,
-    },
-    localeItems
+  const variableNames = useMemo(
+    () =>
+      getVariableNames(
+        {
+          ...text,
+          item: localeItem,
+        },
+        localeItems
+      ),
+    [text, localeItem, localeItems]
   );
   const [iconGroupActivated, setIconGroupActivated] = useState(false);
   return (
@@ -117,7 +97,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
       </div>
       <div className="pl-24 mt-8">
         {!useFormula && (
-          <Toolbar>
+          <TextEditToolbar>
             <KeyCombobox
               label={""}
               value={localeItem && localeItem.key ? localeItem.key : undefined}
@@ -188,11 +168,11 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                 />
               )}
             </div>
-          </Toolbar>
+          </TextEditToolbar>
         )}
         {useFormula && (
           <div>
-            <Toolbar className="mb-4">
+            <TextEditToolbar className="mb-4">
               <Switch
                 label="Formula"
                 checked={useFormula}
@@ -214,7 +194,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                   }}
                 />
               </div>
-            </Toolbar>
+            </TextEditToolbar>
             <Controller
               control={control}
               name="formula"
@@ -234,7 +214,13 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
         )}
         {variableNames && (
           <div>
-            {variableNames.map((name) => {
+            {variableNames.map((variableName) => {
+              // use count for formattedCount
+              const name = (() => {
+                if (variableName == "formattedCount") return "count";
+                if (variableName == "formattedNumber") return "number";
+                return variableName;
+              })();
               const value = get(text.variables, name);
               return (
                 <Controller

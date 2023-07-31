@@ -1,41 +1,17 @@
 import React, { ComponentPropsWithRef, ReactElement, forwardRef } from "react";
-
+import { twMerge } from "tailwind-merge";
+// position: absolute;
+// left: 0;
+// top: calc(100% + 1px);
 export interface MenuProps extends React.HTMLAttributes<HTMLDivElement> {}
-const MenuContainer = ({ children, ...rest }) => {
+const MenuContainer = ({ className, children, ...rest }: MenuProps) => {
   return (
     <div
       // style={{width: menuWidth}}
-      css={`
-        /* position: absolute; */
-        /* left: 0; */
-        background-color: var(--hud);
-        box-shadow: var(--shadow-hud);
-        padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
-        border-radius: var(--border-radius-small);
-        margin: 0;
-        z-index: 1000;
-        overflow-x: overlay;
-        overflow-y: auto;
-        /* top: calc(100% + 1px); */
-        &::-webkit-scrollbar {
-          width: 12px;
-          background-color: transparent;
-          background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=);
-          background-repeat: repeat;
-          background-size: 100% auto;
-        }
-        &::-webkit-scrollbar-track {
-          border: solid 3px transparent;
-          -webkit-box-shadow: inset 0 0 10px 10px transparent;
-          box-shadow: inset 0 0 10px 10px transparent;
-        }
-        &::-webkit-scrollbar-thumb {
-          border: solid 3px transparent;
-          border-radius: 6px;
-          -webkit-box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-          box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-        }
-      `}
+      className={twMerge(
+        "bg-hud shadow-hud rounded-sm m-0 py-8 z-[1000] overflow-x-['overlay'] overflow-y-auto invisible-scrollbar",
+        className
+      )}
       {...rest}
     >
       {children}
@@ -49,6 +25,7 @@ export interface MenuItemProps
   name: React.ReactNode;
   content?: React.ReactNode;
   icon?: React.ReactNode;
+  contentTruncate?: boolean;
 }
 const MenuIcon = ({
   children,
@@ -96,65 +73,46 @@ const MenuIcon = ({
   );
 };
 const MenuItem = forwardRef<HTMLDivElement, MenuItemProps>(
-  ({ selected, highlighted = false, name, content, icon, ...rest }, ref) => {
+  (
+    {
+      selected,
+      highlighted: externalHighlighted,
+      name,
+      content,
+      contentTruncate = true,
+      icon,
+      ...rest
+    },
+    ref
+  ) => {
+    const [hovered, setHovered] = React.useState(false);
+    const highlighted =
+      typeof externalHighlighted === "boolean" ? externalHighlighted : hovered;
     return (
       <div
-        css={`
-          align-items: center;
-          color: var(--white);
-          cursor: default;
-          display: flex;
-          font-family: var(--font-stack);
-          font-size: var(--font-size-small);
-          font-weight: var(--font-weight-normal);
-          letter-spacing: var(--font-letter-spacing-neg-xsmall);
-          line-height: var(--font-line-height);
-          // height: var(--size-small);
-          padding: 0px var(--size-xsmall) 0px var(--size-xxsmall);
-          user-select: none;
-          outline: none;
-
-          &[disabled] {
-            color: var(--figma-color-text-oncomponent-tertiary);
-          }
-          /* &:hover, */
-          /* &:focus, */
-          &[data-highlighted] {
-            background-color: var(--blue);
-          }
-        `}
-        // className={`${selected ? "select-menu__item--selected" : ""} ${
-        //   highlighted ? "select-menu__item--highlighted" : ""
-        // }`}
+        className="flex items-center pl-8 pr-16 font-normal outline-none cursor-default select-none text-onbrand text-small disabled:text-oncomponentTeritary data-[highlighted]:bg-brand"
         data-selected={selected ? selected : undefined}
         data-highlighted={highlighted ? highlighted : undefined}
-        // {...getItemProps({ item, index, disabled: item.disabled })}
+        onMouseOver={() => {
+          setHovered(true);
+        }}
+        onMouseLeave={() => setHovered(false)}
         {...rest}
         ref={ref}
       >
         <MenuIcon {...{ selected, highlighted, icon }} />
-        <span
-          css={`
-            display: flex;
-            flex-direction: column;
-            padding: var(--size-xxxsmall) 0;
-            width: calc(100% - 16px);
-            .name,
-            .content {
-              width: 100%;
-              overflow-x: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              pointer-events: none;
-            }
-            .content {
-              font-size: var(--font-size-xsmall);
-              color: var(--figma-color-text-onbrand-secondary);
-            }
-          `}
-        >
-          <span className="name">{name}</span>
-          {content && <span className="content">{content}</span>}
+        <span className="flex flex-col py-4 w-[calc(100%-16px)]">
+          <span className="w-full truncate pointer-events-none">{name}</span>
+          {content && (
+            <span
+              className={twMerge(
+                "w-full pointer-events-none text-xsmall text-onbrandSecondary leading-tight",
+                contentTruncate && "truncate"
+              )}
+            >
+              {content}
+            </span>
+          )}
         </span>
       </div>
     );
@@ -166,4 +124,8 @@ const MenuTrigger = forwardRef<
 >(({ className, ...rest }, forwardedRef) => {
   return <button ref={forwardedRef} {...rest}></button>;
 });
-export default Object.assign(MenuContainer, { Item: MenuItem, Icon: MenuIcon });
+export default Object.assign(MenuContainer, {
+  Trigger: MenuTrigger,
+  Item: MenuItem,
+  Icon: MenuIcon,
+});

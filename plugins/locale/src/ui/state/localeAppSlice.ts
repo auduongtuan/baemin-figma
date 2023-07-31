@@ -29,6 +29,7 @@ const initialState: {
     languages: [],
     defaultLanguage: null,
     altLanguage: null,
+    numberFormat: "by-language",
   },
   list: {
     source: "all",

@@ -13,7 +13,7 @@ import {
 } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
 import { pluralize } from "@capaj/pluralize";
-import TextEditForm from "./TextEditForm";
+import TextEditForm from "../text-edit/TextEditForm";
 import { MIXED_VALUE } from "../../../lib";
 const MultipleTextEditor = () => {
   const localeSelection = useLocaleSelection();

@@ -8,6 +8,7 @@ import {
   getTextPropsByCharacters,
 } from "../../lib";
 import configs from "figma-helpers/configs";
+import { deformatNumbersInVariables } from "../../lib/localeTextVariable";
 export function getLang(node: TextNode): Lang {
   const lang = h.getNodeData(node, `${PREFIX}lang`);
   if (lang in LANGUAGE_LIST) {

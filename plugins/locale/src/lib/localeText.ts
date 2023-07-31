@@ -1,5 +1,5 @@
 import configs from "figma-helpers/configs";
-import { escapeRegExp, isObject } from "lodash-es";
+import { escapeRegExp } from "lodash-es";
 import {
   compareTimeDesc,
   isNumeric,
@@ -18,9 +18,14 @@ import {
   LocaleText,
 } from "./types";
 import { findItemByKey } from "./localeItem";
+import {
+  deformatNumbersInVariables,
+  formatNumbersInVariables,
+} from "./localeTextVariable";
 export function applyVariablesToContent(
   localeItemContent: LocaleItemContent,
-  originVariables: LocaleTextVariables
+  originVariables: LocaleTextVariables,
+  lang?: Lang
 ): string {
   const variables = { ...originVariables };
   function addDefaultCount() {
@@ -38,6 +43,7 @@ export function applyVariablesToContent(
   // PLURAL FORM
   if (isPlurals(localeItemContent)) {
     addDefaultCount();
+    formatNumbersInVariables(variables, lang);
     if (variables.count == 1 && "one" in localeItemContent) {
       return placeholders(localeItemContent.one || "", variables);
     }
@@ -48,7 +54,10 @@ export function applyVariablesToContent(
     // Non plurals
     if (variables && localeItemContent) {
       const variableNames = getVariableNamesFromItemContent(localeItemContent);
-      if (variableNames.includes("count")) addDefaultCount();
+      if (variableNames.includes("count")) {
+        addDefaultCount();
+      }
+      formatNumbersInVariables(variables, lang);
       return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
@@ -108,12 +117,14 @@ export function getTextPropsByCharacters(
           }
         });
       });
+    const variables = { ...foundVariables };
+    deformatNumbersInVariables(variables);
     if (item) {
       return {
         item,
         key: item.key,
         lang: foundLang as Lang,
-        variables: foundVariables,
+        variables,
       };
     }
   }
@@ -247,7 +258,7 @@ export function parseFormula(props: LocaleTextProps, items: LocaleItem[]) {
     if (newLocaleItemContent) {
       newString = newString.replace(
         match[0],
-        applyVariablesToContent(newLocaleItemContent, variables)
+        applyVariablesToContent(newLocaleItemContent, variables, lang)
       );
     }
   });
@@ -264,7 +275,8 @@ export function getTextCharactersWithTags(
     if (textProps.item && textProps.lang in textProps.item) {
       return applyVariablesToContent(
         textProps.item[textProps.lang],
-        textProps.variables
+        textProps.variables,
+        textProps.lang
       );
     } else {
       return undefined;

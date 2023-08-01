@@ -40,7 +40,7 @@ export function useSetIsDevMode() {
       if (devMode) {
         dispatch(setIsDevMode(true));
       } else {
-        dispatch(setIsDevMode(false));
+        dispatch(setIsDevMode(true));
       }
     });
   }, []);

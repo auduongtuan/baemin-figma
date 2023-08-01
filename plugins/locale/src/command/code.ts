@@ -15,6 +15,9 @@ import io from "figma-helpers/io";
 import { getTexts } from "./text/textNodes";
 import changeText from "figma-helpers/changeText";
 import configs from "figma-helpers/configs";
+import { getFormula, getKey, getLang, getVariables } from "./text/textProps";
+import { formatNumbersInVariables } from "../lib/localeTextVariable";
+import { getTCode } from "../lib";
 
 figma.skipInvisibleInstanceChildren = true;
 io.on("select_texts", (msg) => selectTexts(msg.key));
@@ -27,7 +30,7 @@ io.on("update_texts", (msg) => {
   });
 });
 io.on("get_locale_data", async () => {
-  io.send("get_locale_data", { localeData: await getLocaleData() });
+  io.send("get_locale_data", { localeData: getLocaleData() });
 });
 io.on("save_locale_data", async (msg) => await saveLocaleData(msg.localeData));
 io.on(
@@ -61,6 +64,10 @@ io.on("set_configs", async (msg) => {
     io.send("set_configs");
   }
 });
+io.on("set_selection", async (msg) => {
+  const node = figma.getNodeById(msg.id) as SceneNode;
+  if (node) figma.currentPage.selection = [node];
+});
 figma.on("run", (runEvent: RunEvent) => {
   configs
     .fetch({
@@ -84,6 +91,43 @@ figma.on("run", (runEvent: RunEvent) => {
       });
     });
 });
+// Make sure that we're in Dev Mode and running codegen
+if (figma.editorType === "dev" && figma.mode === "codegen") {
+  // Register a callback to the "generate" event
+  figma.codegen.on("generate", ({ node }) => {
+    if (!node) {
+    }
+    if (node.type == "FRAME") {
+      const localeData = getLocaleData();
+      return [
+        {
+          title: "i18n JSON",
+          language: "JSON",
+          code: JSON.stringify(localeData.localeItems),
+        },
+      ];
+    }
+    if (node.type !== "TEXT") return [];
+    const key = getKey(node);
+    const formula = getFormula(node);
+    const lang = getLang(node);
+    const variables = getVariables(node);
+    if (!formula && !key) return [];
+    formatNumbersInVariables(variables, lang);
+    return [
+      {
+        title: "i18n key",
+        language: "PLAINTEXT",
+        code: key,
+      },
+      {
+        title: "i18n t function",
+        language: "JAVASCRIPT",
+        code: getTCode(key, variables),
+      },
+    ];
+  });
+}
 figma.on("selectionchange", async () => {
   updateSelection();
 });

@@ -9,6 +9,7 @@ import Menu from "./Menu";
 import * as Popper from "@radix-ui/react-popper";
 import { Portal } from "@radix-ui/react-portal";
 import debounce from "lodash-es/debounce";
+import { twMerge } from "tailwind-merge";
 // import { removeVietnameseAccent } from "../../lib/helpers";
 export interface ComboboxOption {
   id?: string;
@@ -170,13 +171,13 @@ const Combobox = ({
   });
   return (
     <div
-      css={`
-        display: ${inline ? "inline-flex" : "flex"};
-        flex-direction: ${inline ? "row" : "column"};
-        align-items: ${inline ? "center" : "flex-start"};
-        gap: 8px;
-      `}
-      className={`show-border ${className && className}`}
+      className={twMerge(
+        inline ? "inline-flex" : "flex",
+        inline ? "flex-row" : "flex-col",
+        inline ? "items-center" : "items-start",
+        "gap-8 show-border",
+        className
+      )}
     >
       {label && (
         <label htmlFor={id} className="text-xsmall" {...getLabelProps()}>
@@ -193,19 +194,13 @@ const Combobox = ({
             })}
           >
             <input
-              className={clsx("select-menu__label grow", {
-                // "select-menu__label--placeholder": !inputValue ? true : false,
-              })}
-              placeholder={placeholder}
-              css={`
-                border: none;
-                background: none;
-                padding: 0;
-                &:focus {
-                  border: none;
-                  outline: none;
+              className={clsx(
+                "select-menu__label grow border-none bg-none p-0 focus:outline-none focus:border-none",
+                {
+                  // "select-menu__label--placeholder": !inputValue ? true : false,
                 }
-              `}
+              )}
+              placeholder={placeholder}
               {...getInputProps({
                 disabled,
                 onFocus: (e) => {

@@ -10,14 +10,7 @@ const Switch = forwardRef<
   const labelRender = () => (
     <label
       htmlFor={id}
-      css={`
-        align-items: center;
-        color: var(--black8);
-        display: flex;
-        height: 100%;
-        line-height: var(--font-line-height);
-        user-select: none;
-      `}
+      className="items-center color-action flex h-full leading-[16px] user-select-none"
     >
       {label}
     </label>
@@ -25,39 +18,12 @@ const Switch = forwardRef<
   const switchRender = () => (
     <RSwitch.Root
       id={id}
-      css={`
-        background-color: var(--white);
-        border: 1px solid var(--black8-opaque);
-        border-radius: 6px;
-        content: "";
-        display: block;
-        height: 12px;
-        transition: background-color 0 0.2s;
-        width: 24px;
-        &[data-state="checked"] {
-          background-color: var(--figma-color-bg-brand);
-          border: 1px solid var(--figma-color-bg-brand);
-        }
-      `}
+      className={`bg-white border-action border rounded-md content-[""] block h-12 w-24 transition-colors duration-200 data-checked:bg-brand data-checked:border-brand`}
       ref={forwardedRef}
       {...rest}
     >
       <RSwitch.Thumb
-        css={`
-          background-color: var(--white);
-          border: 1px solid var(--black8-opaque);
-          border-radius: 50%;
-          content: "";
-          display: block;
-          transition: transform 0.2s;
-          width: 12px;
-          height: 12px;
-          margin: -1px;
-          &[data-state="checked"] {
-            transform: translateX(12px);
-            border: 1px solid var(--figma-color-bg-brand);
-          }
-        `}
+        className={`bg-default border border-action rounded-full content-[""] block w-12 h-12 transition-transform duration-200 -m-1 data-checked:translate-x-12 data-checked:border-brand`}
       />
     </RSwitch.Root>
   );

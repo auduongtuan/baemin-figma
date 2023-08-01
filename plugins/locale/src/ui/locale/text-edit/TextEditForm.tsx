@@ -24,7 +24,7 @@ import { EditDialogTrigger } from "../dialogs/EditDialog";
 import FormulaEditor from "../atoms/FormulaEditor";
 import KeyCombobox from "../atoms/KeyCombobox";
 import SwitchLanguageDropdownMenu from "../atoms/SwitchLanguageDropdownMenu";
-import TextEditToolbar from "./TextEditToolbar";
+import TextEditToolbar, { TextEditIconGroup } from "./TextEditToolbar";
 const TextEditForm = ({ text }: { text: LocaleText }) => {
   const localeItems = useLocaleItems();
   const localeItem =
@@ -84,13 +84,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
   return (
     <div>
       <div className="flex items-center w-full font-normal text-left text-small group">
-        <TextIcon
-          className="mr-8 text-secondary shrink-0 grow-0"
-          css={`
-            width: 16px;
-            height: 16px;
-          `}
-        />
+        <TextIcon className="w-16 h-16 mr-8 text-secondary shrink-0 grow-0" />
         <div className="font-medium truncate grow shrink">
           {text.characters}
         </div>
@@ -103,8 +97,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
               value={localeItem && localeItem.key ? localeItem.key : undefined}
               text={text}
             />
-            <div
-              className={`icon-group flex grow gap-12`}
+            <TextEditIconGroup
               data-activated={iconGroupActivated ? "activated" : undefined}
             >
               {localeItem && !useFormula && (
@@ -167,7 +160,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                   }}
                 />
               )}
-            </div>
+            </TextEditIconGroup>
           </TextEditToolbar>
         )}
         {useFormula && (
@@ -183,8 +176,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                   });
                 }}
               />
-              <div
-                className={`icon-group flex grow gap-12`}
+              <TextEditIconGroup
                 data-activated={iconGroupActivated ? "activated" : undefined}
               >
                 <SwitchLanguageDropdownMenu
@@ -193,7 +185,7 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
                     setIconGroupActivated(open);
                   }}
                 />
-              </div>
+              </TextEditIconGroup>
             </TextEditToolbar>
             <Controller
               control={control}

@@ -26,10 +26,13 @@ export default {
         xlarge: "14px",
       },
       colors: {
+        disabled: "rgba(0,0,0,0.3)",
         action: "rgba(0,0,0,0.8)",
         secondary: "var(--figma-color-text-secondary)",
         danger: "var(--figma-color-text-danger)",
         brand: "var(--figma-color-bg-brand)",
+        brandHover: "var(--figma-color-bg-brand-hover)",
+        brandPressed: "var(--figma-color-bg-brand-pressed)",
         component: "var(--figma-color-bg-component)",
         onbrand: "var(--figma-color-text-onbrand)",
         onbrandSecondary: "var(--figma-color-text-onbrand-secondary)",
@@ -46,6 +49,7 @@ export default {
       borderColor: {
         divider: "var(--figma-color-border)",
         disabled: "rgba(0,0,0,0.1)",
+        focus: "rgba(0,0,0,0.3)",
       },
     },
   },

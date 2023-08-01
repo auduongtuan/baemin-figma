@@ -10,6 +10,7 @@ import { CopyTooltip, IconButton } from "ds";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { LocaleText } from "../../lib";
 import { useState } from "react";
+import { runCommand } from "@ui/uiHelper";
 
 const DevText = ({
   text,
@@ -26,7 +27,10 @@ const DevText = ({
     <div className="group">
       <div className="flex items-center w-full font-normal text-left text-small group">
         <TextIcon className="w-16 h-16 mr-8 text-secondary shrink-0 grow-0" />
-        <div className="font-medium truncate grow shrink">
+        <div
+          className="font-medium truncate grow shrink"
+          onClick={() => runCommand("set_selection", { id: text.id })}
+        >
           {text.characters}
         </div>
         {text.key && (

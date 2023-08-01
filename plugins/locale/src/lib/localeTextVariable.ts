@@ -25,6 +25,8 @@ export function formatNumbersInVariables(
     if (!sep) return;
     // formatted count
     if (variables.count || variables.count === 0) {
+      if (typeof variables.count == "string")
+        variables.count = parseInt(variables.count);
       variables.formattedCount = formatNumber(
         variables.count,
         sep.decimal,
@@ -32,6 +34,8 @@ export function formatNumbersInVariables(
       );
     }
     if (variables.number || variables.number === 0) {
+      if (typeof variables.number == "string")
+        variables.number = parseFloat(variables.number);
       variables.formattedNumber = formatNumber(
         variables.number,
         sep.decimal,

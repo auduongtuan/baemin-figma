@@ -311,3 +311,8 @@ export function getFullLocaleText(
     characters,
   };
 }
+export function getTCode(key: string, variables: LocaleTextVariables) {
+  return `t("${key}"${
+    Object.keys(variables).length > 0 ? `, ${JSON.stringify(variables)}` : ""
+  })`;
+}

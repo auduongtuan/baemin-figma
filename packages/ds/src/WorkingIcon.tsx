@@ -1,24 +1,11 @@
 import React from "react";
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { keyframes } from "styled-components";
 
-const rotate = keyframes`
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const WorkingIcon = ({showText = false}) => {
+const WorkingIcon = ({ showText = false }) => {
   return (
-    <div className="flex gap-4 items-center">
-    <UpdateIcon
-      width="14"
-      height="14"
-      css={`
-        animation: ${rotate} 1s linear infinite;
-      `}
-    />
-    {showText && <span>Working...</span>}
+    <div className="flex items-center gap-4">
+      <UpdateIcon width="14" height="14" className="animate-spin" />
+      {showText && <span>Working...</span>}
     </div>
   );
 };

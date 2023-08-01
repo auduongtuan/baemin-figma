@@ -41,9 +41,9 @@ function getNodes() {
       );
     });
 }
-const getDataNodes = async () => {
+const getDataNodes = () => {
   const all = getNodes();
-  await changeText.loadFonts(DEFAULT_FONTS);
+  // await changeText.loadFonts(DEFAULT_FONTS);
   const createMain = () => {
     const mainNode = createDataBlock();
     mainNode.name = DATA_FRAME_NAME;
@@ -68,14 +68,14 @@ const getDataNodes = async () => {
   };
 };
 
-export async function getLocaleData() {
+export function getLocaleData() {
   // const localeData = await figma.clientStorage.getAsync('localeData');
   // setNodeData(mainLocaleDataFrame, `${PREFIX}main_document_id`, figma.root.id);
   let combinedLocaleData: LocaleData = {
     localeItems: [],
     localeLibraries: [],
   };
-  const dataNodes = await getDataNodes();
+  const dataNodes = getDataNodes();
   dataNodes.all.reverse().forEach((localeDataNode, i) => {
     const nodeLocaleData = getData(localeDataNode);
 
@@ -158,7 +158,7 @@ export async function getLocaleData() {
 export async function saveLocaleData(localeData: LocaleData) {
   // only save locale file
   if (localeData) {
-    const dataNodes = await getDataNodes();
+    const dataNodes = getDataNodes();
     const defaultLibraryId = dataNodes.main.id;
     const libraryGroups = groupBy(
       localeData.localeItems.filter((item) => item.isLocal),

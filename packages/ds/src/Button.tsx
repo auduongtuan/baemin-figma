@@ -1,6 +1,7 @@
 import React, { useState, ComponentType } from "react";
 import { forwardRef, useEffect } from "react";
 import WorkingIcon from "./WorkingIcon";
+import { twMerge } from "tailwind-merge";
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   variant?: "primary" | "secondary" | "tertiary";
   destructive?: boolean;
@@ -23,8 +24,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     return (
       <button
-        css={`
-          display: flex;
+        className={twMerge(
+          `flex items-center rounded-md text-onbrand shrink-0 font-sans text-xsmall leading-[16px] h-32 font-normal px-16 no-underline border-2 border-transparent select-none [&>svg]:mr-4 focus:outline-none`,
+          variant == "primary" &&
+            `bg-brand text-onbrand focus:border-focus active:border-focus`,
+          variant == "primary" && destructive && `bg-danger`,
+          variant == "secondary" &&
+            `bg-transparent border-action color-action px-17 focus:border-brand active:border-brand disabled:border-disabed disabled:color-disabled`,
+          variant == "secondary" && destructive && `border-danger text-danger`
+        )}
+        // css={`
+        /* display: flex;
           align-items: center;
           border-radius: var(--border-radius-large);
           color: var(--white);
@@ -39,14 +49,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           text-decoration: none;
           outline: none;
           border: 2px solid transparent;
-          user-select: none;
+          user-select: none; */
 
-          svg {
+        /* svg {
             margin-right: var(--size-xxxsmall);
-          }
+          } */
 
-          // primary
-          &.button--primary {
+        // primary
+        /* &.button--primary {
             background-color: var(--blue);
 
             &:enabled:active,
@@ -108,9 +118,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               color: var(--red);
               opacity: 0.4;
             }
-          }
+          } */
 
-          // tertiary
+        /* // tertiary
           &.button--tertiary {
             border: 1px solid transparent;
             color: var(--blue);
@@ -138,11 +148,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             &:disabled {
               opacity: 0.4;
             }
-          }
-        `}
-        className={`button--${variant}${
-          destructive ? "-destructive" : ""
-        } ${className}`}
+          } */
+        // `}
+        // className={`button--${variant}${
+        //   destructive ? "-destructive" : ""
+        // } ${className}`}
         type={type}
         {...rest}
         ref={ref}

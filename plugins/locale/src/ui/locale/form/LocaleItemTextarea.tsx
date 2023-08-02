@@ -30,7 +30,6 @@ const LocaleItemTextarea = forwardRef<
           if (typeof ref == "function") ref(node);
         }}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
       />
       {(variableMenuOpen || isFocused) && (
         <VariableMenu

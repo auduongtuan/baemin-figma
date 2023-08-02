@@ -29,6 +29,7 @@ const VariableMenu = ({
           <IconButton
             className={`bg-default absolute bottom-9 right-8 opacity-0 group-hover:opacity-100 aria-expanded:opacity-100 transition-opacity duration-100`}
             onMouseDown={(e) => e.preventDefault()}
+            tabIndex={-1}
           >
             <BracketIcon />
           </IconButton>

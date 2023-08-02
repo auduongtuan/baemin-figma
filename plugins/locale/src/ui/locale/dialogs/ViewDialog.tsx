@@ -31,7 +31,7 @@ const ViewDialog = () => {
         {item ? (
           <>
             <h2 className="font-medium text-large grow">Key</h2>
-            <div className="mt-12">{item.key}</div>
+            <div className="mt-8">{item.key}</div>
             <h2 className="mt-24 font-medium text-large grow">Translation</h2>
             <div className="flex flex-col gap-16 mt-12">
               {languages.map((language) => {

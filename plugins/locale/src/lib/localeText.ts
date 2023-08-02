@@ -22,12 +22,13 @@ import {
   deformatNumbersInVariables,
   formatNumbersInVariables,
 } from "./localeTextVariable";
+
 export function applyVariablesToContent(
   localeItemContent: LocaleItemContent,
   originVariables: LocaleTextVariables,
   lang?: Lang
 ): string {
-  const variables = { ...originVariables };
+  let variables = { ...originVariables };
   function addDefaultCount() {
     if (
       !("count" in variables) ||
@@ -43,7 +44,7 @@ export function applyVariablesToContent(
   // PLURAL FORM
   if (isPlurals(localeItemContent)) {
     addDefaultCount();
-    formatNumbersInVariables(variables, lang);
+    variables = formatNumbersInVariables(variables, lang);
     if (variables.count == 1 && "one" in localeItemContent) {
       return placeholders(localeItemContent.one || "", variables);
     }
@@ -57,7 +58,7 @@ export function applyVariablesToContent(
       if (variableNames.includes("count")) {
         addDefaultCount();
       }
-      formatNumbersInVariables(variables, lang);
+      variables = formatNumbersInVariables(variables, lang);
       return placeholders(localeItemContent, variables);
     } else {
       return localeItemContent;
@@ -117,8 +118,7 @@ export function getTextPropsByCharacters(
           }
         });
       });
-    const variables = { ...foundVariables };
-    deformatNumbersInVariables(variables);
+    const variables = deformatNumbersInVariables(foundVariables);
     if (item) {
       return {
         item,
@@ -230,16 +230,14 @@ export function getVariableNames(
 export function matchFormula(
   formula: string,
   items: LocaleItem[],
-  callback?: (item?: LocaleItem, match?: string[]) => void
+  callback?: (item?: LocaleItem | null, match?: string[]) => void
 ) {
   const matches = matchAll(/\:\s*([A-Za-z0-9\._]+)\s*\:/, formula);
   if (matches) {
     matches.forEach((match: string[]) => {
       if (match.length > 1) {
         const localeItem = findItemByKey(match[1], items);
-        if (localeItem) {
-          callback(localeItem, match);
-        }
+        callback(localeItem, match);
       }
     });
   }
@@ -310,9 +308,4 @@ export function getFullLocaleText(
     variables,
     characters,
   };
-}
-export function getTCode(key: string, variables: LocaleTextVariables) {
-  return `t("${key}"${
-    Object.keys(variables).length > 0 ? `, ${JSON.stringify(variables)}` : ""
-  })`;
 }

@@ -31,6 +31,7 @@ export function useUpdateLocaleSelection() {
     });
   }, []);
 }
+
 export function useSetIsDevMode() {
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -40,7 +41,7 @@ export function useSetIsDevMode() {
       if (devMode) {
         dispatch(setIsDevMode(true));
       } else {
-        dispatch(setIsDevMode(true));
+        dispatch(setIsDevMode(false));
       }
     });
   }, []);

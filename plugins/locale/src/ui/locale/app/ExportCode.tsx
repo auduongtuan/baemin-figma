@@ -33,7 +33,7 @@ import { LocaleText } from "../../../lib";
 import { compareTimeAsc } from "../../../lib/helpers";
 import { filterItemsByLibrary } from "../../../lib";
 import { getLibraryOptions } from "../../state/helpers";
-import { getLangJSON } from "./exportJson";
+import { getLangJSON } from "../../../lib/exportCode";
 const printCodeBlock = (
   localeItems: LocaleItem[],
   library: LocaleLibrary,

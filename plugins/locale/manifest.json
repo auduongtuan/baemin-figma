@@ -4,7 +4,13 @@
   "api": "1.0.0",
   "editorType": ["figma", "dev"],
   "capabilities": ["inspect", "codegen"],
-  "codegenLanguages": [{ "label": "i18n code", "value": "javascript" }],
+  "codegenLanguages": [
+    { "label": "i18next", "value": "i18next" },
+    {
+      "label": "i18n-js",
+      "value": "i18n-js"
+    }
+  ],
   "main": "dist/code.js",
   "permissions": ["currentuser"],
   "ui": "dist/index.html",

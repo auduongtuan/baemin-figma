@@ -10,6 +10,13 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        shine: {
+          "100%": {
+            "background-position-x": "-200%",
+          },
+        },
+      },
       data: {
         open: 'state="open"',
         checked: 'state="checked"',
@@ -17,6 +24,8 @@ export default {
       },
       boxShadow: {
         hud: "var(--shadow-hud)",
+        modal:
+          "hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px",
       },
       spacing: spacingScale,
       fontSize: {
@@ -31,12 +40,17 @@ export default {
         secondary: "var(--figma-color-text-secondary)",
         danger: "var(--figma-color-text-danger)",
         brand: "var(--figma-color-bg-brand)",
+        brandStrong: "var(--figma-color-bg-brand-strong)",
         brandHover: "var(--figma-color-bg-brand-hover)",
         brandPressed: "var(--figma-color-bg-brand-pressed)",
         component: "var(--figma-color-bg-component)",
         onbrand: "var(--figma-color-text-onbrand)",
         onbrandSecondary: "var(--figma-color-text-onbrand-secondary)",
         oncomponentTeritary: "var(--figma-color-text-oncomponent-tertiary)",
+      },
+      backgroundImage: {
+        skeleton:
+          "linear-gradient( 110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%)",
       },
       backgroundColor: {
         default: "var(--figma-color-bg)",

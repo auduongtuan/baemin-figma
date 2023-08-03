@@ -23,12 +23,9 @@ function getJSONCodegen(
 }
 
 function codegenHandle({ node, language }: CodegenEvent): CodegenResult[] {
-  if (!node) {
-  }
+  if (!node) return [];
   const format =
-    !language || (language !== "i18next" && language !== "i18n-js")
-      ? "i18next"
-      : language;
+    language !== "i18next" && language !== "i18n-js" ? "i18next" : language;
   if (isDataNode(node)) {
     const dataNodeInfo = parseDataNodeInfo(node);
     return getJSONCodegen(dataNodeInfo.items, format);

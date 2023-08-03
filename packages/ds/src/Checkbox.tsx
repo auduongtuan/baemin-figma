@@ -31,9 +31,10 @@ const Checkbox = forwardRef<
         id={checkboxId}
         checked={checked}
         className={`
-        bg-white border border-secondary rounded-sm content-[""] h-13 w-13 transition-colors duration-200 line-height-0 padding-0 margin-0 block 
+        bg-default border border-secondary rounded-sm content-[""] h-13 w-13 transition-colors duration-200 line-height-0 padding-0 margin-0 block 
         data-checked:bg-brand data-checked:border-brand data-checked:text-icon-onbrand
         data-indeterminate:bg-brand data-indeterminate:border-brand data-indeterminate:text-icon-onbrand
+        focus:outline-2 focus:outline-brand 
         disabled:border-disabled
         `}
         ref={forwardedRef}

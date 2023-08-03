@@ -15,7 +15,7 @@ const LocaleMain = ({}) => {
   return !isReady ? (
     <MainSekeleton />
   ) : (
-    <div className="flex flex-col w-full h-screen bg-white">
+    <div className="flex flex-col w-full h-screen bg-default">
       <NewDialog />
       <DeleteDialog />
       <EditDialog />

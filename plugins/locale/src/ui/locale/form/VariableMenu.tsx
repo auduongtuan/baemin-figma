@@ -23,6 +23,7 @@ const VariableMenu = ({
         setOpen(open);
         onOpenChange && onOpenChange(open);
       }}
+      modal={true}
     >
       <Tooltip content="Add common variable">
         <Popover.Trigger asChild>
@@ -35,10 +36,11 @@ const VariableMenu = ({
           </IconButton>
         </Popover.Trigger>
       </Tooltip>
-      <Popover.Portal>
+      <Popover.Portal style={{ zIndex: 2000 }}>
         <Popover.Content
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
+          style={{ zIndex: 2000 }}
         >
           <Menu
             style={{

@@ -22,6 +22,9 @@ export default {
         checked: 'state="checked"',
         indeterminate: 'state="indeterminate"',
       },
+      letterSpacing: {
+        tight: "-0.01em",
+      },
       boxShadow: {
         hud: "var(--shadow-hud)",
         modal:
@@ -38,6 +41,7 @@ export default {
         disabled: "rgba(0,0,0,0.3)",
         action: "rgba(0,0,0,0.8)",
         secondary: "var(--figma-color-text-secondary)",
+        tertiary: "var(--figma-color-text-tertiary)",
         danger: "var(--figma-color-text-danger)",
         brand: "var(--figma-color-bg-brand)",
         brandStrong: "var(--figma-color-bg-brand-strong)",
@@ -56,6 +60,7 @@ export default {
         default: "var(--figma-color-bg)",
         hover: "var(--figma-color-bg-hover)",
         hud: "var(--hud)",
+        selection: "rgba(24, 145, 251, 0.3)",
       },
       textColor: {
         "icon-onbrand": "var(--figma-color-icon-onbrand)",
@@ -63,6 +68,7 @@ export default {
       borderColor: {
         divider: "var(--figma-color-border)",
         disabled: "rgba(0,0,0,0.1)",
+        light: "rgba(0,0,0,0.1)",
         focus: "rgba(0,0,0,0.3)",
       },
     },

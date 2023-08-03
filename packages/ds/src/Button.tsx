@@ -1,6 +1,6 @@
 import React, { useState, ComponentType } from "react";
 import { forwardRef, useEffect } from "react";
-import WorkingIcon from "./WorkingIcon";
+import WorkingIcon from "./icons/WorkingIcon";
 import { twMerge } from "tailwind-merge";
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   variant?: "primary" | "secondary" | "tertiary";

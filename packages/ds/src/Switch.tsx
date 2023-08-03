@@ -18,7 +18,7 @@ const Switch = forwardRef<
   const switchRender = () => (
     <RSwitch.Root
       id={id}
-      className={`bg-white border-action border rounded-md content-[""] block h-12 w-24 transition-colors duration-200 data-checked:bg-brand data-checked:border-brand`}
+      className={`bg-default border-action border rounded-md content-[""] block h-12 w-24 transition-colors duration-200 data-checked:bg-brand data-checked:border-brand focus:outline-brand focus:outline-2`}
       ref={forwardedRef}
       {...rest}
     >

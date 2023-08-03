@@ -1,14 +1,4 @@
-import React, {
-  useState,
-  ComponentType,
-  Ref,
-  forwardRef,
-  useEffect,
-  ComponentPropsWithoutRef,
-  ComponentPropsWithRef,
-} from "react";
-import styled, { css } from "styled-components";
-import { renderToString } from "react-dom/server";
+import React, { forwardRef, useEffect, ComponentPropsWithRef } from "react";
 import clsx from "clsx";
 import TextareaAutosize, {
   TextareaAutosizeProps,
@@ -29,83 +19,11 @@ export interface TextareaProps extends TextareaAutosizeProps {
   helpText?: React.ReactNode;
   labelClass?: string;
   afterLabel?: React.ReactNode;
+  afterTextarea?: React.ReactNode;
 }
 
-export const BaseInputStyle = css`
-  font-size: var(--font-size-xsmall);
-  font-weight: var(--font-weight-normal);
-  letter-spacing: var(--font-letter-spacing-neg-xsmall);
-  line-height: var(--line-height);
-  position: relative;
-  display: flex;
-  overflow: visible;
-  align-items: center;
-  width: 100%;
-  margin: 0;
-  padding: 7px 8px;
-  color: var(--black8);
-  border: 1px solid var(--black1);
-  /* border-color: var(--black1); */
-  border-radius: var(--border-radius-small);
-  outline: none;
-  background-color: var(--white);
-  --ring-color: var(--blue);
-  &:hover,
-  &:placeholder-shown:hover {
-    color: var(--black8);
-    border: 1px solid var(--black1);
-    background-image: none;
-  }
-  &::selection {
-    color: var(--black);
-    background-color: var(--blue3);
-  }
-  &::placeholder {
-    color: var(--black3);
-    /* border: 1px solid transparent; */
-  }
-  &:placeholder-shown {
-    border: 1px solid var(--black1);
-  }
-  &:focus:placeholder-shown {
-    border: 1px solid var(--ring-color);
-    outline: 1px solid var(--ring-color);
-    outline-offset: -2px;
-  }
-  &:disabled:hover {
-    border: 1px solid transparent;
-  }
-  &:active,
-  &:focus {
-    color: var(--black);
-    border: 1px solid var(--ring-color);
-    outline: 1px solid var(--ring-color);
-    outline-offset: -2px;
-  }
-  &:disabled {
-    position: relative;
-    color: var(--black3);
-    user-select: none;
-  }
-  &:disabled:active {
-    outline: none;
-  }
-  &[aria-invalid="true"] {
-    --ring-color: var(--figma-color-border-danger);
-  }
-  .icon {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    width: var(--size-medium);
-    height: var(--size-medium);
-    z-index: 1;
-    opacity: 0.3;
-  }
-`;
-const StyledTextBox = styled.input<TextBoxProps>`
-  ${BaseInputStyle};
-`;
+export const baseInputStyle = "base-input";
+
 export const ErrorMessage = ({
   children,
   className,
@@ -165,14 +83,15 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
           <div className="flex items-center mb-8">
             <label
               htmlFor={id}
-              className={clsx("grow text-xsmall", labelClass)}
+              className={clsx("block grow text-xsmall", labelClass)}
             >
               {label}
             </label>
             {afterLabel && <div className="grow-0 shrink-0">{afterLabel}</div>}
           </div>
         )}
-        <StyledTextBox
+        <input
+          className={baseInputStyle}
           id={id}
           placeholder={
             placeholder || (typeof label == "string" ? label : undefined)
@@ -191,10 +110,10 @@ export const TextBox = forwardRef<HTMLInputElement, TextBoxProps>(
   }
 );
 
-const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
-  ${BaseInputStyle};
-  resize: none;
-`;
+// const StyledTextarea = styled(TextareaAutosize)<TextareaProps>`
+//   ${BaseInputStyle};
+//   resize: none;
+// `;
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
@@ -207,6 +126,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       errorText,
       helpText,
       afterLabel,
+      afterTextarea,
       ...rest
     },
     ref
@@ -217,24 +137,28 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           <div className="flex items-center mb-8">
             <label
               htmlFor={id}
-              className={clsx("grow text-xsmall", labelClass)}
+              className={clsx("block grow text-xsmall", labelClass)}
             >
               {label}
             </label>
             {afterLabel && <div className="grow-0 shrink-0">{afterLabel}</div>}
           </div>
         )}
-        <StyledTextarea
-          id={id}
-          placeholder={
-            placeholder || (typeof label == "string" ? label : undefined)
-          }
-          defaultValue={defaultValue}
-          className="textarea"
-          {...rest}
-          aria-invalid={errorText ? true : false}
-          ref={ref}
-        ></StyledTextarea>
+        <div className="relative">
+          <TextareaAutosize
+            rows={1}
+            id={id}
+            placeholder={
+              placeholder || (typeof label == "string" ? label : undefined)
+            }
+            defaultValue={defaultValue}
+            className={twMerge(baseInputStyle, "textarea resize-none")}
+            {...rest}
+            aria-invalid={errorText ? true : false}
+            ref={ref}
+          ></TextareaAutosize>
+          {afterTextarea && afterTextarea}
+        </div>
         {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
         {helpText && <HelpText>{helpText}</HelpText>}
       </div>

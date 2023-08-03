@@ -22,7 +22,7 @@ const Dropzone = ({
       data-drag-active={isDragActive ? "true" : undefined}
       className={twMerge(
         `border border-dashed border-divider rounded-md flex flex-col items-center justify-center`,
-        `text-center min-h-120px gap-8 px-16 py-8 text-secondary data-[drag-active]:text-brand data-[drag-active]:border-brandStrong transition-colors duration-100`,
+        `text-center min-h-[120px] gap-8 px-16 py-8 text-secondary data-[drag-active]:text-brand data-[drag-active]:border-brandStrong transition-colors duration-100`,
         `[&_p]:h-32 [&_p]:leading-[16px]`,
         className
       )}

@@ -40,8 +40,8 @@ export * from "./Checkbox";
 export { default as Tooltip } from "./Tooltip";
 // export * from "./Tooltip";
 
-export { default as WorkingIcon } from "./WorkingIcon";
-export * from "./WorkingIcon";
+export { default as WorkingIcon } from "./icons/WorkingIcon";
+export * from "./icons/WorkingIcon";
 
 export { default as Tag } from "./Tag";
 

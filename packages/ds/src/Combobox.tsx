@@ -175,7 +175,7 @@ const Combobox = ({
         inline ? "inline-flex" : "flex",
         inline ? "flex-row" : "flex-col",
         inline ? "items-center" : "items-start",
-        "gap-8 show-border",
+        "gap-8 ",
         className
       )}
     >

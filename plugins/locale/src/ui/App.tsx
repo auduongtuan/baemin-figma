@@ -1,6 +1,5 @@
 import { Tooltip } from "ds";
 // import 'figma-plugin-ds/dist/figma-plugin-ds.css'
-import "ds/ui.css";
 import "./ui.css";
 import LocaleMain from "./locale/LocaleMain";
 import { Provider } from "react-redux";

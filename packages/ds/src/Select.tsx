@@ -127,10 +127,10 @@ const Select = ({
   return (
     <div
       className={twMerge(
-        `show-border gap-8`,
+        `gap-8`,
         inline
           ? "inline-flex flex-row items-center"
-          : "flex flex-column items-start",
+          : "flex flex-col items-start",
         className
       )}
     >
@@ -154,9 +154,11 @@ const Select = ({
             }}
           >
             <span
-              className={`select-menu__label ${
-                !selectedItem ? "select-menu__label--placeholder" : ""
-              }`}
+              className={twMerge(
+                `select-menu__label`,
+                !selectedItem ? "select-menu__label--placeholder" : "",
+                !inline && `grow`
+              )}
             >
               {selectedItem ? (
                 <span className="flex items-center gap-4 shrink [&_svg]:w-12 [&_svg]:h-12 [&_svg]:flex-[0_0_auto]">

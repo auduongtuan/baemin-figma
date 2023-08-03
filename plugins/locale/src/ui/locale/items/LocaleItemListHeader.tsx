@@ -15,7 +15,7 @@ const LocaleItemListHeader = () => {
   const { source, editMode } = useAppSelector((state) => state.localeApp.list);
   const isDevMode = useIsDevMode();
   return (
-    <header className="sticky top-0 z-20 bg-white">
+    <header className="sticky top-0 z-20 bg-default">
       <div className="flex items-center px-16 py-4">
         <div className="flex w-full gap-8 grow">
           <div className="items-center grow">

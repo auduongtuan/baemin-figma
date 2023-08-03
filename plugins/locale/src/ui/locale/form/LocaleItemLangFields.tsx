@@ -44,11 +44,11 @@ const LocaleItemLangFields = ({ hasPlural, lang }) => {
             onVariableSelect={(variableName, textareaEl) => {
               const selectionStart = textareaEl.selectionStart;
               const selectionEnd = textareaEl.selectionEnd;
-              const oldValue = field.value as string;
+              const oldValue = (field.value as string) || "";
               const newValue =
-                oldValue.slice(0, selectionStart) +
+                oldValue.substring(0, selectionStart) +
                 variableName +
-                oldValue.slice(selectionEnd);
+                oldValue.substring(selectionEnd);
               setValue(`${lang}.one`, newValue);
               setTimeout(() => {
                 textareaEl.selectionStart =

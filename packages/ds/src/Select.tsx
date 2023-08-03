@@ -156,8 +156,7 @@ const Select = ({
             <span
               className={twMerge(
                 `select-menu__label`,
-                !selectedItem ? "select-menu__label--placeholder" : "",
-                !inline && `grow`
+                !selectedItem ? "select-menu__label--placeholder" : ""
               )}
             >
               {selectedItem ? (

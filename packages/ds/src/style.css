@@ -181,7 +181,7 @@ select.select-menu {
     /*  button */
     &__button {
       @apply base-input;
-      @apply flex h-32 items-center;
+      @apply flex h-32 items-center min-w-0;
       &:disabled:hover,
       &--disabled:hover {
         border-color: transparent;
@@ -212,7 +212,7 @@ select.select-menu {
 
     /* label w/ placeholder modifier */
     &__label {
-      @apply text-xsmall tracking-tight truncate -mt-2 text-action;
+      @apply text-xsmall tracking-tight truncate -mt-2 text-action grow;
 
       &--placeholder {
         @apply text-tertiary;

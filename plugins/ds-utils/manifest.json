@@ -7,6 +7,7 @@
   "menu": [
     { "name": "Change theme", "command": "changeTheme" },
     { "name": "Display tokens", "command": "displayTokens" },
+    { "name": "Update tokens", "command": "updateTokens" },
     { "name": "Test", "command": "test" }
   ]
 }

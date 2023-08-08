@@ -83,44 +83,44 @@ export const figmaAliasLight = {
       disabled: "white/0.24",
     },
     success: {
-      default: "green.500",
-      hover: "green.400",
-      pressed: "green.600",
+      default: "green.600",
+      hover: "green.500",
+      pressed: "green.700",
       disabled: "green.200",
       strong: "green.900",
     },
     error: {
-      default: "red.500",
-      hover: "red.400",
-      pressed: "red.600",
+      default: "red.600",
+      hover: "red.500",
+      pressed: "red.700",
       disabled: "red.200",
       strong: "red.900",
     },
     warning: {
-      default: "yellow.500",
-      hover: "yellow.400",
-      pressed: "yellow.600",
+      default: "yellow.600",
+      hover: "yellow.500",
+      pressed: "yellow.700",
       disabled: "yellow.200",
       strong: "yellow.900",
     },
     primary: {
-      default: "mint.500",
-      hover: "mint.400",
-      pressed: "mint.600",
+      default: "mint.600",
+      hover: "mint.500",
+      pressed: "mint.700",
       disabled: "mint.200",
       strong: "mint.900",
     },
     new: {
-      default: "purple.500",
-      hover: "purple.400",
-      pressed: "purple.600",
+      default: "purple.600",
+      hover: "purple.500",
+      pressed: "purple.700",
       disabled: "purple.200",
       strong: "purple.900",
     },
     info: {
-      default: "blue.500",
-      hover: "blue.400",
-      pressed: "blue.600",
+      default: "blue.600",
+      hover: "blue.500",
+      pressed: "blue.700",
       disabled: "blue.200",
       strong: "blue.900",
     },
@@ -135,7 +135,7 @@ export const figmaAliasLight = {
   border: {
     action: "gray.300",
     default: "gray.200",
-    divider: "gray.200",
+    divider: "gray.900/0.09",
     modal: "black/0.16",
     success: {
       default: "green.500",
@@ -181,7 +181,6 @@ export const figmaAliasLight = {
     },
   },
 };
-
 
 export const figmaAliasDark = {
   bg: {
@@ -364,4 +363,3 @@ export const figmaAliasDark = {
     },
   },
 };
-

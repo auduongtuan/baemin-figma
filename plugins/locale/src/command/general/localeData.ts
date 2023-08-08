@@ -136,7 +136,8 @@ export function parseDataNodeInfo(
 }
 export function getLocaleDataWithCreatingMain() {
   const dataNodes = getClassifiedDataNodes();
-  if (!dataNodes.main) createMainDataNode();
+  if (!dataNodes.main && figma.mode != "codegen" && figma.editorType != "dev")
+    createMainDataNode();
   return getLocaleData();
 }
 

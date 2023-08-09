@@ -87,13 +87,7 @@ const SheetManagement = () => {
     <div className="flex w-full">
       <div className="grow">
         <div className="flex gap-8">
-          <p
-            css={`
-              margin: 0;
-            `}
-          >
-            {sheetName}
-          </p>
+          <p className="m-0">{sheetName}</p>
           <Tooltip content="Unlink sheet">
             <IconButton
               onClick={() => dispatch(setLocaleData({ sheetId: null }))}
@@ -106,13 +100,13 @@ const SheetManagement = () => {
           />
         </div>
 
-        <p className="m-0 text-secondary mt-4">
+        <p className="m-0 mt-4 text-secondary">
           {localeItems && localeItems.length} items - Last sync{" "}
           {/* {timeAgo.format(new Date(modifiedTime))} */}
         </p>
       </div>
 
-      <div className="shrink-0 grow-0 flex gap-4">
+      <div className="flex gap-4 shrink-0 grow-0">
         <Button variant="secondary" onClick={() => sync()} loading={isSyncing}>
           Sync
         </Button>

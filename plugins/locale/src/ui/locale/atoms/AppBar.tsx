@@ -31,7 +31,7 @@ const AppBar = () => {
 
   // console.log("Navigator", navigator.clipboard);
   return (
-    <footer className="flex justify-between w-full px-16 py-12 bg-white border-t border-divider grow-0 shrink-0 ">
+    <footer className="flex justify-between w-full px-16 py-12 bg-default border-t border-divider grow-0 shrink-0 ">
       <div className="grow">
         <span className="text-secondary">
           v{import.meta.env.VITE_PLUGIN_VERSION}

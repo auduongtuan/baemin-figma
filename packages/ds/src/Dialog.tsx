@@ -18,7 +18,7 @@ const DialogFooter = ({ children }: React.ComponentPropsWithRef<"footer">) => {
   const { dialogContainerEl } = useDialogContext();
   return (
     <Portal container={dialogContainerEl}>
-      <footer className="px-16 py-8 bg-white border-t border-divider shrink-0 grow-0">
+      <footer className="px-16 py-8 bg-default border-t border-divider shrink-0 grow-0">
         {children}
       </footer>
     </Portal>
@@ -194,7 +194,7 @@ const DialogPanel = ({
               }
             >
               <Transition.Child
-                className="transition-all duration-400 bg-white rounded-md overflow-hidden  shadow-xl w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col focus:outline-none"
+                className="transition-all duration-400 bg-default rounded-md overflow-hidden  shadow-xl w-[90vw] max-w-[calc(100vw-48px)] max-h-[calc(100vh-48px)] flex flex-col focus:outline-none"
                 enterFrom="opacity-0 translate-y-40"
                 enterTo="opacity-100 translate-y-0"
                 leaveFrom="opacity-100 translate-y-0"

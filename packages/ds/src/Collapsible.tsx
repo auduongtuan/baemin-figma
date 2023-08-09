@@ -23,27 +23,6 @@ const CollapsibleTrigger = ({
         "flex items-start w-full gap-4 px-4 py-6 -mx-4 border-none rounded-lg bg-none hover:bg-hover group",
         className
       )}
-      // css={`
-      //   border: none;
-      //   background: none;
-      //   display: flex;
-      //   width: 100%;
-      //   align-items: flex-start;
-      //   gap: 4px;
-      //   padding: 6px 4px;
-      //   margin: 0 -4px;
-      //   border-radius: var(--border-radius-large);
-      //   &:hover {
-      //     background: var(--figma-color-bg-hover);
-      //   }
-      //   .chevron-icon {
-      //     transform-style: preserve-3d;
-      //     transition: transform 100ms;
-      //   }
-      //   &[data-state="open"] .chevron-icon {
-      //     transform: rotate(90deg);
-      //   }
-      // `}
       {...rest}
     >
       <ChevronRightIcon

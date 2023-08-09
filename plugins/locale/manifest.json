@@ -2,7 +2,15 @@
   "name": "BM i18n",
   "id": "1243474106181549610",
   "api": "1.0.0",
-  "editorType": ["figma"],
+  "editorType": ["figma", "dev"],
+  "capabilities": ["inspect", "codegen"],
+  "codegenLanguages": [
+    { "label": "i18next", "value": "i18next" },
+    {
+      "label": "i18n-js",
+      "value": "i18n-js"
+    }
+  ],
   "main": "dist/code.js",
   "permissions": ["currentuser"],
   "ui": "dist/index.html",

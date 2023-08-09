@@ -30,16 +30,17 @@ const LocaleItemTextarea = forwardRef<
           if (typeof ref == "function") ref(node);
         }}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        afterTextarea={
+          (variableMenuOpen || isFocused) && (
+            <VariableMenu
+              open={variableMenuOpen}
+              onOpenChange={setVariableMenuOpen}
+              onSelect={onVariableSelect}
+              textareaEl={textareaEl}
+            />
+          )
+        }
       />
-      {(variableMenuOpen || isFocused) && (
-        <VariableMenu
-          open={variableMenuOpen}
-          onOpenChange={setVariableMenuOpen}
-          onSelect={onVariableSelect}
-          textareaEl={textareaEl}
-        />
-      )}
     </div>
   );
 });

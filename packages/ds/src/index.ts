@@ -40,8 +40,8 @@ export * from "./Checkbox";
 export { default as Tooltip } from "./Tooltip";
 // export * from "./Tooltip";
 
-export { default as WorkingIcon } from "./WorkingIcon";
-export * from "./WorkingIcon";
+export { default as WorkingIcon } from "./icons/WorkingIcon";
+export * from "./icons/WorkingIcon";
 
 export { default as Tag } from "./Tag";
 
@@ -59,3 +59,11 @@ export { default as SectionTitle } from "./SectionTitle";
 export * from "./SectionTitle";
 export { default as RadioGroup } from "./RadioGroup";
 export * from "./RadioGroup";
+
+export { default as Description } from "./Description";
+export * from "./Description";
+
+export * from "./helpers";
+
+export { default as CopyTooltip } from "./CopyTooltip";
+export * from "./CopyTooltip";

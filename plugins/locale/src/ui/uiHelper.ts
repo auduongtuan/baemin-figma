@@ -12,6 +12,7 @@ export const commands = [
   "auto_set_key",
   "create_annotation",
   "set_configs",
+  "set_selection",
 ] as const;
 export type Command = typeof commands[number];
 
@@ -28,6 +29,7 @@ export function runCommand(
   type: "set_configs",
   data: { configs: { [key: string]: any } }
 ): void;
+export function runCommand(type: "set_selection", data: { id: string }): void;
 export function runCommand(
   type: string,
   data: { [key: string]: any } = {}

@@ -1,10 +1,9 @@
 import React from "react";
-const Divider = () => {
+import { twMerge } from "tailwind-merge";
+const Divider = ({ className }: { className?: string }) => {
   return (
-    <hr 
-      css={`
-        border-top: 1px solid #eee;
-      `}
+    <hr
+      className={twMerge("border-top border-solid border-[#eee]", className)}
     ></hr>
   );
 };

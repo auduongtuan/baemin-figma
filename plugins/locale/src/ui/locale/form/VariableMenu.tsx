@@ -23,21 +23,24 @@ const VariableMenu = ({
         setOpen(open);
         onOpenChange && onOpenChange(open);
       }}
+      modal={true}
     >
       <Tooltip content="Add common variable">
         <Popover.Trigger asChild>
           <IconButton
             className={`bg-default absolute bottom-9 right-8 opacity-0 group-hover:opacity-100 aria-expanded:opacity-100 transition-opacity duration-100`}
             onMouseDown={(e) => e.preventDefault()}
+            tabIndex={-1}
           >
             <BracketIcon />
           </IconButton>
         </Popover.Trigger>
       </Tooltip>
-      <Popover.Portal>
+      <Popover.Portal style={{ zIndex: 2000 }}>
         <Popover.Content
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
+          style={{ zIndex: 2000 }}
         >
           <Menu
             style={{

@@ -22,6 +22,9 @@ export function useConfigs() {
 export function useLanguages() {
   return useAppSelector((state) => state.localeApp.configs.languages);
 }
+export function useIsDevMode() {
+  return useAppSelector((state) => state.localeApp.isDevMode);
+}
 export function useDialog(checkOpen: (state: DialogState) => boolean = null) {
   const currentDialog = useAppSelector(
     (state) => state.localeApp.currentDialog

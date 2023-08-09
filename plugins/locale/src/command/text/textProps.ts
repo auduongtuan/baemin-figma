@@ -8,7 +8,7 @@ import {
   getTextPropsByCharacters,
 } from "../../lib";
 import configs from "figma-helpers/configs";
-import { deformatNumbersInVariables } from "../../lib/localeTextVariable";
+
 export function getLang(node: TextNode): Lang {
   const lang = h.getNodeData(node, `${PREFIX}lang`);
   if (lang in LANGUAGE_LIST) {
@@ -17,14 +17,17 @@ export function getLang(node: TextNode): Lang {
     return configs.get("defaultLanguage");
   }
 }
+
 export function getVariables(node: TextNode): LocaleTextVariables {
   const string = h.getNodeData(node, `${PREFIX}variables`);
   return string ? JSON.parse(string) : {};
 }
+
 export function getStyles(node: TextNode): LocaleTextStyles {
   const string = h.getNodeData(node, `${PREFIX}variables`);
   return string ? JSON.parse(string) : {};
 }
+
 export function getVariable(node: TextNode, variableName?: string) {
   const variables = getVariables(node);
   if (variableName && variableName in variables) {
@@ -33,9 +36,11 @@ export function getVariable(node: TextNode, variableName?: string) {
     return null;
   }
 }
+
 export function setVariables(node: TextNode, variables: LocaleTextVariables) {
   h.setNodeData(node, `${PREFIX}variables`, JSON.stringify(variables));
 }
+
 export function setVariable(
   node: TextNode,
   variableName: string,
@@ -50,15 +55,19 @@ export function setVariable(
 export function setLang(node: TextNode, lang: string) {
   h.setNodeData(node, `${PREFIX}lang`, lang);
 }
+
 export function getKey(node: TextNode) {
   return h.getNodeData(node, `${PREFIX}key`);
 }
+
 export function setKey(node: TextNode, key: string) {
   h.setNodeData(node, `${PREFIX}key`, key);
 }
+
 export function getFormula(node: TextNode) {
   return h.getNodeData(node, `${PREFIX}formula`);
 }
+
 export function setFormula(node: TextNode, formula: string) {
   h.setNodeData(node, `${PREFIX}formula`, formula);
 }

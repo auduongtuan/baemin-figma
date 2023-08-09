@@ -2,6 +2,7 @@ import { isObject } from "lodash-es";
 import { matchAll } from "./helpers";
 import { getTextPropsByCharacters } from "./localeText";
 import {
+  Lang,
   LocaleItem,
   LocaleItemContent,
   LocaleItemId,
@@ -11,8 +12,12 @@ import {
   LocaleLibrary,
 } from "./types";
 import configs from "figma-helpers/configs";
+import { LANGUAGE_LIST } from "./constant";
 
-export function findItemByKey(key: string, localeItems: LocaleItem[]) {
+export function findItemByKey(
+  key: string,
+  localeItems: LocaleItem[]
+): LocaleItem | null {
   return localeItems
     ? localeItems.find((item) => "key" in item && item.key == key)
     : null;
@@ -126,4 +131,16 @@ export function addDuplicatedPropToItems(
     ...item,
     duplicated: keyCounter[item.key] > 1,
   }));
+}
+export function getLangsInItems(items: LocaleItem[]) {
+  const langs = new Set<Lang>();
+  // check first 10 items
+  items.slice(0, 10).forEach((item) => {
+    Object.keys(item).forEach((lang) => {
+      if (lang in LANGUAGE_LIST) {
+        langs.add(lang as Lang);
+      }
+    });
+  });
+  return Array.from(langs);
 }

@@ -16,7 +16,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         ref={forwardedRef}
         type={type}
         className={twMerge(
-          "text-action bg-transparent p-4 -m-4 hover:bg-hover",
+          "text-action bg-transparent p-4 -m-4 hover:bg-hover focus:outline-brand focus:outline-2",
           pressed && "text-brand bg-hover",
           className
         )}

@@ -1,6 +1,11 @@
 import { getKey, getLang, getFormula, getVariables } from "./textProps";
-import type { LocaleText } from "../../lib";
+import {
+  findItemByKey,
+  type LocaleText,
+  LocaleItemOptionalDuplicated,
+} from "../../lib";
 import { selection, isContainer } from "figma-helpers";
+
 export function getTextNodes(scope?: BaseNode | BaseNode[]): TextNode[] {
   const updateNodes = scope
     ? Array.isArray(scope)
@@ -43,4 +48,17 @@ export function getTextsFromTextNodes(textNodes: TextNode[]): LocaleText[] {
 export function getTexts(scope?: BaseNode | BaseNode[]): LocaleText[] {
   const textNodes = getTextNodes(scope || figma.currentPage);
   return getTextsFromTextNodes(textNodes);
+}
+
+export function getItemsFromTexts(
+  texts: LocaleText[],
+  allItems: LocaleItemOptionalDuplicated[]
+) {
+  return texts.reduce<LocaleItemOptionalDuplicated[]>((acc, text) => {
+    const item = findItemByKey(text.key, allItems);
+    if (item) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
 }

@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useCallback } from "react";
 import { Switch } from "ds";
 import { Controller, useFormContext } from "react-hook-form";
 import { LANGUAGE_LIST } from "../../../lib";
-import { useLanguages } from "@ui/hooks/locale";
-import VariableMenu from "./VariableMenu";
 import LocaleItemTextarea from "./LocaleItemTextarea";
 
 const LocaleItemLangFields = ({ hasPlural, lang }) => {
-  const { control, setValue } = useFormContext();
+  const { control, setValue, getValues } = useFormContext();
+  const onVariableSelect = useCallback(
+    (fieldName: string) =>
+      (variableName: string, textareaEl: HTMLTextAreaElement) => {
+        const selectionStart = textareaEl.selectionStart;
+        const selectionEnd = textareaEl.selectionEnd;
+        const oldValue = (getValues(fieldName) as string) || "";
+        const newValue =
+          oldValue.substring(0, selectionStart) +
+          variableName +
+          oldValue.substring(selectionEnd);
+        setValue(fieldName, newValue);
+        setTimeout(() => {
+          textareaEl.selectionStart = selectionStart + variableName.length;
+          textareaEl.selectionEnd = selectionStart + variableName.length;
+        }, 0);
+      },
+    [getValues, setValue]
+  );
   return (
     <div className="mt-12">
       <Controller
@@ -41,21 +57,7 @@ const LocaleItemLangFields = ({ hasPlural, lang }) => {
             }
             value={field.value}
             onChange={field.onChange}
-            onVariableSelect={(variableName, textareaEl) => {
-              const selectionStart = textareaEl.selectionStart;
-              const selectionEnd = textareaEl.selectionEnd;
-              const oldValue = field.value as string;
-              const newValue =
-                oldValue.slice(0, selectionStart) +
-                variableName +
-                oldValue.slice(selectionEnd);
-              setValue(`${lang}.one`, newValue);
-              setTimeout(() => {
-                textareaEl.selectionStart =
-                  selectionStart + variableName.length;
-                textareaEl.selectionEnd = selectionStart + variableName.length;
-              }, 0);
-            }}
+            onVariableSelect={onVariableSelect(field.name)}
             ref={field.ref}
           />
         )}
@@ -73,7 +75,7 @@ const LocaleItemLangFields = ({ hasPlural, lang }) => {
               className="mt-12"
               value={field.value}
               onChange={field.onChange}
-              onVariableSelect={(variableName) => {}}
+              onVariableSelect={onVariableSelect(field.name)}
               ref={field.ref}
             />
           )}

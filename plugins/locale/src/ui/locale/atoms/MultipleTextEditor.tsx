@@ -22,7 +22,7 @@ const MultipleTextEditor = () => {
   return localeSelection && localeSelection.texts ? (
     <div className="p-16">
       <header className="flex items-center">
-        <h4 className="mt-0 grow font-medium text-secondary">
+        <h4 className="mt-0 font-medium grow text-secondary">
           {localeSelection.texts.length}{" "}
           {pluralize("text", localeSelection.texts.length)} in selection
         </h4>
@@ -73,7 +73,7 @@ const MultipleTextEditor = () => {
           </Tooltip>
         </div>
       </header>
-      <div className="mt-16 flex flex-col gap-16">
+      <div className="flex flex-col gap-16 mt-16">
         {localeSelection.texts.map((text) => {
           return <TextEditForm key={text.id} text={text}></TextEditForm>;
         })}

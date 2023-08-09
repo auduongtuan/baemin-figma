@@ -7,6 +7,7 @@ import { isEqual } from "lodash-es";
 import Menu, { MenuItemProps } from "./Menu";
 import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
 import { useDialogContext } from "./Dialog";
+import { twMerge } from "tailwind-merge";
 export interface SelectOption extends MenuItemProps {
   id?: string;
   value: any;
@@ -125,13 +126,13 @@ const Select = ({
 
   return (
     <div
-      css={`
-        display: ${inline ? "inline-flex" : "flex"};
-        flex-direction: ${inline ? "row" : "column"};
-        align-items: ${inline ? "center" : "flex-start"};
-        gap: 8px;
-      `}
-      className={`show-border ${className && className}`}
+      className={twMerge(
+        `gap-8`,
+        inline
+          ? "inline-flex flex-row items-center"
+          : "flex flex-col items-start",
+        className
+      )}
     >
       {label &&
         (LabelComponent ? (
@@ -153,21 +154,13 @@ const Select = ({
             }}
           >
             <span
-              className={`select-menu__label ${
+              className={twMerge(
+                `select-menu__label`,
                 !selectedItem ? "select-menu__label--placeholder" : ""
-              }`}
+              )}
             >
               {selectedItem ? (
-                <span
-                  className="flex items-center gap-4 shrink"
-                  css={`
-                    svg {
-                      width: 12px;
-                      height: 12px;
-                      flex: 0 0 auto;
-                    }
-                  `}
-                >
+                <span className="flex items-center gap-4 shrink [&_svg]:w-12 [&_svg]:h-12 [&_svg]:flex-[0_0_auto]">
                   {selectedItem.icon && selectedItem.icon}
                   <span className="truncate shrink">{selectedItem.name}</span>
                 </span>
@@ -179,26 +172,8 @@ const Select = ({
           </button>
         </Popper.Anchor>
 
-        {errorText && (
-          <p
-            css={`
-              color: var(--figma-color-text-danger);
-              font-size: var(--font-size-xsmall);
-            `}
-          >
-            {errorText}
-          </p>
-        )}
-        {helpText && (
-          <p
-            css={`
-              color: var(--figma-color-text-secondary);
-              font-size: var(--font-size-xsmall);
-            `}
-          >
-            {helpText}
-          </p>
-        )}
+        {errorText && <p className="text-danger text-xsmall">{errorText}</p>}
+        {helpText && <p className="text-secondary text-xsmall">{helpText}</p>}
 
         {isOpen && (
           <Portal asChild>

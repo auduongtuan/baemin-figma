@@ -1,4 +1,4 @@
-import { BaseInputStyle, Menu } from "ds";
+import { Menu } from "ds";
 import React, { useState } from "react";
 import {
   Mention,
@@ -6,24 +6,10 @@ import {
   MentionsInputProps,
   SuggestionDataItem,
 } from "react-mentions";
-import styled from "styled-components";
-import { getStringContent } from "../../../lib";
-import { useAppSelector } from "../../hooks/redux";
-import { useLocaleSelection, useLocaleItems } from "../../hooks/locale";
+import { getStringContent } from "@lib";
+import { useLocaleItems } from "@ui/hooks/locale";
+
 const mentionInputClassName = "mention-input";
-const FormulaInputContainer = styled.div`
-  .${mentionInputClassName}__input {
-    ${BaseInputStyle};
-  }
-  .${mentionInputClassName}__control {
-    min-height: 98px;
-  }
-  .${mentionInputClassName}__suggestions {
-    margin-left: 10px;
-    padding-top: 16px;
-    background-color: transparent !important;
-  }
-`;
 export interface FormulaEditorProps
   extends Omit<MentionsInputProps, "children" | "value" | "onChange"> {
   value?: string;
@@ -54,7 +40,7 @@ const FormulaEditor = ({ value, onChange, ...rest }: FormulaEditorProps) => {
     }
   };
   return (
-    <FormulaInputContainer>
+    <div>
       <MentionsInput
         className={mentionInputClassName}
         value={passedValue}
@@ -87,7 +73,7 @@ const FormulaEditor = ({ value, onChange, ...rest }: FormulaEditorProps) => {
           }}
         />
       </MentionsInput>
-    </FormulaInputContainer>
+    </div>
   );
 };
 

@@ -1,6 +1,9 @@
 import { figmaRGBToHex } from "figma-helpers/colors";
 import { selection, isFrame } from "figma-helpers";
-import { figmaAliasDark, figmaAliasLight } from "./constant/tokens/aliasColors";
+import {
+  darkAliasReferences,
+  lightAliasReferences,
+} from "./constant/tokens/aliasColors";
 import displayTokenList from "./colors/displayTokenList";
 import copyAttributesToChild from "./shortcuts/copyAttributesToChild";
 import updateStyles from "./colors/updateStyles";
@@ -44,12 +47,12 @@ designSystem.updateTokens = updateStyles;
 designSystem.displayTokens = async () => {
   await displayTokenList(
     "light",
-    figmaAliasLight,
+    lightAliasReferences,
     "TOKEN DISPLAY CONTAINER - LIGHT"
   );
   await displayTokenList(
     "dark",
-    figmaAliasDark,
+    darkAliasReferences,
     "TOKEN DISPLAY CONTAINER - DARK"
   );
 };

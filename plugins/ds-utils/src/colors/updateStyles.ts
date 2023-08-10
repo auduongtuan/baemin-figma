@@ -2,8 +2,8 @@ import createOrUpdateStyle from "./createOrUpdateStyle";
 import parseTokens from "./parseTokens";
 import globalColors from "../constant/tokens/globalColors";
 import {
-  figmaAliasLight,
-  figmaAliasDark,
+  lightAliasReferences,
+  darkAliasReferences,
 } from "../constant/tokens/aliasColors";
 
 const updateStyles = () => {
@@ -21,7 +21,7 @@ const updateStyles = () => {
     );
   }
   // update light alias tokens
-  let parsedLightAliasTokens = parseTokens(figmaAliasLight);
+  let parsedLightAliasTokens = parseTokens(lightAliasReferences);
   for (const name in parsedLightAliasTokens) {
     const type = name.split(".")[0] || "";
     createOrUpdateStyle(
@@ -32,7 +32,7 @@ const updateStyles = () => {
     );
   }
   // update dark alias tokens
-  let parsedDarkAliasTokens = parseTokens(figmaAliasDark);
+  let parsedDarkAliasTokens = parseTokens(darkAliasReferences);
   console.log(parsedDarkAliasTokens);
   for (const name in parsedDarkAliasTokens) {
     const type = name.split(".")[0] || "";

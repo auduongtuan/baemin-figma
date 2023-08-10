@@ -1,6 +1,6 @@
 // \{[\s\n\r]*name:[\n\r\s]*"(.*)"[\n\r\s]*,[\n\r\s]*value:[\n\r\s]*(.*)[\n\r\s]*\}
 import globalColors from "./globalColors";
-export const figmaAliasLight = {
+export const lightAliasReferences = {
   bg: {
     default: "gray.50",
     surface: "white",
@@ -8,11 +8,11 @@ export const figmaAliasLight = {
     emphasis: "gray.900/0.8",
     overlay: "gray.900/0.2",
     backdrop: "gray.900/0.6",
-    hover: "gray.300/0.09",
+    hover: "gray.500/0.08",
     action: {
       default: "transparent",
-      hover: "gray.900/0.07",
-      pressed: "gray.900/0.09",
+      hover: "gray.500/0.10",
+      pressed: "gray.500/0.16",
       selected: {
         default: "mint.500/0.16",
         hover: "mint.500/0.24",
@@ -136,7 +136,7 @@ export const figmaAliasLight = {
   border: {
     action: "gray.300",
     default: "gray.200",
-    divider: "gray.900/0.10",
+    divider: "gray.900/0.12",
     modal: "black/0.16",
     success: {
       default: "green.500",
@@ -183,7 +183,7 @@ export const figmaAliasLight = {
   },
 };
 
-export const figmaAliasDark = {
+export const darkAliasReferences = {
   bg: {
     default: "gray.900",
     surface: "gray.800",
@@ -191,11 +191,11 @@ export const figmaAliasDark = {
     emphasis: "gray.900/0.8",
     overlay: "gray.900/0.2",
     backdrop: "gray.900/0.6",
-    hover: "gray.500/0.09",
+    hover: "gray.500/0.08",
     action: {
       default: "transparent",
-      hover: "white/0.07",
-      pressed: "white/0.09",
+      hover: "gray.500/0.10",
+      pressed: "gray.500/0.16",
       selected: {
         default: "mint.500/0.16",
         hover: "mint.500/0.24",
@@ -319,7 +319,7 @@ export const figmaAliasDark = {
   border: {
     action: "gray.400",
     default: "gray.600",
-    divider: "white/0.10",
+    divider: "white/0.12",
     modal: "white/0.16",
     success: {
       default: "green.500",

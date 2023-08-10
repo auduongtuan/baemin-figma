@@ -2,8 +2,8 @@ import { webRGB, webRGBA, webRGBToFigmaRGB } from "figma-helpers/colors";
 import globalColors from "../constant/tokens/globalColors";
 import parseTokens, { convertTokens } from "./parseTokens";
 import {
-  figmaAliasDark,
-  figmaAliasLight,
+  darkAliasReferences,
+  lightAliasReferences,
 } from "../constant/tokens/aliasColors";
 const localCollections = figma.variables.getLocalVariableCollections();
 function getCollectionByName(name: string) {
@@ -62,7 +62,7 @@ function createGlobalColorVariables() {
     // );
     const colorVariable = createOrGetVariable(
       globalColorsCollection,
-      `global${palette}/${name.replace(/\./g, "-")}`,
+      `${palette}/${name.replace(/\./g, "-")}`,
       "COLOR"
     );
     console.log(colorVariable);
@@ -92,10 +92,10 @@ function createAliasColorVariables() {
   const darkMode = aliasColorsCollection.modes.find(
     (mode) => mode.name == "dark"
   );
-  let parsedLightTokens = parseTokens(figmaAliasLight);
-  let parsedDarkTokens = parseTokens(figmaAliasDark);
-  const lightModeAlias = convertTokens(figmaAliasLight);
-  const darkModeAlias = convertTokens(figmaAliasDark);
+  let parsedLightTokens = parseTokens(lightAliasReferences);
+  let parsedDarkTokens = parseTokens(darkAliasReferences);
+  const lightModeAlias = convertTokens(lightAliasReferences);
+  const darkModeAlias = convertTokens(darkAliasReferences);
   console.log(lightModeAlias);
   for (const name in parsedLightTokens) {
     const parts = name.split(".");

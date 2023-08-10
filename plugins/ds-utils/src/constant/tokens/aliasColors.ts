@@ -8,10 +8,11 @@ export const figmaAliasLight = {
     emphasis: "gray.900/0.8",
     overlay: "gray.900/0.2",
     backdrop: "gray.900/0.6",
+    hover: "gray.300/0.09",
     action: {
       default: "transparent",
-      hover: "gray.900/0.04",
-      pressed: "gray.900/0.06",
+      hover: "gray.900/0.07",
+      pressed: "gray.900/0.09",
       selected: {
         default: "mint.500/0.16",
         hover: "mint.500/0.24",
@@ -135,7 +136,7 @@ export const figmaAliasLight = {
   border: {
     action: "gray.300",
     default: "gray.200",
-    divider: "gray.900/0.09",
+    divider: "gray.900/0.10",
     modal: "black/0.16",
     success: {
       default: "green.500",
@@ -190,10 +191,11 @@ export const figmaAliasDark = {
     emphasis: "gray.900/0.8",
     overlay: "gray.900/0.2",
     backdrop: "gray.900/0.6",
+    hover: "gray.500/0.09",
     action: {
       default: "transparent",
-      hover: "white/0.04",
-      pressed: "white/0.06",
+      hover: "white/0.07",
+      pressed: "white/0.09",
       selected: {
         default: "mint.500/0.16",
         hover: "mint.500/0.24",
@@ -317,7 +319,7 @@ export const figmaAliasDark = {
   border: {
     action: "gray.400",
     default: "gray.600",
-    divider: "gray.600",
+    divider: "white/0.10",
     modal: "white/0.16",
     success: {
       default: "green.500",

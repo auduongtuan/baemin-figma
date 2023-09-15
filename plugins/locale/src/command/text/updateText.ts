@@ -26,7 +26,7 @@ import configs from "figma-helpers/configs";
 export function updateTextNode(
   textNode: TextNode,
   textProps: LocaleTextProps,
-  items: LocaleItem[]
+  items: LocaleItem[] = []
 ) {
   if (!textProps) return;
   // setup key

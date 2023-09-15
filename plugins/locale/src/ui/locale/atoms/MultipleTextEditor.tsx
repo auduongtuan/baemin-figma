@@ -9,6 +9,7 @@ import { Tooltip, IconButton } from "ds";
 import {
   ChatBubbleIcon,
   MagicWandIcon,
+  MinusCircledIcon,
   UpdateIcon,
 } from "@radix-ui/react-icons";
 import { runCommand } from "../../uiHelper";
@@ -26,7 +27,16 @@ const MultipleTextEditor = () => {
           {localeSelection.texts.length}{" "}
           {pluralize("text", localeSelection.texts.length)} in selection
         </h4>
-        <div className="flex gap-8 shrink-0">
+        <div className="flex gap-12 shrink-0">
+          <Tooltip content="Unset keys and formulas">
+            <IconButton
+              onClick={() => {
+                runCommand("unset_key_and_formula");
+              }}
+            >
+              <MinusCircledIcon />
+            </IconButton>
+          </Tooltip>
           <Tooltip content="Update texts to latest content">
             <IconButton
               onClick={() => {
@@ -75,7 +85,12 @@ const MultipleTextEditor = () => {
       </header>
       <div className="flex flex-col gap-16 mt-16">
         {localeSelection.texts.map((text) => {
-          return <TextEditForm key={text.id} text={text}></TextEditForm>;
+          return (
+            <TextEditForm
+              key={text.id + text.key + text.formula}
+              text={text}
+            ></TextEditForm>
+          );
         })}
       </div>
     </div>

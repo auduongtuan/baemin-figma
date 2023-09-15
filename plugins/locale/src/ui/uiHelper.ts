@@ -13,6 +13,7 @@ export const commands = [
   "create_annotation",
   "set_configs",
   "set_selection",
+  "unset_key_and_formula",
 ] as const;
 export type Command = typeof commands[number];
 

@@ -7,6 +7,7 @@ import {
   removeLocaleItem,
   removeLocaleItems,
   moveLocaleItemsToLibrary,
+  moveLocaleItemsToGroup,
 } from "./localeSlice";
 import type { RootState } from "./store";
 import { runCommand } from "../uiHelper";
@@ -20,7 +21,8 @@ listenerMiddleware.startListening({
     updateLocaleItem,
     removeLocaleItem,
     removeLocaleItems,
-    moveLocaleItemsToLibrary
+    moveLocaleItemsToLibrary,
+    moveLocaleItemsToGroup
   ),
   effect: (action, listenerApi) => {
     const modifiedTime = new Date().toJSON();

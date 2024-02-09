@@ -144,3 +144,41 @@ export function getLangsInItems(items: LocaleItem[]) {
   });
   return Array.from(langs);
 }
+
+export function getItemKeyWithoutGroup(itemKey: string) {
+  const parts = itemKey.split(".");
+  return parts[parts.length - 1];
+}
+
+export function getItemKeyInNewGroup(itemKey: string, newGroupName: string) {
+  const itemKeyWithoutGroup = getItemKeyWithoutGroup(itemKey);
+  return newGroupName
+    ? newGroupName + "." + itemKeyWithoutGroup
+    : itemKeyWithoutGroup;
+}
+
+/**
+ * Check if an item is in a given collection (same library and key)
+ */
+export function isItemInCollection(
+  itemToCheck: LocaleItem,
+  items: LocaleItem[]
+) {
+  const found = items.find(
+    (item) =>
+      item.key == itemToCheck.key && item.fromLibrary == itemToCheck.fromLibrary
+  );
+  return found !== undefined && found !== null;
+}
+
+/**
+ * Get group name from item collections
+ */
+export function getGroupNameFromItems(items: LocaleItem[]) {
+  const groups = new Set<string>();
+  items.forEach((item) => {
+    const parts = item.key.split(".");
+    groups.add(parts.slice(0, parts.length - 1).join("."));
+  });
+  return Array.from(groups);
+}

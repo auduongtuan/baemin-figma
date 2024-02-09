@@ -5,7 +5,14 @@ import { unionWith } from "lodash-es";
 export interface DialogState {
   // [libraryId, key]
   key?: "__SELECTED_ITEMS" | LocaleItemId;
-  type?: "VIEW" | "EDIT" | "NEW" | "DELETE" | "IMPORT" | "MOVE_LIBRARY";
+  type?:
+    | "VIEW"
+    | "EDIT"
+    | "NEW"
+    | "DELETE"
+    | "IMPORT"
+    | "MOVE_LIBRARY"
+    | "MOVE_GROUP";
   onDone?: (localeItem: LocaleItem) => void;
 }
 
@@ -37,7 +44,7 @@ const initialState: {
   },
   list: {
     source: "all",
-    editMode: false,
+    editMode: true,
     selectedItems: [],
   },
 };

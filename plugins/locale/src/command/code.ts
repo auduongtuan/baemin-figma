@@ -20,6 +20,7 @@ import { getTexts } from "./text/textNodes";
 import changeText from "figma-helpers/changeText";
 import configs from "figma-helpers/configs";
 import codegenHandle from "./general/codegen";
+import toggleAnnotations from "./general/toggleAnnotations";
 
 // Make sure that we're in Dev Mode and running codegen
 if (figma.editorType === "dev" && figma.mode === "codegen") {
@@ -80,6 +81,9 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
   io.on("set_selection", async (msg) => {
     const node = figma.getNodeById(msg.id) as SceneNode;
     if (node) figma.currentPage.selection = [node];
+  });
+  io.on("toggle_annotations", async (msg) => {
+    await toggleAnnotations();
   });
   figma.on("run", (runEvent: RunEvent) => {
     configs

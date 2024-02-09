@@ -4,3 +4,4 @@ export { default as DuplicationIcon } from "./DuplicationIcon";
 export { default as BracketIcon } from "./BracketIcon";
 export { default as KeyIcon } from "./KeyIcon";
 export { default as FolderIcon } from "./FolderIcon";
+export { default as ChatBubbleEyeIcon } from "./ChatBubbleEyeIcon";

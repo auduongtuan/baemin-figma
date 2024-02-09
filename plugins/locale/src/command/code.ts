@@ -6,6 +6,7 @@ import {
 } from "./../lib/constant";
 import { updateTextsAsync } from "./text/updateText";
 import autoSetKeyForSelection from "./selection/autoSetKey";
+import unsetKeyAndFormulaForSelection from "./selection/unsetKeyAndFormula";
 import {
   getLocaleDataWithCreatingMain,
   saveLocaleData,
@@ -28,6 +29,9 @@ if (figma.editorType === "dev" && figma.mode === "codegen") {
   figma.skipInvisibleInstanceChildren = true;
   io.on("select_texts", (msg) => selectTexts(msg.key));
   io.on("auto_set_key", (msg) => autoSetKeyForSelection(msg.localeItems));
+  io.on("unset_key_and_formula", () => {
+    unsetKeyAndFormulaForSelection();
+  });
   io.on("update_texts", (msg) => {
     const { ids, items, ...rest } = msg;
     // updateTextsByIds(ids, rest);

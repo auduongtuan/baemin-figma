@@ -57,7 +57,13 @@ const TextEditForm = ({ text }: { text: LocaleText }) => {
     [localeItems, text]
   );
   useEffect(() => {
-    if (text.formula) setUseFormula(true);
+    if (text.formula) {
+      setUseFormula(true);
+      setValue("formula", text.formula);
+    } else {
+      setUseFormula(false);
+      setValue("formula", "");
+    }
     const watcher = watch((data) => {
       if (data) {
         updateTextDebounce(data);

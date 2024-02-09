@@ -173,12 +173,14 @@ export function isItemInCollection(
 
 /**
  * Get group name from item collections
+ * Note: doesn't include ungrouped
  */
 export function getGroupNameFromItems(items: LocaleItem[]) {
   const groups = new Set<string>();
   items.forEach((item) => {
     const parts = item.key.split(".");
-    groups.add(parts.slice(0, parts.length - 1).join("."));
+    const group = parts.slice(0, parts.length - 1).join(".");
+    if (group) groups.add(group);
   });
   return Array.from(groups);
 }

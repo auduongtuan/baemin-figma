@@ -95,9 +95,13 @@ const MoveGroupForm = () => {
       value: "__CUSTOM",
       name: "Use a custom name",
     },
+    {
+      value: "__UNGROUPED",
+      name: "Ungrouped",
+    },
     ...groupNames.map((g) => ({
-      value: g === "" ? "__UNGROUPED" : g,
-      name: g === "" ? "Ungrouped" : g,
+      value: g,
+      name: g,
     })),
   ];
 

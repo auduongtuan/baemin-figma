@@ -1,5 +1,5 @@
 import { pluralize } from "@capaj/pluralize";
-import { IconButton, MoveLibraryIcon, Tooltip } from "ds";
+import { FolderIcon, IconButton, MoveLibraryIcon, Tooltip } from "ds";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Cross2Icon, StackIcon, TrashIcon } from "@radix-ui/react-icons";
 import {
@@ -54,7 +54,7 @@ const LocaleItemToolbar = ({}) => {
                       );
                     }}
                   >
-                    <StackIcon />
+                    <FolderIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip content="Move items to other library">

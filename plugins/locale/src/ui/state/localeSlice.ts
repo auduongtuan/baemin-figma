@@ -145,10 +145,10 @@ export const localeSlice = createSlice({
     moveLocaleItemsToGroup: moveLocaleItemsToGroupReducer,
     updateLocaleItem: (
       state,
-      action: PayloadAction<LocaleItem & { id: LocaleItemId }>
+      action: PayloadAction<LocaleItem & { itemId: LocaleItemId }>
     ) => {
-      const { id, ...updatedItem } = action.payload;
-      const [oldFromLibrary, oldKey] = id;
+      const { itemId, ...updatedItem } = action.payload;
+      const [oldFromLibrary, oldKey] = itemId;
       const newLocalItems = cloneDeep(state.localeItems).map((item) => {
         // only change key or library at a time
         if (

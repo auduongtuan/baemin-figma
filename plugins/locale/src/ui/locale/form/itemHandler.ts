@@ -12,7 +12,7 @@ export function updateItemHandler(values: FormValues) {
   const localeSelection = getLocaleSelection();
   const localeItemData = getItemFromFormValues("update", otherFormValues);
   store.dispatch(
-    updateLocaleItem({ ...localeItemData, id: [oldFromLibrary, oldKey] })
+    updateLocaleItem({ ...localeItemData, itemId: [oldFromLibrary, oldKey] })
   );
   if (localeSelection) updateTextsOfItem(oldKey, localeItemData);
   runCommand("show_figma_notify", { message: "Item updated" });
@@ -24,7 +24,7 @@ export function quickUpdateItemHandler(values: FormValues) {
   const localeSelection = getLocaleSelection();
   const localeItemData = getItemFromFormValues("quick-update", otherFormValues);
   store.dispatch(
-    updateLocaleItem({ ...localeItemData, id: [oldFromLibrary, oldKey] })
+    updateLocaleItem({ ...localeItemData, itemId: [oldFromLibrary, oldKey] })
   );
   // update selected text also
   if (localeSelection) updateTextsOfItem(null, localeItemData);

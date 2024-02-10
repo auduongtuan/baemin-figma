@@ -85,7 +85,7 @@ const MultipleTextEditor = () => {
       </header>
       <div className="flex flex-col gap-16 mt-16">
         {localeSelection.texts.map((text) => {
-          return <TextEditForm key={text.id} text={text} />;
+          return <TextEditForm text={text} />;
         })}
       </div>
     </div>

@@ -67,3 +67,6 @@ export * from "./helpers";
 
 export { default as CopyTooltip } from "./CopyTooltip";
 export * from "./CopyTooltip";
+
+export { default as MultipleSelection } from "./MultipleSelection";
+export * from "./MultipleSelection";

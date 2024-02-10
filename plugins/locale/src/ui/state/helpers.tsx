@@ -28,6 +28,8 @@ export function updateText(id: string, textProps: LocaleTextProps) {
       ...(typeof characters != "undefined" ? { characters } : {}),
     })
   );
+  const selection = store.getState().locale.localeSelection;
+  console.log(selection);
 }
 export function updateTexts(ids: string[], textProps: LocaleTextProps) {
   runCommand("update_texts", {

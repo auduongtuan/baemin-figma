@@ -9,6 +9,7 @@ import DeleteDialog from "./dialogs/DeleteDialog";
 import EditDialog from "./dialogs/EditDialog";
 import MoveLibraryDialog from "./dialogs/MoveLibraryDialog";
 import ViewDialog from "./dialogs/ViewDialog";
+import MoveGroupDialog from "./dialogs/MoveGroupDialog";
 const LocaleMain = ({}) => {
   const isReady = useAppSelector((state) => state.localeApp.isReady);
   const localeSelection = useLocaleSelection();
@@ -20,6 +21,7 @@ const LocaleMain = ({}) => {
       <DeleteDialog />
       <EditDialog />
       <MoveLibraryDialog />
+      <MoveGroupDialog />
       <ViewDialog />
       <section className="flex flex-col w-full overflow-y-scroll shrink grow">
         {localeSelection && localeSelection.texts.length > 0 ? (

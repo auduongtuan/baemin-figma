@@ -30,6 +30,7 @@ function codegenHandle({ node, language }: CodegenEvent): CodegenResult[] {
     const dataNodeInfo = parseDataNodeInfo(node);
     return getJSONCodegen(dataNodeInfo.items, format);
   }
+  console.log(node);
   if (isContainer(node)) {
     const texts = getTexts(node);
     const allItems = getLocaleData().localeItems;

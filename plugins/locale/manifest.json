@@ -14,5 +14,6 @@
   "main": "dist/code.js",
   "permissions": ["currentuser"],
   "ui": "dist/index.html",
-  "menu": [{ "name": "Open", "command": "locale" }]
+  "menu": [{ "name": "Open", "command": "locale" }],
+  "networkAccess": { "allowedDomains": ["https://rsms.me"] }
 }

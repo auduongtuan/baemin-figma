@@ -1,6 +1,9 @@
-# Figma plugin
+# BM i18n
+This is an innovative public Figma plugin that I created when working at Woowa Brothers Vietnam (BAEMIN) to simplify the internalisation process within my company. 
 
-Below are the steps to get your plugin running. You can also find instructions at:
+## Run the plugin development
+
+Below are the steps to get the plugin running. You can also find instructions at:
 
   https://www.figma.com/plugin-docs/setup/
 

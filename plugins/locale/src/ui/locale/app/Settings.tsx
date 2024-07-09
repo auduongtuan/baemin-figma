@@ -7,6 +7,7 @@ import {
   Popover,
   Select,
   Tooltip,
+  MultipleSelection,
 } from "ds";
 import configs from "figma-helpers/configs";
 import React, { useEffect, useState } from "react";
@@ -66,9 +67,9 @@ const Settings = () => {
         </Popover.Trigger>
       </Tooltip>
 
-      <Popover.Content title="Settings" width={"210px"}>
+      <Popover.Content title="Settings" width={"280px"}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="languages" className="text-xsmall">
+          {/* <label htmlFor="languages" className="text-xsmall">
             Languages
           </label>
           <Controller
@@ -103,6 +104,26 @@ const Settings = () => {
                   );
                 })}
               </>
+            )} */}
+
+          <Controller
+            name={`languages`}
+            control={control}
+            rules={{
+              validate: {
+                atLeast2: (v) => isArray(v) && v.length > 1,
+              },
+            }}
+            render={({ field }) => (
+              <MultipleSelection
+                label="Languages"
+                value={field.value}
+                onChange={field.onChange}
+                options={Object.keys(LANGUAGE_LIST).map((lang) => ({
+                  value: lang,
+                  name: LANGUAGE_LIST[lang],
+                }))}
+              ></MultipleSelection>
             )}
           />
           {errors.languages && (

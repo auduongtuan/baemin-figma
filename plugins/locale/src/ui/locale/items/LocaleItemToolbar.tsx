@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
 import { pluralize } from "@capaj/pluralize";
-import { IconButton, LibraryIcon, MoveLibraryIcon, Tooltip } from "ds";
+import { FolderIcon, IconButton, MoveLibraryIcon, Tooltip } from "ds";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { TrashIcon } from "@radix-ui/react-icons";
-import { setCurrentDialog } from "../../state/localeAppSlice";
+import { Cross2Icon, StackIcon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  clearSelectedItems,
+  setCurrentDialog,
+} from "../../state/localeAppSlice";
 import { Transition } from "@headlessui/react";
 
 const LocaleItemToolbar = ({}) => {
@@ -20,13 +22,41 @@ const LocaleItemToolbar = ({}) => {
         leaveTo="translate-y-32 opacity-0"
       >
         <div className="flex items-center w-calc(100%-16px) px-16 py-8 pb-8 mx-8 bg-default border rounded-md shadow-sm border-divider">
-          <div className="grow">
+          <div className="flex items-center grow ">
             {listState.selectedItems.length}{" "}
             {pluralize("item", listState.selectedItems.length)} selected
+            {listState.selectedItems.length > 0 && (
+              <Tooltip content="Clear selection">
+                <IconButton
+                  className="ml-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(clearSelectedItems());
+                  }}
+                >
+                  <Cross2Icon></Cross2Icon>
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
           <div className="flex gap-16 grow-0 shrink-0">
             {listState.selectedItems.length > 0 && (
               <>
+                <Tooltip content="Move items to other group">
+                  <IconButton
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(
+                        setCurrentDialog({
+                          type: "MOVE_GROUP",
+                          key: "__SELECTED_ITEMS",
+                        })
+                      );
+                    }}
+                  >
+                    <FolderIcon />
+                  </IconButton>
+                </Tooltip>
                 <Tooltip content="Move items to other library">
                   <IconButton
                     onClick={(e) => {

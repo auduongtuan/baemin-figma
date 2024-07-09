@@ -1,14 +1,15 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setLocaleData } from "../../state/localeSlice";
-import { IconButton, Tooltip } from "ds";
+import { ChatBubbleEyeIcon, IconButton, Tooltip } from "ds";
 import { useForm } from "react-hook-form";
-import { GearIcon, UploadIcon } from "@radix-ui/react-icons";
+import { EyeClosedIcon, GearIcon, UploadIcon } from "@radix-ui/react-icons";
 import { setCurrentDialog } from "../../state/localeAppSlice";
 import { useLocaleItems } from "../../hooks/locale";
 import ImportDialog from "../dialogs/ImportDialog";
 import ExportCode from "../app/ExportCode";
 import Settings from "../app/Settings";
+import io from "figma-helpers/io";
 
 const AppBar = () => {
   const sheetId = useAppSelector((state) => state.locale.sheetId);
@@ -31,7 +32,7 @@ const AppBar = () => {
 
   // console.log("Navigator", navigator.clipboard);
   return (
-    <footer className="flex justify-between w-full px-16 py-12 bg-default border-t border-divider grow-0 shrink-0 ">
+    <footer className="flex justify-between w-full px-16 py-12 border-t bg-default border-divider grow-0 shrink-0 ">
       <div className="grow">
         <span className="text-secondary">
           v{import.meta.env.VITE_PLUGIN_VERSION}
@@ -40,6 +41,15 @@ const AppBar = () => {
         {/* <WorkingIcon /> */}
       </div>
       <div className="flex gap-16 grow-0 shrink-0">
+        <Tooltip content="Toggle annotations">
+          <IconButton
+            onClick={() => {
+              io.send("toggle_annotations");
+            }}
+          >
+            <ChatBubbleEyeIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip content="Import JSON files">
           <IconButton
             onClick={() => {

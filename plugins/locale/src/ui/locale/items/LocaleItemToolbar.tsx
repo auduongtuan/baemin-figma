@@ -42,7 +42,7 @@ const LocaleItemToolbar = ({}) => {
           <div className="flex gap-16 grow-0 shrink-0">
             {listState.selectedItems.length > 0 && (
               <>
-                <Tooltip content="Move items to other group">
+                <Tooltip content="Move items to another group">
                   <IconButton
                     onClick={(e) => {
                       e.preventDefault();
@@ -57,7 +57,7 @@ const LocaleItemToolbar = ({}) => {
                     <FolderIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip content="Move items to other library">
+                <Tooltip content="Move items to another library">
                   <IconButton
                     onClick={(e) => {
                       e.preventDefault();

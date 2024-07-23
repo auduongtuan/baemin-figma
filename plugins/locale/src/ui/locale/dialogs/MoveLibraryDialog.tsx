@@ -10,7 +10,7 @@ const MoveLibraryDialog = () => {
   const { dialogProps } = useDialog((state) => state.type == "MOVE_LIBRARY");
   return (
     <Dialog {...dialogProps}>
-      <Dialog.Panel title="Move items to other library">
+      <Dialog.Panel title="Move items to another library">
         <MoveLibraryForm />
       </Dialog.Panel>
     </Dialog>

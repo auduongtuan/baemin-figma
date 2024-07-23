@@ -276,10 +276,10 @@ const MultipleSelection = ({
                   maxWidth: "var(--radix-popper-available-width)",
                   maxHeight: "var(--radix-popper-available-height)",
                 }}
-                className="flex flex-col overflow-hidden"
+                className="flex flex-col py-0 overflow-hidden"
                 {...getMenuProps()}
               >
-                <div className="flex items-center gap-4 px-4 mx-6 mb-4 border rounded-sm shrink-0 grow-0 text-onbrandSecondary border-white/20">
+                <div className="flex items-center gap-4 px-4 mx-6 mt-8 mb-4 border rounded-sm shrink-0 grow-0 text-onbrandSecondary border-white/20">
                   <MagnifyingGlassIcon className="mr-2 -ml-2 w-14 h-14 grow-0 shrink-0" />
                   <input
                     className={clsx(
@@ -304,7 +304,7 @@ const MultipleSelection = ({
                     )}
                   />
                 </div>
-                <div className="h-full overflow-y-scroll grow shrink invisible-scrollbar">
+                <div className="h-full pb-8 overflow-y-scroll grow shrink invisible-scrollbar">
                   {items &&
                     items.map((item, index) => (
                       <Menu.Item

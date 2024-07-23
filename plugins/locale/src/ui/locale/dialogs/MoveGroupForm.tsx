@@ -110,7 +110,7 @@ const MoveGroupForm = () => {
       <form className="flex flex-col gap-16" onSubmit={handleSubmit(submit)}>
         {!hasSameLibrary && (
           <ErrorMessage className="mt-0">
-            Cannot move because current selected items are not from a same
+            Cannot move because the selected items are not from the same
             library.
           </ErrorMessage>
         )}
@@ -118,7 +118,7 @@ const MoveGroupForm = () => {
           <>
             <section>
               <Select
-                label="Select new group name"
+                label="Select group name"
                 value={newGroupNameSelect}
                 onChange={(value) => {
                   setValue("newGroupNameSelect", value);
@@ -170,7 +170,7 @@ const MoveGroupForm = () => {
                   `${duplicatedItems.length} ${pluralize(
                     "item",
                     duplicatedItems.length
-                  )} already in this group will not be modified`}
+                  )} already in this group will not be modified.`}
               </ErrorMessage>
             )}
             {modifiedItems.length > 0 && (

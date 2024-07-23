@@ -49,7 +49,9 @@ function setData(node: BaseNode, data: SavedLocaleData) {
 export const isDataNode = (node: SceneNode): node is DataNode => {
   return (
     ((isFrame(node) || isComponent(node)) && getData(node) != "") ||
-    (isInstance(node) && getData(node.mainComponent) != "")
+    (isInstance(node) &&
+      isComponent(node.mainComponent) &&
+      getData(node.mainComponent) != "")
   );
 };
 export const isLocalDataNode = (node: SceneNode): node is LocalDataNode => {
